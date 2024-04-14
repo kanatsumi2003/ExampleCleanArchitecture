@@ -1,10 +1,12 @@
 import { Collection, Db } from "mongodb";
 import BaseRepository from "./BaseRepository";
 import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
-class UserRepository extends BaseRepository<User>{
-    public static collection: Collection<User>;
-    constructor(collection: Collection<User>){
-        super(collection);
+
+class UserRepository extends BaseRepository<User> {
+    private static collection: Collection<User> = new Collection<User>();
+
+    constructor() {
+        super(UserRepository.collection);
     }
     // public userRepository;
     // public UserRepository() {

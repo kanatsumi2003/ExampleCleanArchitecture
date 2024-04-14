@@ -8,23 +8,48 @@ import {
   DeleteResult,
   OptionalUnlessRequiredId,
   FilterOperations,
-  Document
+  Document,
 } from "mongodb";
+import { User } from "../../../Domain/Entities/UserEntites";
+const { MongoClient } = require("mongodb");
+require('dotenv').config();
+
 
 abstract class BaseRepository<T extends Document> {
   public readonly collection: Collection<T>;
   constructor(collection: Collection<T>) {
     this.collection = collection;
   }
+
+  async connectDB() {
+    try {
+        const URI = process.env.CONNECTION_STRING || "";
+        const dbName = "EInvoiceDB";
+        console.log("URI:", URI);
+        console.log("dbName:", dbName);
+
+        const client = new MongoClient(URI, { useNewUrlParser: true, useUnifiedTopology: true });
+        await client.connect();
+        console.log("Connected successfully to database !");
+        return client.db(dbName);
+    } catch (error) {
+        console.error("Error connecting to database:", error);
+        throw error;
+    }
+}
+
+
   async insertDocuments<U extends OptionalUnlessRequiredId<T>>(data: U): Promise<InsertOneResult<T>> {
     try {
-      const result = await this.collection.insertOne(data);
-      console.log("Inserted documents into the colleciotn");
+      const db: Db = await this.connectDB(); // Await the promise to get the Db object
+      const result = await db.collection<T>("User").insertOne(data); // Use the Db object to access the collection
+      console.log("Inserted documents into the collection");
       return result;
     } catch (error) {
       throw error;
     }
   }
+
 
   async findDocuments<T>(
     query: FilterOperations<T>,
@@ -40,7 +65,7 @@ abstract class BaseRepository<T extends Document> {
         ? { projection: projectionOptions }
         : {};
       const docs = await this.collection
-        .find(query , { ...projection })
+        .find(query, { ...projection })
         .sort(sortOptions)
         .skip(skip)
         .limit(limit)
