@@ -1,4 +1,4 @@
-class BaseEntities {
+class BaseEntities{
   private _isDelete: boolean;
   private _createTime: Date;
   private _updateTime: Date;
@@ -37,10 +37,10 @@ class BaseEntities {
   }
 
   constructor() {
-    this.isDelete = false;
-    this.createTime = new Date();
-    this.updateTime = new Date();
-    this.isActive = true;
+    this._isDelete = false;
+    this._createTime = new Date();
+    this._updateTime = new Date();
+    this._isActive = true;
   }
 }
 
