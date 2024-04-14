@@ -1,9 +1,9 @@
 import { BaseEntities } from "./BaseEntites";
-import mongoose, { Types } from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
 import bcrypt from "bcryptjs";
 import speakeasy from "speakeasy";
 
-class User {
+class User{
   private _fullname: string;
   private _email: string;
   private _username: string;
@@ -122,18 +122,18 @@ class User {
     role_id: Types.ObjectId,
     imageUser: string
   ) {
-    this.fullname = fullname;
-    this.email = email;
-    this.username = username;
-    this.password = password;
-    this.phoneNumber = phoneNumber;
-    this.role_id = role_id;
-    this.imageUser = imageUser;
-    this.emailConfirmed = false;
-    this.phoneConfirmed = false;
-    this.emailCode = Math.random().toString(36).substring(2, 5);
-    this.enable2FA = false;
-    this.twoFASecret = speakeasy.generateSecret({ length: 20 }).base32;
+    this._fullname = fullname;
+    this._email = email;
+    this._username = username;
+    this._password = password;
+    this._phoneNumber = phoneNumber;
+    this._role_id = role_id;
+    this._imageUser = imageUser;
+    this._emailConfirmed = false;
+    this._phoneConfirmed = false;
+    this._emailCode = Math.random().toString(36).substring(2, 5);
+    this._enable2FA = false;
+    this._twoFASecret = speakeasy.generateSecret({ length: 20 }).base32;
     if (!mongoose.Types.ObjectId.isValid(role_id)) {
       this.role_id = new mongoose.Types.ObjectId(role_id); //convert role_id from string or another data types into mongoose ObjectId
     } else {
