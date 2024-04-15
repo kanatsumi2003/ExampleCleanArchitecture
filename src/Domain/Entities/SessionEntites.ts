@@ -1,104 +1,105 @@
 import { BaseEntities } from "./BaseEntites";
 class SessionLogin {
-  private _userId: string;
-  private _email: string;
-  private _name: string;
-  private _username: string;
-  private _jwttoken: string;
-  private _refreshToken: string;
-  private _expireRefreshToken: string;
-  private _expireDate: Date;
-  private _deviceId: string;
-  private _ipAddress: string;
-  private _dbName: string;
+  private userId: string;
+  private email: string;
+  private name: string;
+  private username: string;
+  private jwttoken: string;
+  private refreshToken: string;
+  private expireRefreshToken: string;
+  private expireDate: Date;
+  private deviceId: string;
+  private ipAddress: string;
+  private dbName: string;
 
-  public get userId(): string {
-    return this._userId;
-  }
 
-  public set userId(userId: string) {
-    this._userId = userId;
-  }
+    public getUserId(): string {
+        return this.userId;
+    }
 
-  public get email(): string {
-    return this._email;
-  }
+    public setUserId(userId: string): void {
+        this.userId = userId;
+    }
 
-  public set email(email: string) {
-    this._email = email;
-  }
+    public getEmail(): string {
+        return this.email;
+    }
 
-  public get name(): string {
-    return this._name;
-  }
+    public setEmail(email: string): void {
+        this.email = email;
+    }
 
-  public set name(name: string) {
-    this._name = name;
-  }
+    public getName(): string {
+        return this.name;
+    }
 
-  public get username(): string {
-    return this._username;
-  }
+    public setName(name: string): void {
+        this.name = name;
+    }
 
-  public set username(username: string) {
-    this._username = username;
-  }
+    public getUsername(): string {
+        return this.username;
+    }
 
-  public get jwttoken(): string {
-    return this._jwttoken;
-  }
+    public setUsername(username: string): void {
+        this.username = username;
+    }
 
-  public set jwttoken(jwttoken: string) {
-    this._jwttoken = jwttoken;
-  }
+    public getJwttoken(): string {
+        return this.jwttoken;
+    }
 
-  public get refreshToken(): string {
-    return this._refreshToken;
-  }
+    public setJwttoken(jwttoken: string): void {
+        this.jwttoken = jwttoken;
+    }
 
-  public set refreshToken(refreshToken: string) {
-    this._refreshToken = refreshToken;
-  }
+    public getRefreshToken(): string {
+        return this.refreshToken;
+    }
 
-  public get expireRefreshToken(): string {
-    return this._expireRefreshToken;
-  }
+    public setRefreshToken(refreshToken: string): void {
+        this.refreshToken = refreshToken;
+    }
 
-  public set expireRefreshToken(expireRefreshToken: string) {
-    this._expireRefreshToken = expireRefreshToken;
-  }
+    public getExpireRefreshToken(): string {
+        return this.expireRefreshToken;
+    }
 
-  public get expireDate(): Date {
-    return this._expireDate;
-  }
+    public setExpireRefreshToken(expireRefreshToken: string): void {
+        this.expireRefreshToken = expireRefreshToken;
+    }
 
-  public set expireDate(expireDate: Date) {
-    this._expireDate = expireDate;
-  }
+    public getExpireDate(): Date {
+        return this.expireDate;
+    }
 
-  public get deviceId(): string {
-    return this._deviceId;
-  }
+    public setExpireDate(expireDate: Date): void {
+        this.expireDate = expireDate;
+    }
 
-  public set deviceId(deviceId: string) {
-    this._deviceId = deviceId;
-  }
+    public getDeviceId(): string {
+        return this.deviceId;
+    }
 
-  public get ipAddress(): string {
-    return this._ipAddress;
-  }
+    public setDeviceId(deviceId: string): void {
+        this.deviceId = deviceId;
+    }
 
-  public set ipAddress(ipAddress: string) {
-    this._ipAddress = ipAddress;
-  }
+    public getIpAddress(): string {
+        return this.ipAddress;
+    }
 
-  public get dbName(): string {
-    return this._dbName;
-  }
+    public setIpAddress(ipAddress: string): void {
+        this.ipAddress = ipAddress;
+    }
 
-  public set dbName(dbName: string) {
-    this._dbName = dbName;
-  }
+    public getDbName(): string {
+        return this.dbName;
+    }
+
+    public setDbName(dbName: string): void {
+        this.dbName = dbName;
+    }
 
   constructor(
     userId: string,

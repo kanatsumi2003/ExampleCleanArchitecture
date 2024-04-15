@@ -1,117 +1,123 @@
+import { ObjectId } from 'mongodb';
 import { BaseEntities } from "./BaseEntites";
-import mongoose, { Document, Types } from "mongoose";
+import mongoose, { Document, Mongoose, Types } from "mongoose";
 import bcrypt from "bcryptjs";
 import speakeasy from "speakeasy";
 
 class User{
-  private _fullname: string;
-  private _email: string;
-  private _username: string;
-  private _password: string;
-  private _phoneNumber: string;
-  private _role_id: Types.ObjectId;
-  private _imageUser: string;
-  private _emailConfirmed: boolean;
-  private _phoneConfirmed: boolean;
-  private _emailCode: string;
-  private _enable2FA: boolean;
-  private _twoFASecret: string;
+  private id: mongoose.Types.ObjectId;
+  private fullname: string;
+  private email: string;
+  private username: string;
+  private password: string;
+  private phoneNumber: string;
+  private role_id: Types.ObjectId;
+  private imageUser: string;
+  private emailConfirmed: boolean;
+  private phoneConfirmed: boolean;
+  private emailCode: string;
+  private enable2FA: boolean;
+  private twoFASecret: string;
 
-  public get fullname(): string {
-    return this._fullname;
-  }
+    public getId(): mongoose.Types.ObjectId {
+        return this.id;
+    }
 
-  public set fullname(fullname: string) {
-    this._fullname = fullname;
-  }
+    public getFullname(): string {
+        return this.fullname;
+    }
 
-  public get email(): string {
-    return this._email;
-  }
+    public setFullname(fullname: string): void {
+        this.fullname = fullname;
+    }
 
-  public set email(email: string) {
-    this._email = email;
-  }
+    public getEmail(): string {
+        return this.email;
+    }
 
-  public get username(): string {
-    return this._username;
-  }
+    public setEmail(email: string): void {
+        this.email = email;
+    }
 
-  public set username(username: string) {
-    this._username = username;
-  }
+    public getUsername(): string {
+        return this.username;
+    }
 
-  public get password(): string {
-    return this._password;
-  }
+    public setUsername(username: string): void {
+        this.username = username;
+    }
 
-  public set password(password: string) {
-    this._password = password;
-  }
+    public getPassword(): string {
+        return this.password;
+    }
 
-  public get phoneNumber(): string {
-    return this._phoneNumber;
-  }
+    public setPassword(password: string): void {
+        this.password = password;
+    }
 
-  public set phoneNumber(phoneNumber: string) {
-    this._phoneNumber = phoneNumber;
-  }
+    public getPhoneNumber(): string {
+        return this.phoneNumber;
+    }
 
-  public get role_id(): Types.ObjectId {
-    return this._role_id;
-  }
+    public setPhoneNumber(phoneNumber: string): void {
+        this.phoneNumber = phoneNumber;
+    }
 
-  public set role_id(role_id: Types.ObjectId) {
-    this._role_id = role_id;
-  }
+    public getRole_id(): Types.ObjectId {
+        return this.role_id;
+    }
 
-  public get imageUser(): string {
-    return this._imageUser;
-  }
+    public setRole_id(role_id: Types.ObjectId): void {
+        this.role_id = role_id;
+    }
 
-  public set imageUser(imageUser: string) {
-    this._imageUser = imageUser;
-  }
+    public getImageUser(): string {
+        return this.imageUser;
+    }
 
-  public get emailConfirmed(): boolean {
-    return this._emailConfirmed;
-  }
+    public setImageUser(imageUser: string): void {
+        this.imageUser = imageUser;
+    }
 
-  public set emailConfirmed(emailConfirmed: boolean) {
-    this._emailConfirmed = emailConfirmed;
-  }
+    public isEmailConfirmed(): boolean {
+        return this.emailConfirmed;
+    }
 
-  public get phoneConfirmed(): boolean {
-    return this._phoneConfirmed;
-  }
+    public setEmailConfirmed(emailConfirmed: boolean): void {
+        this.emailConfirmed = emailConfirmed;
+    }
 
-  public set phoneConfirmed(phoneConfirmed: boolean) {
-    this._phoneConfirmed = phoneConfirmed;
-  }
+    public isPhoneConfirmed(): boolean {
+        return this.phoneConfirmed;
+    }
 
-  public get emailCode(): string {
-    return this._emailCode;
-  }
+    public setPhoneConfirmed(phoneConfirmed: boolean): void {
+        this.phoneConfirmed = phoneConfirmed;
+    }
 
-  public set emailCode(emailCode: string) {
-    this._emailCode = emailCode;
-  }
+    public getEmailCode(): string {
+        return this.emailCode;
+    }
 
-  public get enable2FA(): boolean {
-    return this._enable2FA;
-  }
+    public setEmailCode(emailCode: string): void {
+        this.emailCode = emailCode;
+    }
 
-  public set enable2FA(enable2FA: boolean) {
-    this._enable2FA = enable2FA;
-  }
+    public isEnable2FA(): boolean {
+        return this.enable2FA;
+    }
 
-  public get twoFASecret(): string {
-    return this._twoFASecret;
-  }
+    public setEnable2FA(enable2FA: boolean): void {
+        this.enable2FA = enable2FA;
+    }
 
-  public set twoFASecret(twoFASecret: string) {
-    this._twoFASecret = twoFASecret;
-  }
+    public getTwoFASecret(): string {
+        return this.twoFASecret;
+    }
+
+    public setTwoFASecret(twoFASecret: string): void {
+        this.twoFASecret = twoFASecret;
+    }
 
   constructor(
     fullname: string,
@@ -122,18 +128,19 @@ class User{
     role_id: Types.ObjectId,
     imageUser: string
   ) {
-    this._fullname = fullname;
-    this._email = email;
-    this._username = username;
-    this._password = password;
-    this._phoneNumber = phoneNumber;
-    this._role_id = role_id;
-    this._imageUser = imageUser;
-    this._emailConfirmed = false;
-    this._phoneConfirmed = false;
-    this._emailCode = Math.random().toString(36).substring(2, 5);
-    this._enable2FA = false;
-    this._twoFASecret = speakeasy.generateSecret({ length: 20 }).base32;
+    this.id = new mongoose.Types.ObjectId;
+    this.fullname = fullname;
+    this.email = email;
+    this.username = username;
+    this.password = password;
+    this.phoneNumber = phoneNumber;
+    this.role_id = role_id;
+    this.imageUser = imageUser;
+    this.emailConfirmed = false;
+    this.phoneConfirmed = false;
+    this.emailCode = Math.random().toString(36).substring(2, 5);
+    this.enable2FA = false;
+    this.twoFASecret = speakeasy.generateSecret({ length: 20 }).base32;
     if (!mongoose.Types.ObjectId.isValid(role_id)) {
       this.role_id = new mongoose.Types.ObjectId(role_id); //convert role_id from string or another data types into mongoose ObjectId
     } else {
