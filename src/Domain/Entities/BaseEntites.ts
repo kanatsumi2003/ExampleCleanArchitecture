@@ -1,46 +1,48 @@
 class BaseEntities{
-  private _isDelete: boolean;
-  private _createTime: Date;
-  private _updateTime: Date;
-  private _isActive: boolean;
+  private isDelete: boolean;
+  private createTime: Date;
+  private updateTime: Date;
+  private isActive: boolean;
 
-  public get isDelete(): boolean {
-    return this._isDelete;
-  }
+    public isIsDelete(): boolean {
+        return this.isDelete;
+    }
 
-  public set isDelete(isDelete: boolean) {
-    this._isDelete = isDelete;
-  }
+    public setIsDelete(isDelete: boolean): void {
+        this.isDelete = isDelete;
+    }
 
-  public get createTime(): Date {
-    return this._createTime;
-  }
+    public getCreateTime(): Date {
+        return this.createTime;
+    }
 
-  public set createTime(createTime: Date) {
-    this._createTime = createTime;
-  }
+    public setCreateTime(createTime: Date): void {
+        this.createTime = createTime;
+    }
 
-  public get updateTime(): Date {
-    return this._updateTime;
-  }
+    public getUpdateTime(): Date {
+        return this.updateTime;
+    }
 
-  public set updateTime(updateTime: Date) {
-    this._updateTime = updateTime;
-  }
+    public setUpdateTime(updateTime: Date): void {
+        this.updateTime = updateTime;
+    }
 
-  public get isActive(): boolean {
-    return this._isActive;
-  }
+    public isIsActive(): boolean {
+        return this.isActive;
+    }
 
-  public set isActive(isActive: boolean) {
-    this._isActive = isActive;
-  }
+    public setIsActive(isActive: boolean): void {
+        this.isActive = isActive;
+    }
 
+
+  
   constructor() {
-    this._isDelete = false;
-    this._createTime = new Date();
-    this._updateTime = new Date();
-    this._isActive = true;
+    this.isDelete = false;
+    this.createTime = new Date();
+    this.updateTime = new Date();
+    this.isActive = true;
   }
 }
 

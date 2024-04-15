@@ -1,42 +1,43 @@
 import { BaseEntities } from "./BaseEntites";
 
 class Role {
-  private _name: string;
-  private _description: string;
-  private _isAdmin: boolean;
-  private _listClaim: string[];
+  private name: string;
+  private description: string;
+  private isAdmin: boolean;
+  private listClaim: string[];
 
-  public get name(): string {
-    return this._name;
-  }
 
-  public set name(name: string) {
-    this._name = name;
-  }
+    public getName(): string {
+        return this.name;
+    }
 
-  public get description(): string {
-    return this._description;
-  }
+    public setName(name: string): void {
+        this.name = name;
+    }
 
-  public set description(description: string) {
-    this._description = description;
-  }
+    public getDescription(): string {
+        return this.description;
+    }
 
-  public get isAdmin(): boolean {
-    return this._isAdmin;
-  }
+    public setDescription(description: string): void {
+        this.description = description;
+    }
 
-  public set isAdmin(isAdmin: boolean) {
-    this._isAdmin = isAdmin;
-  }
+    public isIsAdmin(): boolean {
+        return this.isAdmin;
+    }
 
-  public get listClaim(): string[] {
-    return this._listClaim;
-  }
+    public setIsAdmin(isAdmin: boolean): void {
+        this.isAdmin = isAdmin;
+    }
 
-  public set listClaim(listClaim: string[]) {
-    this._listClaim = listClaim;
-  }
+    public getListClaim(): string[] {
+        return this.listClaim;
+    }
+
+    public setListClaim(listClaim: string[]): void {
+        this.listClaim = listClaim;
+    }
 
   constructor(
     name: string,
