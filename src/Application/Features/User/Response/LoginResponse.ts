@@ -1,3 +1,4 @@
+import { BaseResponse } from './../../../Common/Model/Response/BaseResponse';
 export class LoginResponse extends BaseResponse {
     private acessToken: string;
     private refreshToken: string;

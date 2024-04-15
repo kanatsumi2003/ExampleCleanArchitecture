@@ -1,4 +1,4 @@
-class BaseResponse {
+export class BaseResponse {
     private message: string;
     private statusCode: number;
     private data: object;
