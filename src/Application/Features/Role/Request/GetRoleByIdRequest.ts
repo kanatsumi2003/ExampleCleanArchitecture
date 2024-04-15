@@ -1,5 +1,5 @@
 export class GetRoleByIdRequest {
-    private roleId: string;
+    public roleId: string;
 
     public getRoleId(): string {
         return this.roleId;
