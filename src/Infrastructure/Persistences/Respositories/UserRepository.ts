@@ -1,8 +1,13 @@
-// import { Collection, Db } from "mongodb";
-// import BaseRepository from "./BaseRepository";
-// import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
-// import mongoose from "mongoose";
-// class UserRepository extends BaseRepository<User>{
+import { Collection, Db } from "mongodb";
+import BaseRepository from "./BaseRepository";
+import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
+import IUserRepository from "../../../Application/Persistences/IRepositories/IUserRepository";
+import mongoose from "mongoose";
+class UserRepository extends BaseRepository<User> implements IUserRepository{
+    constructor(){
+        const collectionName: string = "users";
+        super(collectionName);
+    }
 //     constructor() {
 //         const collectionName: string = "User";
 //         super(collectionName);
@@ -60,8 +65,8 @@
 //             throw error;
 //         }
 //     }
-// }
+}
 
 
-// export default UserRepository
+export default UserRepository
  
