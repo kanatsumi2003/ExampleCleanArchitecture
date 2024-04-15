@@ -2,9 +2,9 @@ import { Collection, Db } from "mongodb";
 import BaseRepository from "./BaseRepository";
 import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
 class UserRepository extends BaseRepository<User>{
-    public static collection: Collection<User>;
-    constructor(collection: Collection<User>){
-        super(collection);
+    constructor() {
+        const collectionName: string = "User";
+        super(collectionName);
     }
     // public userRepository;
     // public UserRepository() {
@@ -20,4 +20,5 @@ class UserRepository extends BaseRepository<User>{
     }
 }
 
-export default UserRepository;
+export default UserRepository
+ 
