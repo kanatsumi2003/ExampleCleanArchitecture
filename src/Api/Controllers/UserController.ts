@@ -1,14 +1,23 @@
-// import { Request, Response, query } from "express";
-// import mongoose, { Collection } from "mongoose";
-// import { User } from "../../Domain/Entities/UserEntites";
-// import { ObjectId } from "mongodb";
-// import UserRepository from "../../Infrastructure/Persistences/Respositories/UserRepository";
-// class UserController {
-//     private userRepository: UserRepository;
-//     constructor() {
-//         this.userRepository = new UserRepository();
-//     }
-
+import { Request, Response, query } from "express";
+import mongoose, { Collection } from "mongoose";
+import { User } from "../../Domain/Entities/UserEntites";
+import { ObjectId } from "mongodb";
+import UserRepository from "../../Infrastructure/Persistences/Respositories/UserRepository";
+class UserController {
+    private userRepository: UserRepository;
+    constructor() {
+        this.userRepository = new UserRepository();
+    }
+    async login(req: Request, res: Response): Promise<void> {
+        
+        const {email, password} = req.body;
+        const data = {
+            email: email,
+            password: password
+        };
+        const result = await LoginHandler(data);
+        res.status(200).json({data: result})
+    }
 //     async newUser(req: Request, res: Response): Promise<void> {
 //         try {
 //             const user = new User("b", "asd", "1", "123", "123", new ObjectId(123), "123")
@@ -51,6 +60,6 @@
 //             throw error;
 //         }
 //     }
-// }
+}
 
-// export default UserController;
+export default UserController;

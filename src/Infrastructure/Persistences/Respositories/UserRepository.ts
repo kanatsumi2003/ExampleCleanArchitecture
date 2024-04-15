@@ -8,6 +8,9 @@ class UserRepository extends BaseRepository<User> implements IUserRepository{
         const collectionName: string = "users";
         super(collectionName);
     }
+    async getUserSession() {
+        return sessionStorage;
+    }
 //     constructor() {
 //         const collectionName: string = "User";
 //         super(collectionName);
