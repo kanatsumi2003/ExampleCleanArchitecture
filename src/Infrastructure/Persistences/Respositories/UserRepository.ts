@@ -8,6 +8,10 @@ class UserRepository extends BaseRepository<User> implements IUserRepository{
         const collectionName: string = "users";
         super(collectionName);
     }
+    getUserByEmail(email: string) {
+        throw new Error("Method not implemented.");
+    }
+    
     async getUserSession() {
         return sessionStorage;
     }

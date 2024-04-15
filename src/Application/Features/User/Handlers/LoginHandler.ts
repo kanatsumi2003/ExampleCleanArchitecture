@@ -1,9 +1,20 @@
+import { response } from "express";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
+import { LoginResponse } from "../Response/LoginResponse";
 
-async function LoginHandler(data){
+async function LoginHandler(data): Promise<LoginResponse>{
     const {email, password} = data;
-    UserRepository.session
-    return accesstoken;
+    const result = {
+        email: email,
+        password: password,
+        message: "hhihi"
+    }
+    
+
+    const loginResponse = new LoginResponse("Success", 200, data, "");
+
+    return loginResponse
+    
     // try {
     //     console.log("login");
     //     const { email, password } = req.body;
@@ -73,3 +84,5 @@ async function LoginHandler(data){
     //     res.status(500).send("Lỗi máy chủ");
     // }
 }
+
+export default LoginHandler;
