@@ -8,26 +8,26 @@ import { LoginRequest } from "../../Application/Features/User/Requests/LoginRequ
 import { LoginResponse } from "../../Application/Features/User/Response/LoginResponse";
 import { error } from "console";
 class UserController {
-    // private userRepository: UserRepository;
-    // constructor() {
-    //     this.userRepository = new UserRepository();
+    private userRepository: UserRepository;
+    constructor() {
+        this.userRepository = new UserRepository();
 
-    // }
+    }
     async login(req: Request<any, any, LoginRequest>, res: Response): Promise<void> {
         try {
             const { email, password } = req.body;
             const deviceId = req.headers['user-agent'] || 'Unknown Device';
             const ipAddress = req.headers['x-forwarded-for'] || (req as any).socket?.remoteAddress || 'Unknown IP';
             const data = {deviceId, ipAddress, email, password}
-            const result: LoginResponse = await LoginHandler(data);
+            const result: any = await LoginHandler(data);
 
-            res.status(result.getStatusCode()).json({ data: result });
-            if (result.getError) {
-                res.status(result.getStatusCode()).json({ error: result.getError });
+            res.status(result.statusCode).json({ data: result });
+            if (result.error != undefined || result.error) {
+                res.status(result.statusCode).json({ error: result.error });
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Login failed:', error);
-            res.status(500).json({ error: 'Login failed', message: error.message });
+             res.status(500).json({error: error.message});
         }
     }
     //     async newUser(req: Request, res: Response): Promise<void> {

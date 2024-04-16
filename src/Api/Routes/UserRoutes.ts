@@ -8,3 +8,13 @@
 // router.get('/users/find', userController.findUser.bind(userController));
 // router.delete('/users/delete', userController.delete.bind(userController));
 // module.exports = router;
+
+import express from "express";
+import UserController from "../Controllers/UserController";
+
+const router = express.Router();
+const userController = new UserController();
+router.post('/users/login', userController.login);
+
+module.exports = router;
+

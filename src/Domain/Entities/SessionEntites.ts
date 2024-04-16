@@ -129,97 +129,97 @@ class SessionLogin {
 }
 
 class SessionWithBase extends BaseEntities {
-    private session: SessionLogin;
-    constructor(session: SessionLogin) {
+    private sessionLogin!: SessionLogin;
+    constructor(sessionLogin: SessionLogin) {
         super();
-        Object.assign(this, session);
+        Object.assign(this, sessionLogin);
     }
     public getUserId(): string {
-        return this.session.getUserId();
+        return this.sessionLogin.getUserId();
     }
 
     public setUserId(userId: string): void {
-        this.session.setUserId(userId);
+        this.sessionLogin.setUserId(userId);
     }
 
     public getEmail(): string {
-        return this.session.getEmail();
+        return this.sessionLogin.getEmail();
     }
 
     public setEmail(email: string): void {
-        this.session.setEmail(email);
+        this.sessionLogin.setEmail(email);
     }
 
     public getName(): string {
-        return this.session.getName();
+        return this.sessionLogin.getName();
     }
 
     public setName(name: string): void {
-        this.session.setName(name);
+        this.sessionLogin.setName(name);
     }
 
     public getUsername(): string {
-        return this.session.getUsername();
+        return this.sessionLogin.getUsername();
     }
 
     public setUsername(username: string): void {
-        this.session.setUsername(username);
+        this.sessionLogin.setUsername(username);
     }
 
     public getJwttoken(): string {
-        return this.session.getJwttoken();
+        return this.sessionLogin.getJwttoken();
     }
 
     public setJwttoken(jwttoken: string): void {
-        this.session.setJwttoken(jwttoken);
+        this.sessionLogin.setJwttoken(jwttoken);
     }
 
     public getRefreshToken(): string {
-        return this.session.getRefreshToken();
+        return this.sessionLogin.getRefreshToken();
     }
 
     public setRefreshToken(refreshToken: string): void {
-        this.session.setRefreshToken(refreshToken);
+        this.sessionLogin.setRefreshToken(refreshToken);
     }
 
     public getExpireRefreshToken(): string {
-        return this.session.getExpireRefreshToken();
+        return this.sessionLogin.getExpireRefreshToken();
     }
 
     public setExpireRefreshToken(expireRefreshToken: string): void {
-        this.session.setExpireRefreshToken(expireRefreshToken);
+        this.sessionLogin.setExpireRefreshToken(expireRefreshToken);
     }
 
     public getExpireDate(): Date {
-        return this.session.getExpireDate();
+        return this.sessionLogin.getExpireDate();
     }
 
     public setExpireDate(expireDate: Date): void {
-        this.session.setExpireDate(expireDate);
+        this.sessionLogin.setExpireDate(expireDate);
     }
 
     public getDeviceId(): string {
-        return this.session.getDeviceId();
+        return this.sessionLogin.getDeviceId();
     }
 
     public setDeviceId(deviceId: string): void {
-        this.session.setDeviceId(deviceId);
+        this.sessionLogin.setDeviceId(deviceId);
     }
 
     public getIpAddress(): string {
-        return this.session.getIpAddress();
+        return this.sessionLogin.getIpAddress();
     }
 
     public setIpAddress(ipAddress: string): void {
-        this.session.setIpAddress(ipAddress);
+        this.sessionLogin.setIpAddress(ipAddress);
     }
 
     public getDbName(): string {
-        return this.session.getDbName();
+        return this.sessionLogin.getDbName();
     }
 
     public setDbName(dbName: string): void {
-        this.session.setDbName(dbName);
+        this.sessionLogin.setDbName(dbName);
     }
 }
 

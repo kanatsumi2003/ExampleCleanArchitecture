@@ -3,7 +3,7 @@ import moment from "moment";
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
 
-export async function encodejwt(user) {
+export async function encodejwt(user:any) {
 
     const token: string = jwt.sign(
         {
@@ -37,7 +37,7 @@ export async function encodejwt(user) {
     }
 }
 
-export function addDuration(duration) {
+export function addDuration(duration: string) {
     console.log(duration);
     const unit = duration.slice(-1); // Lấy đơn vị thời gian (giờ 'h', ngày 'd', v.v.)
     const amount = parseInt(duration.slice(0, -1)); // Lấy số lượng thời gian từ chuỗi
@@ -57,7 +57,7 @@ export function addDuration(duration) {
     }
 
     // Tạo ngày giờ mới sau khi cộng thêm khoảng thời gian
-    const newDateTime = moment().add(amount, momentUnit);
+    const newDateTime = moment().add(amount as any, momentUnit);
 
     // Định dạng và trả về ngày giờ mới dưới dạng chuỗi
     return newDateTime.format('YYYY-MM-DD HH:mm:ss');

@@ -7,7 +7,7 @@ import { comparePassword } from "../../../Common/Helpers/passwordUtils";
 import { addDuration, encodejwt } from "../../../Common/Helpers/jwtUtils";
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 
-async function LoginHandler(data): Promise<LoginResponse> {
+async function LoginHandler(data: any): Promise<LoginResponse> {
     try {
         const userRepository = new UserRepository();
         const sessionRepository = new SessionRepository();
@@ -28,7 +28,7 @@ async function LoginHandler(data): Promise<LoginResponse> {
         const user: any = await userRepository.getUserByEmail(email, queryData);
         console.log(user);
 
-        const isMatch = await comparePassword(password, user.getPassword());
+        const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
             throw new Error("Password is not match!");
         }
@@ -47,8 +47,8 @@ async function LoginHandler(data): Promise<LoginResponse> {
                 await sessionRepository.deleteSession(session._id, queryDataSession); 
         } 
 
-        const tokenExpiryDate = addDuration(token.expiresIn);
-        const refreshTokenExpiryDate = addDuration(process.env.REACT_APP_EXPIRE_REFRESH_TOKEN);
+        const tokenExpiryDate = addDuration(token.expiresIn || "");
+        const refreshTokenExpiryDate = addDuration(process.env.REACT_APP_EXPIRE_REFRESH_TOKEN || "");
 
         await sessionRepository.createSession({
             userId: user._id,
@@ -73,7 +73,7 @@ async function LoginHandler(data): Promise<LoginResponse> {
 
         return loginResponse
 
-    } catch (error) {
+    } catch (error: any) {
         throw new Error(error.message)
     }
 

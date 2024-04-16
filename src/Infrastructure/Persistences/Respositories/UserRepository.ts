@@ -8,22 +8,19 @@ class UserRepository extends BaseRepository<User> implements IUserRepository{
         const collectionName: string = "users";
         super(collectionName);
     }
-    async getUserByEmail(email: string, queryData: UserWithBase): Promise<UserWithBase> {
+    async getUserByEmail(email: string, queryData: any): Promise<UserWithBase> {
         try {
-            const query = {email: email, isDelete: queryData.isIsDelete, isActive: queryData.isIsActive ,emailConfirmed: queryData.isEmailConfirmed};
+            const query = {email: email, isDelete: queryData.isDelete, isActive: queryData.isActive ,emailConfirmed: queryData.emailConfirmed};
             const users: UserWithBase[] = await this.findDocuments(query, null, {});
             if (users === null || users.length <= 0) {
                 throw new Error('No user found!');
             }
             return users[0];
-        } catch (error) {
-            throw new Error('Error getting user by email: ' + error.message);
+        } catch (error: any) {
+            throw new Error('Error at UserRepository: ' + error.message);
         }
     }
     
-    async getUserSession() {
-        return sessionStorage;
-    }
 //     constructor() {
 //         const collectionName: string = "User";
 //         super(collectionName);

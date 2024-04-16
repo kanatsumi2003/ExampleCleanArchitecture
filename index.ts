@@ -8,6 +8,7 @@ app.use(express.json());
 
 // app.use("/api", userRoute);
 app.use("/api", roleRoute);
+app.use("/api", userRoute);
 app.listen(3000, '0.0.0.0', () => {
     console.log(`Server is runnit at port: ${PORT}`);
 })

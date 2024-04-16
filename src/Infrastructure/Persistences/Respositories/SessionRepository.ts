@@ -8,19 +8,19 @@ class SessionRepository extends BaseRepository<SessionLogin> implements ISession
         const collectionName: string = "sessions";
         super(collectionName);
     }
-    async findSessionByEmailAndIP(queryData: SessionWithBase): Promise<SessionWithBase> {
+    async findSessionByEmailAndIP(queryData: any): Promise<SessionWithBase[]> {
         try {
             const query = {
-                email: queryData.getEmail,
-                ipAddress: queryData.getIpAddress,
-                deviceId: queryData.getDeviceId,
-                isDelete: queryData.isIsDelete
+                email: queryData.email,
+                ipAddress: queryData.ipAddress,
+                deviceId: queryData.deviceId,
+                isDelete: queryData.isDelete
             }
             const sessions: SessionWithBase[] = await this.findDocuments(query, null, {});
-            if (sessions === null || sessions.length <= 0) {
-                throw new Error('No session found!');
-            }
-            return sessions[0];
+            // if (sessions === null || sessions.length <= 0) {
+            //     throw new Error('No session found!');
+            // }
+            return sessions;
         } catch (error) {
             throw error;
         }
@@ -38,7 +38,7 @@ class SessionRepository extends BaseRepository<SessionLogin> implements ISession
 
     }
 
-    async createSession(sessionData) {
+    async createSession(sessionData: any) {
         const fullSession = new SessionWithBase(sessionData)
         await this.insertDocuments(fullSession);
         return fullSession;

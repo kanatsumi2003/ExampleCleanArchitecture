@@ -1,7 +1,7 @@
 export class BaseResponse {
     private message: string;
     private statusCode: number;
-    private data: object;
+    // private data: object;
     private error?: string;
 
     public getError?(): string | undefined {
@@ -29,19 +29,19 @@ export class BaseResponse {
         this.statusCode = statusCode;
     }
 
-    public getData(): object {
-        return this.data;
-    }
+    // public getData(): object {
+    //     return this.data;
+    // }
 
-    public setData(data: object): void {
-        this.data = data;
-    }
+    // public setData(data: object): void {
+    //     this.data = data;
+    // }
 
     
     constructor(message: string, statusCode: number, data: object, error?: string) {
         this.message = message;
         this.statusCode = statusCode;
-        this.data = data;
+        // this.data = data;
         this.error = error;
     }
 }
