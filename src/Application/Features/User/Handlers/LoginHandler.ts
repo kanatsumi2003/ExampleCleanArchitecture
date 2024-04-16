@@ -6,6 +6,7 @@ import { UserWithBase } from "../../../../Domain/Entities/UserEntites";
 import { comparePassword } from "../../../Common/Helpers/passwordUtils";
 import { addDuration, encodejwt } from "../../../Common/Helpers/jwtUtils";
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
+import { CreateSessionHandler } from "../../Session/Handlers/CreateSessionHandler";
 
 async function LoginHandler(data: any): Promise<LoginResponse> {
     try {
@@ -50,18 +51,29 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
         const tokenExpiryDate = addDuration(token.expiresIn || "");
         const refreshTokenExpiryDate = addDuration(process.env.REACT_APP_EXPIRE_REFRESH_TOKEN || "");
 
-        await sessionRepository.createSession({
-            userId: user._id,
-            email: user.email,
-            name: user.name || "unknown", 
-            username: user.username.toLowerCase(), 
-            jwttoken: token.token, 
-            refreshToken: token.refreshToken,
-            ExpireRefreshToken: refreshTokenExpiryDate,
-            expireDate: tokenExpiryDate,
+        const dataForCreateSession = {
+            user: user,
+            token: token,
             deviceId: deviceId,
             ipAddress: ipAddress,
-        });
+            refreshTokenExpiryDate: refreshTokenExpiryDate,
+            tokenExpiryDate: tokenExpiryDate,
+        }
+
+        CreateSessionHandler(dataForCreateSession);
+
+        // await sessionRepository.createSession({
+        //     userId: user._id,
+        //     email: user.email,
+        //     name: user.name || "unknown", 
+        //     username: user.username.toLowerCase(), 
+        //     jwttoken: token.token, 
+        //     refreshToken: token.refreshToken,
+        //     ExpireRefreshToken: refreshTokenExpiryDate,
+        //     expireDate: tokenExpiryDate,
+        //     deviceId: deviceId,
+        //     ipAddress: ipAddress,
+        // });
 
         const dataTokenResponse = {
             accessToken: token.token,
@@ -69,7 +81,7 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
             expireIn: token.expiresIn || ""
         }
 
-        const loginResponse = new LoginResponse("Success", 200, dataTokenResponse, "");
+        const loginResponse = new LoginResponse("Success", 200, dataTokenResponse);
 
         return loginResponse
 

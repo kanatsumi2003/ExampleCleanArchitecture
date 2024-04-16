@@ -6,7 +6,7 @@ export class LoginResponse extends BaseResponse {
         expireIn: string;
     }
     
-    constructor(message: string, statusCode: number, data: { accessToken: string, refreshToken: string, expireIn: string }, error: string) {
+    constructor(message: string, statusCode: number, data: { accessToken: string, refreshToken: string, expireIn: string }, error?: string) {
         super(message, statusCode, data, error);
         this.data = {
             accessToken: data.accessToken,
