@@ -1,9 +1,8 @@
-import { User } from "../../../Domain/Entities/UserEntites";
+import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
 import IBaseRepository from "./IBaseRepository";
 
 interface IUserRepository extends IBaseRepository {
-    createUser(user: User): Promise<void>;
-    login()
+    getUserByEmail(email: string, queryData: UserWithBase);
 }
 
 export default IUserRepository;

@@ -4,8 +4,7 @@ import mongoose, { Document, Mongoose, Types } from "mongoose";
 import bcrypt from "bcryptjs";
 import speakeasy from "speakeasy";
 
-class User{
-  private id: mongoose.Types.ObjectId;
+class User {
   private fullname: string;
   private email: string;
   private username: string;
@@ -19,105 +18,102 @@ class User{
   private enable2FA: boolean;
   private twoFASecret: string;
 
-    public getId(): mongoose.Types.ObjectId {
-        return this.id;
-    }
 
-    public getFullname(): string {
-        return this.fullname;
-    }
+  public getFullname(): string {
+    return this.fullname;
+  }
 
-    public setFullname(fullname: string): void {
-        this.fullname = fullname;
-    }
+  public setFullname(fullname: string): void {
+    this.fullname = fullname;
+  }
 
-    public getEmail(): string {
-        return this.email;
-    }
+  public getEmail(): string {
+    return this.email;
+  }
 
-    public setEmail(email: string): void {
-        this.email = email;
-    }
+  public setEmail(email: string): void {
+    this.email = email;
+  }
 
-    public getUsername(): string {
-        return this.username;
-    }
+  public getUsername(): string {
+    return this.username;
+  }
 
-    public setUsername(username: string): void {
-        this.username = username;
-    }
+  public setUsername(username: string): void {
+    this.username = username;
+  }
 
-    public getPassword(): string {
-        return this.password;
-    }
+  public getPassword(): string {
+    return this.password;
+  }
 
-    public setPassword(password: string): void {
-        this.password = password;
-    }
+  public setPassword(password: string): void {
+    this.password = password;
+  }
 
-    public getPhoneNumber(): string {
-        return this.phoneNumber;
-    }
+  public getPhoneNumber(): string {
+    return this.phoneNumber;
+  }
 
-    public setPhoneNumber(phoneNumber: string): void {
-        this.phoneNumber = phoneNumber;
-    }
+  public setPhoneNumber(phoneNumber: string): void {
+    this.phoneNumber = phoneNumber;
+  }
 
-    public getRole_id(): Types.ObjectId {
-        return this.role_id;
-    }
+  public getRole_id(): Types.ObjectId {
+    return this.role_id;
+  }
 
-    public setRole_id(role_id: Types.ObjectId): void {
-        this.role_id = role_id;
-    }
+  public setRole_id(role_id: Types.ObjectId): void {
+    this.role_id = role_id;
+  }
 
-    public getImageUser(): string {
-        return this.imageUser;
-    }
+  public getImageUser(): string {
+    return this.imageUser;
+  }
 
-    public setImageUser(imageUser: string): void {
-        this.imageUser = imageUser;
-    }
+  public setImageUser(imageUser: string): void {
+    this.imageUser = imageUser;
+  }
 
-    public isEmailConfirmed(): boolean {
-        return this.emailConfirmed;
-    }
+  public isEmailConfirmed(): boolean {
+    return this.emailConfirmed;
+  }
 
-    public setEmailConfirmed(emailConfirmed: boolean): void {
-        this.emailConfirmed = emailConfirmed;
-    }
+  public setEmailConfirmed(emailConfirmed: boolean): void {
+    this.emailConfirmed = emailConfirmed;
+  }
 
-    public isPhoneConfirmed(): boolean {
-        return this.phoneConfirmed;
-    }
+  public isPhoneConfirmed(): boolean {
+    return this.phoneConfirmed;
+  }
 
-    public setPhoneConfirmed(phoneConfirmed: boolean): void {
-        this.phoneConfirmed = phoneConfirmed;
-    }
+  public setPhoneConfirmed(phoneConfirmed: boolean): void {
+    this.phoneConfirmed = phoneConfirmed;
+  }
 
-    public getEmailCode(): string {
-        return this.emailCode;
-    }
+  public getEmailCode(): string {
+    return this.emailCode;
+  }
 
-    public setEmailCode(emailCode: string): void {
-        this.emailCode = emailCode;
-    }
+  public setEmailCode(emailCode: string): void {
+    this.emailCode = emailCode;
+  }
 
-    public isEnable2FA(): boolean {
-        return this.enable2FA;
-    }
+  public isEnable2FA(): boolean {
+    return this.enable2FA;
+  }
 
-    public setEnable2FA(enable2FA: boolean): void {
-        this.enable2FA = enable2FA;
-    }
+  public setEnable2FA(enable2FA: boolean): void {
+    this.enable2FA = enable2FA;
+  }
 
-    public getTwoFASecret(): string {
-        return this.twoFASecret;
-    }
+  public getTwoFASecret(): string {
+    return this.twoFASecret;
+  }
 
-    public setTwoFASecret(twoFASecret: string): void {
-        this.twoFASecret = twoFASecret;
-    }
+  public setTwoFASecret(twoFASecret: string): void {
+    this.twoFASecret = twoFASecret;
+  }
 
   constructor(
     fullname: string,
@@ -128,7 +124,6 @@ class User{
     role_id: Types.ObjectId,
     imageUser: string
   ) {
-    this.id = new mongoose.Types.ObjectId;
     this.fullname = fullname;
     this.email = email;
     this.username = username;
@@ -158,10 +153,108 @@ class User{
 }
 
 class UserWithBase extends BaseEntities {
+  private user: User
   constructor(user: User) {
     super();
     Object.assign(this, user);
   }
+
+  getFullname(): string {
+    return this.user.getFullname();
+  }
+
+  setFullname(fullname: string): void {
+    this.user.setFullname(fullname);
+  }
+
+  getEmail(): string {
+    return this.user.getEmail();
+  }
+
+  setEmail(email: string): void {
+    this.user.setEmail(email);
+  }
+
+  getUsername(): string {
+    return this.user.getUsername();
+  }
+
+  setUsername(username: string): void {
+    this.user.setUsername(username);
+  }
+
+  getPassword(): string {
+    return this.user.getPassword();
+  }
+
+  setPassword(password: string): void {
+    this.user.setPassword(password);
+  }
+
+  getPhoneNumber(): string {
+    return this.user.getPhoneNumber();
+  }
+
+  setPhoneNumber(phoneNumber: string): void {
+    this.user.setPhoneNumber(phoneNumber);
+  }
+
+  getRole_id(): Types.ObjectId {
+    return this.user.getRole_id();
+  }
+
+  setRole_id(role_id: Types.ObjectId): void {
+    this.user.setRole_id(role_id);
+  }
+
+  getImageUser(): string {
+    return this.user.getImageUser();
+  }
+
+  setImageUser(imageUser: string): void {
+    this.user.setImageUser(imageUser);
+  }
+
+  isEmailConfirmed(): boolean {
+    return this.user.isEmailConfirmed();
+  }
+
+  setEmailConfirmed(emailConfirmed: boolean): void {
+    this.user.setEmailConfirmed(emailConfirmed);
+  }
+
+  isPhoneConfirmed(): boolean {
+    return this.user.isPhoneConfirmed();
+  }
+
+  setPhoneConfirmed(phoneConfirmed: boolean): void {
+    this.user.setPhoneConfirmed(phoneConfirmed);
+  }
+
+  getEmailCode(): string {
+    return this.user.getEmailCode();
+  }
+
+  setEmailCode(emailCode: string): void {
+    this.user.setEmailCode(emailCode);
+  }
+
+  isEnable2FA(): boolean {
+    return this.user.isEnable2FA();
+  }
+
+  setEnable2FA(enable2FA: boolean): void {
+    this.user.setEnable2FA(enable2FA);
+  }
+
+  getTwoFASecret(): string {
+    return this.user.getTwoFASecret();
+  }
+
+  setTwoFASecret(twoFASecret: string): void {
+    this.user.setTwoFASecret(twoFASecret);
+  }
+
   async isCorrectPassword(plainPassword: string): Promise<Boolean> {
     try {
       return await bcrypt.compare(plainPassword, (this as any).password);

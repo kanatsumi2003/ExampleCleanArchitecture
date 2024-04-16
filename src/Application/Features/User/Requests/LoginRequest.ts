@@ -1,5 +1,5 @@
-class LoginRequest {
-    private email: string;
-    private password: string;
+export class LoginRequest {
+    public email: string;
+    public password: string;
 
 }
