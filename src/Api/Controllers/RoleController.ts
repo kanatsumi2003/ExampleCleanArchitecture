@@ -11,6 +11,8 @@ export default class RoleController {
   //     this.roleRopository = new RoleRepository();
   // }
   async getRoleById(req: Request<any, any, GetRoleByIdRequest>, res: Response): Promise<void> {
+    // #swagger.description = 'get role by Id'
+    // #swagger.tags = ["Role"]
     try {
       const { roleId } = req.body;
       const data: any = {
@@ -26,6 +28,8 @@ export default class RoleController {
     }
   }
   async createRole(req: Request<any, any, CreateRoleRequest>, res: Response): Promise<void>{
+    // #swagger.description = 'get role by Id'
+    // #swagger.tags = ["Role"]
     try {
       const { name, description, isAdmin, listClaim } = req.body;
       const data: any = {

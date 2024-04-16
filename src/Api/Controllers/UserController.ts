@@ -10,6 +10,8 @@ export default class UserController {
     //     this.userRepository = new UserRepository();
     // }
     async login(req: Request<any, any, LoginRequest>, res: Response): Promise<Response> {
+    // #swagger.description = 'get role by Id'
+    // #swagger.tags = ["User"]
         try {
             const { email, password } = req.body;
             const deviceId = req.headers['user-agent'] || 'Unknown Device';
@@ -28,6 +30,8 @@ export default class UserController {
     }
     
     async createUser(req: Request<any, any, CreateUserRequest>, res: Response): Promise<Response> {
+    // #swagger.description = 'get role by Id'
+    // #swagger.tags = ["User"]
         try {
             const {email, fullname, password, phoneNumber, username} = req.body;
             const data: any = { 

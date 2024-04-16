@@ -13,9 +13,8 @@ import UserController from "../Controllers/UserController";
 const {authenticateToken} = require("../Middlewares/authMiddleware");
 const router = express.Router();
 const userController = new UserController();
-const endpoint = "/user"
-router.post(endpoint, userController.login)
-router.post(endpoint + '/register', userController.createUser)
+router.post("/user/login", userController.login)
+router.post("/user/register", userController.createUser)
 
 
 module.exports = router;
