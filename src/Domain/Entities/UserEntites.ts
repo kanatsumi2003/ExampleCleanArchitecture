@@ -11,7 +11,7 @@ class User {
   private password: string;
   private phoneNumber: string;
   private role_id: Types.ObjectId;
-  private imageUser: string;
+  private imageUser: string | null;
   private emailConfirmed: boolean;
   private phoneConfirmed: boolean;
   private emailCode: string;
@@ -59,7 +59,7 @@ class User {
     this.phoneNumber = phoneNumber;
   }
 
-  public getRole_id(): Types.ObjectId {
+  public getRole_id(): Types.ObjectId{
     return this.role_id;
   }
 
@@ -67,7 +67,7 @@ class User {
     this.role_id = role_id;
   }
 
-  public getImageUser(): string {
+  public getImageUser(): string | null{
     return this.imageUser;
   }
 
@@ -122,7 +122,7 @@ class User {
     password: string,
     phoneNumber: string,
     role_id: Types.ObjectId,
-    imageUser: string
+    imageUser: string | null
   ) {
     this.fullname = fullname;
     this.email = email;
@@ -133,7 +133,7 @@ class User {
     this.imageUser = imageUser;
     this.emailConfirmed = false;
     this.phoneConfirmed = false;
-    this.emailCode = Math.random().toString(36).substring(2, 5);
+    this.emailCode = Math.random().toString(36).substring(2, 7);
     this.enable2FA = false;
     this.twoFASecret = speakeasy.generateSecret({ length: 20 }).base32;
     if (!mongoose.Types.ObjectId.isValid(role_id)) {
@@ -153,7 +153,7 @@ class User {
 }
 
 class UserWithBase extends BaseEntities {
-  private user: User
+  private user!: User
   constructor(user: User) {
     super();
     Object.assign(this, user);
@@ -199,7 +199,7 @@ class UserWithBase extends BaseEntities {
     this.user.setPhoneNumber(phoneNumber);
   }
 
-  getRole_id(): Types.ObjectId {
+  getRole_id(): Types.ObjectId{
     return this.user.getRole_id();
   }
 
@@ -207,7 +207,7 @@ class UserWithBase extends BaseEntities {
     this.user.setRole_id(role_id);
   }
 
-  getImageUser(): string {
+  getImageUser(): string | null{
     return this.user.getImageUser();
   }
 

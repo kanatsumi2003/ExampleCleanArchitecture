@@ -2,12 +2,15 @@ import { CreateRoleRequest } from "./../../Application/Features/Role/Request/Cre
 import { GetRoleByIdHandler } from "../../Application/Features/Role/Handlers/GetRoleByIdHandler";
 import RoleRepository from "../../Infrastructure/Persistences/Respositories/RoleRepository";
 import { GetRoleByIdRequest } from "./../../Application/Features/Role/Request/GetRoleByIdRequest";
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 import { CreateRoleHandler } from "../../Application/Features/Role/Handlers/CreateRoleHandler";
 
 export default class RoleController {
-
-  async getRoleById(req: Request<any, any, GetRoleByIdRequest>, res: Response) {
+  // private roleRopository: RoleRepository;
+  // constructor() {
+  //     this.roleRopository = new RoleRepository();
+  // }
+  async getRoleById(req: Request<any, any, GetRoleByIdRequest>, res: Response): Promise<void> {
     try {
       const { roleId } = req.body;
       const data: any = {
@@ -22,7 +25,7 @@ export default class RoleController {
       res.status(500).json({ error: error.message });
     }
   }
-  async createRole(req: Request<any, any, CreateRoleRequest>, res: Response) {
+  async createRole(req: Request<any, any, CreateRoleRequest>, res: Response): Promise<void>{
     try {
       const { name, description, isAdmin, listClaim } = req.body;
       const data: any = {

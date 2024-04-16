@@ -48,6 +48,20 @@ class SessionRepository extends BaseRepository<SessionLogin> implements ISession
             throw new Error("Error at createSession in SessionRepository: " + error.message);
         }
     }
+    
+    async findSessionByToken(token: any): Promise<any>{
+        try {
+            const query = {
+                jwttoken: token,
+                isDelete: false,
+            };
+            const sessions: SessionWithBase[] = await this.findDocuments(query, null, {});
+            return sessions[0];
+        } catch (error: any) {
+            throw new Error("Error at findSessionByToken in SessionRepository: " + error.message);
+        }
+
+    }
 }
 
 export default SessionRepository;

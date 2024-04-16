@@ -8,13 +8,15 @@
 // router.get('/users/find', userController.findUser.bind(userController));
 // router.delete('/users/delete', userController.delete.bind(userController));
 // module.exports = router;
-
-import express from "express";
+import express from 'express';
 import UserController from "../Controllers/UserController";
-
+const {authenticateToken} = require("../Middlewares/authMiddleware");
 const router = express.Router();
 const userController = new UserController();
-router.post('/users/login', userController.login);
+const endpoint = "/user"
+router.post(endpoint, userController.login)
+router.post(endpoint + '/register', userController.createUser)
+
 
 module.exports = router;
 
