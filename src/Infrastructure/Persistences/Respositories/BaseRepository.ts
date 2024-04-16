@@ -14,7 +14,7 @@ import {
 const {MongoClient} = require("mongodb");
 require('dotenv').config();
 const URI = process.env.CONNECTION_STRING;
-const dbName = "EInvoiceDB";
+const dbName = "NoahQuizDB";
 
 import { User } from "../../../Domain/Entities/UserEntites";
 import IBaseRepository from "../../../Application/Persistences/IRepositories/IBaseRepository";

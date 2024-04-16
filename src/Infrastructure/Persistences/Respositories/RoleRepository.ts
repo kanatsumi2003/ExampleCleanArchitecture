@@ -9,18 +9,21 @@ export default class RoleRepository extends BaseRepository<Role> implements IRol
     constructor(){
         super(collectionName)
     }
-    async getRoleById(roleId: number | mongoose.Types.ObjectId, queryData: RoleWithBase): Promise<RoleWithBase[]> {
+    async getRoleById(roleId: number | mongoose.Types.ObjectId, queryData: RoleWithBase): Promise<RoleWithBase | null> {
         try {
             if(!mongoose.Types.ObjectId.isValid(roleId)) {
+                roleId = new mongoose.Types.ObjectId(roleId);
+            } else {
                 roleId = new mongoose.Types.ObjectId(roleId);
             }
             const query = {
                 _id: roleId,
-                isActive: queryData.isIsActive(),
-                isDelete: queryData.isIsDelete(),
+                isActive: true,
+                isDelete: false,
             };
             const roles: RoleWithBase[] = await this.findDocuments(query, null, {});
-            return roles;
+            if(roles == null) return null;
+            return roles[0];
         } catch (error) {
             throw error;
         }
