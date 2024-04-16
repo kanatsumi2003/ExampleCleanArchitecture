@@ -8,11 +8,7 @@ import { LoginRequest } from "../../Application/Features/User/Requests/LoginRequ
 import { LoginResponse } from "../../Application/Features/User/Response/LoginResponse";
 import { error } from "console";
 class UserController {
-    private userRepository: UserRepository;
-    constructor() {
-        this.userRepository = new UserRepository();
 
-    }
     async login(req: Request<any, any, LoginRequest>, res: Response): Promise<void> {
         try {
             const { email, password } = req.body;

@@ -1,7 +1,7 @@
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { CreateSessionDTO } from "../DTO/CreateSessionDTO";
 
-export async function CreateSessionHandler(data: any) {
+export async function CreateSessionHandler(data: any): Promise<void> {
     try {
         const sessionRepository = new SessionRepository();
         const createSessionDTO = new CreateSessionDTO(
@@ -18,7 +18,7 @@ export async function CreateSessionHandler(data: any) {
         )
         await sessionRepository.createSession(createSessionDTO);
 
-    } catch (error) {
-
+    } catch (error: any) {
+        throw new Error("Error at CreateSessionHandler in CreateSessionHandler: " + error.message);
     }
 }

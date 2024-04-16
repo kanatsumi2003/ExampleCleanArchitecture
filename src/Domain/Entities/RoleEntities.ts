@@ -52,7 +52,7 @@ class Role {
   }
 }
 class RoleWithBase extends BaseEntities {
-  private role: Role;
+  private role!: Role
   constructor(role: Role) {
     super();
     Object.assign(this, role);

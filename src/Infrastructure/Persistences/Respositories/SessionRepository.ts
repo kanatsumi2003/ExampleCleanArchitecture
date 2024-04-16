@@ -21,27 +21,32 @@ class SessionRepository extends BaseRepository<SessionLogin> implements ISession
             //     throw new Error('No session found!');
             // }
             return sessions;
-        } catch (error) {
-            throw error;
+        } catch (error: any) {
+            throw new Error("Error at findSessionByEmailAndIP in SessionRepository: " + error.message);
         }
     }
 
-    async deleteSession(_id: mongoose.Types.ObjectId, queryData: SessionWithBase): Promise<void> {
+    async deleteSession(_id: mongoose.Types.ObjectId): Promise<void> {
         try {
             const query = {
                 id: _id,
             }
-            const result = await this.deleteDocument(query);
-        } catch (error) {
-            throw error;
+            await this.deleteDocument(query);
+        } catch (error: any) {
+            throw new Error("Error at deleteSession in SessionRepository: " + error.message);
         }
 
     }
 
-    async createSession(sessionData: any) {
-        const fullSession = new SessionWithBase(sessionData)
-        await this.insertDocuments(fullSession);
-        return fullSession;
+    async createSession(sessionData: any): Promise<SessionWithBase>{
+
+        try {
+            const fullSession = new SessionWithBase(sessionData)
+            await this.insertDocuments(fullSession);
+            return fullSession;
+        } catch (error: any) {
+            throw new Error("Error at createSession in SessionRepository: " + error.message);
+        }
     }
 }
 
