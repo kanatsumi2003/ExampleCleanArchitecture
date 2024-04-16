@@ -18,17 +18,10 @@ const dbName = "EInvoiceDB";
 
 import { User } from "../../../Domain/Entities/UserEntites";
 import IBaseRepository from "../../../Application/Persistences/IRepositories/IBaseRepository";
+import { SessionLogin } from "../../../Domain/Entities/SessionEntites";
 
 abstract class BaseRepository<T extends Document> implements IBaseRepository {
-  // public readonly collection: Collection<T>;
-  // public readonly collection: Collection<User> = new Collection<User>;
-  // // constructor(collection: Collection<T>) {
-  // //   this.collection = collection;
-  // // }
-  // constructor(collection: Collection<User>) {
-  //   this.collection = collection;
-    
-  // }
+ 
   private collectionName: string;
   constructor(collectionName: string){
     this.collectionName = collectionName;
@@ -40,10 +33,10 @@ abstract class BaseRepository<T extends Document> implements IBaseRepository {
     return client.db(dbName);
 }
 
-  async insertDocuments<U extends OptionalUnlessRequiredId<User>>(data: U): Promise<InsertOneResult<User>> {
+async insertDocuments<T>(data: T): Promise<InsertOneResult<T>> {
     try {
       const db = await this.connectDB();
-      const collectionName = "User";
+      const collectionName = this.collectionName;
       const collection = db.collection(collectionName);
       const result = await collection.insertOne(data);
       console.log("Inserted documents into the colleciotn");

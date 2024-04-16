@@ -1,20 +1,82 @@
 import { response } from "express";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { LoginResponse } from "../Response/LoginResponse";
+import { LoginRequest } from "../Requests/LoginRequest";
+import { UserWithBase } from "../../../../Domain/Entities/UserEntites";
+import { comparePassword } from "../../../Common/Helpers/passwordUtils";
+import { addDuration, encodejwt } from "../../../Common/Helpers/jwtUtils";
+import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 
-async function LoginHandler(data): Promise<LoginResponse>{
-    const {email, password} = data;
-    const result = {
-        email: email,
-        password: password,
-        message: "hhihi"
+async function LoginHandler(data): Promise<LoginResponse> {
+    try {
+        const userRepository = new UserRepository();
+        const sessionRepository = new SessionRepository();
+        const { deviceId, ipAddress, email, password } = data;
+        const result = {
+            email: email,
+            password: password,
+            hehe: 123
+        }
+        const queryData: any = {
+            isDelete: false,
+            isActive: true,
+            emailConfirmed: true,
+        }
+
+        console.log(deviceId);
+        console.log(ipAddress);
+        const user: any = await userRepository.getUserByEmail(email, queryData);
+        console.log(user);
+
+        const isMatch = await comparePassword(password, user.getPassword());
+        if (!isMatch) {
+            throw new Error("Password is not match!");
+        }
+
+        const token = await encodejwt(user);
+
+        const queryDataSession: any = {
+            email: email.toLowerCase(),
+            ipAddress: ipAddress,
+            deviceId: deviceId,
+            isDelete: true
+        }
+
+        const session :any = await sessionRepository.findSessionByEmailAndIP(queryDataSession);
+        if (session != null) {
+                await sessionRepository.deleteSession(session._id, queryDataSession); 
+        } 
+
+        const tokenExpiryDate = addDuration(token.expiresIn);
+        const refreshTokenExpiryDate = addDuration(process.env.REACT_APP_EXPIRE_REFRESH_TOKEN);
+
+        await sessionRepository.createSession({
+            userId: user._id,
+            email: user.email,
+            name: user.name || "unknown", 
+            username: user.username.toLowerCase(), 
+            jwttoken: token.token, 
+            refreshToken: token.refreshToken,
+            ExpireRefreshToken: refreshTokenExpiryDate,
+            expireDate: tokenExpiryDate,
+            deviceId: deviceId,
+            ipAddress: ipAddress,
+        });
+
+        const dataTokenResponse = {
+            accessToken: token.token,
+            refreshToken: token.refreshToken,
+            expireIn: token.expiresIn || ""
+        }
+
+        const loginResponse = new LoginResponse("Success", 200, dataTokenResponse, "");
+
+        return loginResponse
+
+    } catch (error) {
+        throw new Error(error.message)
     }
-    
 
-    const loginResponse = new LoginResponse("Success", 200, data, "");
-
-    return loginResponse
-    
     // try {
     //     console.log("login");
     //     const { email, password } = req.body;
