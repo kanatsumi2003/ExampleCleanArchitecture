@@ -3,7 +3,7 @@ import BaseRepository from "./BaseRepository";
 import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
 import IUserRepository from "../../../Application/Persistences/IRepositories/IUserRepository";
 import mongoose from "mongoose";
-import { hashPassword } from "../../../Application/Common/Helpers/passwordUtils";
+const { hashPassword } = require("../../../Application/Common/Helpers/passwordUtils");
 class UserRepository extends BaseRepository<User> implements IUserRepository {
   constructor() {
     const collectionName: string = "users";
