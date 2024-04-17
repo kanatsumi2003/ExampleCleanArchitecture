@@ -14,7 +14,7 @@ export default class RoleController {
     // #swagger.description = 'get role by Id'
     // #swagger.tags = ["Role"]
     try {
-      const { roleId } = req.body;
+      const { roleId } = req.params;
       const data: any = {
         id: roleId,
       };
