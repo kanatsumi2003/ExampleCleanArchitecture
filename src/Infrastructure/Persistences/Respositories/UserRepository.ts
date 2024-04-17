@@ -59,6 +59,20 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
       throw new Error("Error at createUser in UserRepository: " + error.message);
     }
   }
+
+  async getUserById(userId: string, queryData: any): Promise<UserWithBase>{
+    try {
+      const query: any = {
+        _id: new mongoose.Types.ObjectId(userId),
+        isDelete: queryData.isDelete,
+        isActive: queryData.isActive,
+      };
+      const user: UserWithBase[] = await this.findDocuments(query, null, {});
+      return user[0];
+    } catch (error: any) {
+      throw new Error("Error at getUserById in UserRepository: " + error.meesage);
+    }
+  }
   //     constructor() {
   //         const collectionName: string = "User";
   //         super(collectionName);

@@ -6,17 +6,18 @@ export async function CreateUserHandler(data: any) {
   try {
     const userRepository = new UserRepository();
     const roleRepository = new RoleRepository();
+    const {email, fullname, password, phoneNumber, username} = data;
     const roleQueryData: any = {
         isDelete: false,
         isActive: true,
     }
     const role: any = await roleRepository.getRoleByName("User", roleQueryData);
     const createUserRoleData: any = {
-      email: data.email,
-      fullname: data.fullname,
-      password: data.password,
-      phoneNumber: data.phoneNumber,
-      username: data.username,
+      email: email,
+      fullname: fullname,
+      password: password,
+      phoneNumber: phoneNumber,
+      username: username,
       role_id: role._id
     };
     const result: any = await userRepository.createUser(createUserRoleData);

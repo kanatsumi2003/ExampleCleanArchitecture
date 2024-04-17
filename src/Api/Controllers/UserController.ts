@@ -4,19 +4,21 @@ import LoginHandler from "../../Application/Features/User/Handlers/LoginHandler"
 import { LoginRequest } from "../../Application/Features/User/Requests/LoginRequest";
 import { CreateUserHandler } from '../../Application/Features/User/Handlers/CreateUserHandler';
 import UserRepository from '../../Infrastructure/Persistences/Respositories/UserRepository';
+import { ChangePasswordRequest } from '../../Application/Features/User/Requests/ChangePasswordRequest';
+import { ChangePasswordHandler } from '../../Application/Features/User/Handlers/ChangePasswordHandler';
 export default class UserController {
     // private userRepository: UserRepository;
     // constructor() {
     //     this.userRepository = new UserRepository();
     // }
     async login(req: Request<any, any, LoginRequest>, res: Response): Promise<Response> {
-    // #swagger.description = 'get role by Id'
-    // #swagger.tags = ["User"]
+        // #swagger.description = 'get role by Id'
+        // #swagger.tags = ["User"]
         try {
             const { email, password } = req.body;
             const deviceId = req.headers['user-agent'] || 'Unknown Device';
             const ipAddress = req.headers['x-forwarded-for'] || (req as any).socket?.remoteAddress || 'Unknown IP';
-            const data = {deviceId, ipAddress, email, password}
+            const data = { deviceId, ipAddress, email, password }
             const result: any = await LoginHandler(data);
 
             if (result.error != undefined || result.error) {
@@ -25,16 +27,16 @@ export default class UserController {
             return res.status(result.statusCode).json({ data: result });
         } catch (error: any) {
             console.error('Login failed:', error);
-            return res.status(500).json({error: error.message});
+            return res.status(500).json({ error: error.message });
         }
     }
-    
+
     async createUser(req: Request<any, any, CreateUserRequest>, res: Response): Promise<Response> {
-    // #swagger.description = 'get role by Id'
-    // #swagger.tags = ["User"]
+        // #swagger.description = 'Create new User'
+        // #swagger.tags = ["User"]
         try {
-            const {email, fullname, password, phoneNumber, username} = req.body;
-            const data: any = { 
+            const { email, fullname, password, phoneNumber, username } = req.body;
+            const data: any = {
                 email: email,
                 fullname: fullname,
                 password: password,
@@ -42,13 +44,32 @@ export default class UserController {
                 username: username,
             };
             const result: any = await CreateUserHandler(data);
-            if(result.error != undefined || result.error) {
+            if (result.error != undefined || result.error) {
                 return res.status(result.statusCode).json({ error: result.error })
             };
 
             return res.status(result.statusCode).json({ data: result });
         } catch (error: any) {
-            return res.status(500).json({error: error.messgae});
+            return res.status(500).json({ error: error.messgae });
+        }
+    }
+    async changePassword(req: Request<any, any, ChangePasswordRequest>, res: Response) {
+        // #swagger.description = 'User change password'
+        // #swagger.tags = ["User"]
+        try {
+            const request: any = req;
+            const userId  = request.user.userId
+            console.log("==============================" + req);
+            const { oldPassword, newPassword } = req.body;
+            const data: any = {
+                userId: userId,
+                oldPassword: oldPassword,
+                newPassword: newPassword,
+            };
+            const result: any = await ChangePasswordHandler(data);
+            return res.status(result.statusCode).json( result );
+        } catch (error: any) {
+            return res.status(500).json({ error: error.mesagge });
         }
     }
     //     async newUser(req: Request, res: Response): Promise<void> {
