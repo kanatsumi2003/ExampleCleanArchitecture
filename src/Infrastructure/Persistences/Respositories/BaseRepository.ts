@@ -1,4 +1,4 @@
-import { FilterQuery, UpdateQuery, UpdateWriteOpResult } from "mongoose";
+import { FilterQuery, UpdateQuery, UpdateWriteOpResult } from 'mongoose';
 
 import {
   Collection,
@@ -10,7 +10,7 @@ import {
   OptionalUnlessRequiredId,
   FilterOperations,
   Document,
-} from "mongodb";
+} from 'mongodb';
 const {MongoClient} = require("mongodb");
 require('dotenv').config();
 const URI = process.env.CONNECTION_STRING;

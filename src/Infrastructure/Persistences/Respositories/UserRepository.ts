@@ -3,6 +3,7 @@ import BaseRepository from "./BaseRepository";
 import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
 import IUserRepository from "../../../Application/Persistences/IRepositories/IUserRepository";
 import mongoose from "mongoose";
+import { hashPassword } from "../../../Application/Common/Helpers/passwordUtils";
 class UserRepository extends BaseRepository<User> implements IUserRepository {
   constructor() {
     const collectionName: string = "users";
@@ -22,10 +23,42 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
       }
       return users[0];
     } catch (error: any) {
-      throw new Error("Error at UserRepository: " + error.message);
+      throw new Error("Error at getUserByEmail in UserRepository: " + error.message);
+    }
+  }
+  async getUserByEmailAndName(email: string, username: string, queryData: any): Promise<UserWithBase | null> {
+    try {
+      const query: any = {
+        $or: [{ email: email }, { username: username }],
+        isActive: queryData.isActive,
+        isDelete: queryData.isDelete,
+      };
+      const users: UserWithBase[] = await this.findDocuments(query, null, {});
+      if(users == null) return null;
+      return users[0];
+    } catch (error: any) {
+      throw new Error("Error at getUserByEmailAndName in UserRepository: " + error.message);
     }
   }
 
+  async createUser(userData: any): Promise<void>{
+    try {
+      const user: any = new User(
+        userData.fullname,
+        userData.email,
+        userData.username,
+        userData.password,
+        userData.phoneNumber,
+        userData.role_id,
+        null
+      )
+      const userWithBase: any = new UserWithBase(user);
+      userWithBase.password = await hashPassword(user.password);
+      await this.insertDocuments(userWithBase);
+    } catch (error: any) {
+      throw new Error("Error at createUser in UserRepository: " + error.message);
+    }
+  }
   //     constructor() {
   //         const collectionName: string = "User";
   //         super(collectionName);
