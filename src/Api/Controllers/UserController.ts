@@ -4,6 +4,7 @@ import LoginHandler from "../../Application/Features/User/Handlers/LoginHandler"
 import { LoginRequest } from "../../Application/Features/User/Requests/LoginRequest";
 import { CreateUserHandler } from '../../Application/Features/User/Handlers/CreateUserHandler';
 import UserRepository from '../../Infrastructure/Persistences/Respositories/UserRepository';
+import { ForgotPasswordHandler } from '../../Application/Features/User/Handlers/ForgotPasswordHandler';
 export default class UserController {
     // private userRepository: UserRepository;
     // constructor() {
@@ -43,10 +44,24 @@ export default class UserController {
             };
             const result: any = await CreateUserHandler(data);
             if(result.error != undefined || result.error) {
-                return res.status(result.statusCode).json({ error: result.error })
+                return res.status(result.statusCode).json({ error: result.error });
             };
 
             return res.status(result.statusCode).json({ data: result });
+        } catch (error: any) {
+            return res.status(500).json({error: error.messgae});
+        }
+    }
+
+    async forgotPassword(req: Request, res: Response): Promise<Response> {
+        try {
+            const email: string = req.body.email;
+            const result: any = await ForgotPasswordHandler(email);
+            if (result.error != undefined || result.error) {
+                return res.status(result.statusCode).json({error: result.error});
+            }
+            console.log(result);
+            return res.status(result.statusCode).json({message: result.message});
         } catch (error: any) {
             return res.status(500).json({error: error.messgae});
         }
