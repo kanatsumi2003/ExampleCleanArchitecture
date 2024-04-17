@@ -19,7 +19,7 @@
     }
   },
   "paths": {
-    "/role": {
+    "/role/{roleId}": {
       "post": {
         "tags": [
           "Role"
@@ -27,21 +27,15 @@
         "description": "get role by Id",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
+            "name": "roleId",
+            "in": "path",
+            "required": true,
             "type": "string"
           },
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "roleId": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
@@ -57,7 +51,7 @@
         }
       }
     },
-    "/role/create-role": {
+    "/role/create-role/": {
       "post": {
         "tags": [
           "Role"
