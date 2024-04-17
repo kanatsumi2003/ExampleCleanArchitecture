@@ -1,8 +1,9 @@
+import { CreateUserResponse } from './../Response/CreateUserResponse';
 import RoleRepository from "../../../../Infrastructure/Persistences/Respositories/RoleRepository";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { CreateRoleResponse } from "../../Role/Response/CreateRoleResponse";
 
-export async function CreateUserHandler(data: any) {
+export async function CreateUserHandler(data: any): Promise<CreateUserResponse> {
   try {
     const userRepository = new UserRepository();
     const roleRepository = new RoleRepository();

@@ -20,7 +20,7 @@
   },
   "paths": {
     "/role/{roleId}": {
-      "get": {
+      "post": {
         "tags": [
           "Role"
         ],
@@ -51,7 +51,7 @@
         }
       }
     },
-    "/role/create-role": {
+    "/role/create-role/": {
       "post": {
         "tags": [
           "Role"

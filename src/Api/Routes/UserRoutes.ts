@@ -10,12 +10,11 @@
 // module.exports = router;
 import express from 'express';
 import UserController from "../Controllers/UserController";
-const {authenticateToken} = require("../Middlewares/authMiddleware");
+const {authenticateToken, authorizationMiddleware} = require("../Middlewares/authMiddleware");
 const router = express.Router();
 const userController = new UserController();
 router.post("/user/login", userController.login)
 router.post("/user/register", userController.createUser)
-router.post("/user/change-password", authenticateToken, userController.changePassword);
 
 module.exports = router;
 
