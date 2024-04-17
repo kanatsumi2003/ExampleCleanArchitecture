@@ -10,7 +10,7 @@
 // module.exports = router;
 import express from 'express';
 import UserController from "../Controllers/UserController";
-const {authenticateToken, authorizationMiddleware} = require("../Middlewares/authMiddleware");
+const {authenticateToken, authorizationMiddleware} = require("../Middlewares/AuthMiddleware");
 const router = express.Router();
 const userController = new UserController();
 router.post("/user/login", userController.login)

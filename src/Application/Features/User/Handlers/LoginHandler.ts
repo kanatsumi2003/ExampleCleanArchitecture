@@ -7,11 +7,13 @@ import { comparePassword } from "../../../Common/Helpers/passwordUtils";
 import { addDuration, encodejwt } from "../../../Common/Helpers/jwtUtils";
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { CreateSessionHandler } from "../../Session/Handlers/CreateSessionHandler";
+import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
+import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
 
 async function LoginHandler(data: any): Promise<LoginResponse> {
     try {
-        const userRepository = new UserRepository();
-        const sessionRepository = new SessionRepository();
+        const userRepository: IUserRepository = new UserRepository();
+        const sessionRepository: ISessionRepository = new SessionRepository();
         const { deviceId, ipAddress, email, password } = data;
 
         const queryData: any = {

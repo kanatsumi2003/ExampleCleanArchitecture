@@ -1,4 +1,5 @@
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
+import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { ChangePasswordResponse } from "../Response/ChangePasswordResponse";
 
 export async function ChangePasswordHandler(data: any) {
@@ -6,7 +7,7 @@ export async function ChangePasswordHandler(data: any) {
     let message = "";
     let error = "";
     try {
-        const userRepository = new UserRepository();
+        const userRepository: IUserRepository = new UserRepository();
         const {userId, oldPassword, newPassword} = data;
         const queryData = {
             isDelete: false,

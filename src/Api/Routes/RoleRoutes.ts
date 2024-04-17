@@ -4,7 +4,7 @@ import express from 'express';
 const router = express.Router();
 
 const roleController = new RoleController();
-const {authenticateToken, authorizationMiddleware} = require("../Middlewares/authMiddleware");
+const {authenticateToken, authorizationMiddleware} = require("../Middlewares/AuthMiddleware");
 
 
 // router.post("/roles", roleController.getRoleById.bind(roleController));
