@@ -3,10 +3,10 @@ import UserRepository from "../../../../Infrastructure/Persistences/Respositorie
 import { LoginResponse } from "../Response/LoginResponse";
 import { LoginRequest } from "../Requests/LoginRequest";
 import { UserWithBase } from "../../../../Domain/Entities/UserEntites";
-import { comparePassword } from "../../../Common/Helpers/passwordUtils";
 import { addDuration, encodejwt } from "../../../Common/Helpers/jwtUtils";
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { CreateSessionHandler } from "../../Session/Handlers/CreateSessionHandler";
+const { comparePassword } = require("../../../Common/Helpers/passwordUtils");
 
 async function LoginHandler(data: any): Promise<LoginResponse> {
     try {
@@ -20,7 +20,9 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
             emailConfirmed: true,
         }
         const user: any = await userRepository.getUserByEmail(email, queryData);
-
+        if (!user) {
+            throw new Error("User with email" + email + "doesn't exist!");
+        }
         const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
             throw new Error("Password is not match!");
@@ -78,7 +80,7 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
         return loginResponse
 
     } catch (error: any) {
-        throw new Error(error.message)
+        throw new Error("Error at LoginHandler:" + error.message)
     }
 
     // try {

@@ -3,7 +3,7 @@ import BaseRepository from "./BaseRepository";
 import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
 import IUserRepository from "../../../Application/Persistences/IRepositories/IUserRepository";
 import mongoose from "mongoose";
-import { hashPassword } from "../../../Application/Common/Helpers/passwordUtils";
+const { hashPassword } = require("../../../Application/Common/Helpers/passwordUtils");
 class UserRepository extends BaseRepository<User> implements IUserRepository {
   constructor() {
     const collectionName: string = "users";
@@ -57,6 +57,20 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
       await this.insertDocuments(userWithBase);
     } catch (error: any) {
       throw new Error("Error at createUser in UserRepository: " + error.message);
+    }
+  }
+
+  async getUserById(userId: string, queryData: any): Promise<UserWithBase>{
+    try {
+      const query: any = {
+        _id: new mongoose.Types.ObjectId(userId),
+        isDelete: queryData.isDelete,
+        isActive: queryData.isActive,
+      };
+      const user: UserWithBase[] = await this.findDocuments(query, null, {});
+      return user[0];
+    } catch (error: any) {
+      throw new Error("Error at getUserById in UserRepository: " + error.meesage);
     }
   }
   //     constructor() {
