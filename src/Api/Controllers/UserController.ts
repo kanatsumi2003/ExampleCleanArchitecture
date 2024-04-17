@@ -51,6 +51,7 @@ export default class UserController {
             return res.status(500).json({error: error.messgae});
         }
     }
+    
     //     async newUser(req: Request, res: Response): Promise<void> {
     //         try {
     //             const user = new User("b", "asd", "1", "123", "123", new ObjectId(123), "123")
