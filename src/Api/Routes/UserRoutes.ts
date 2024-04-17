@@ -13,8 +13,9 @@ import UserController from "../Controllers/UserController";
 const {authenticateToken, authorizationMiddleware} = require("../Middlewares/AuthMiddleware");
 const router = express.Router();
 const userController = new UserController();
-router.post("/user/login", userController.login)
-router.post("/user/register", userController.createUser)
+router.post("/user/login", userController.login);
+router.post("/user/register", userController.createUser);
+router.post("/user/forgot-password", userController.forgotPassword);
 
 module.exports = router;
 
