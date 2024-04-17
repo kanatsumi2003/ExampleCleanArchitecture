@@ -26,7 +26,7 @@ class SessionRepository extends BaseRepository<SessionLogin> implements ISession
         }
     }
 
-    async deleteSession(_id: mongoose.Types.ObjectId, queryData: SessionWithBase): Promise<void> {
+    async deleteSession(_id: mongoose.Types.ObjectId): Promise<void> {
         try {
             const query = {
                 id: _id,

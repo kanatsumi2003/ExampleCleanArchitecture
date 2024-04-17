@@ -24,10 +24,7 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
             emailConfirmed: true,
         }
 
-        console.log(deviceId);
-        console.log(ipAddress);
         const user: any = await userRepository.getUserByEmail(email, queryData);
-        console.log(user);
 
         const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
@@ -43,15 +40,15 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
             isDelete: true
         }
 
-        const session :any = await sessionRepository.findSessionByEmailAndIP(queryDataSession);
+        const session: any = await sessionRepository.findSessionByEmailAndIP(queryDataSession);
         if (session != null) {
-                await sessionRepository.deleteSession(session._id, queryDataSession); 
+            await sessionRepository.deleteSession(session._id);
         } 
 
         const tokenExpiryDate = addDuration(token.expiresIn || "");
         const refreshTokenExpiryDate = addDuration(process.env.REACT_APP_EXPIRE_REFRESH_TOKEN || "");
 
-        const dataForCreateSession = {
+        const dataForCreateSession: any = {
             user: user,
             token: token,
             deviceId: deviceId,
@@ -60,21 +57,7 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
             tokenExpiryDate: tokenExpiryDate,
         }
 
-        CreateSessionHandler(dataForCreateSession);
-
-        // await sessionRepository.createSession({
-        //     userId: user._id,
-        //     email: user.email,
-        //     name: user.name || "unknown", 
-        //     username: user.username.toLowerCase(), 
-        //     jwttoken: token.token, 
-        //     refreshToken: token.refreshToken,
-        //     ExpireRefreshToken: refreshTokenExpiryDate,
-        //     expireDate: tokenExpiryDate,
-        //     deviceId: deviceId,
-        //     ipAddress: ipAddress,
-        // });
-
+        await CreateSessionHandler(dataForCreateSession);
         const dataTokenResponse = {
             accessToken: token.token,
             refreshToken: token.refreshToken,
