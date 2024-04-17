@@ -1,19 +1,17 @@
-import { Request, Response, query } from "express";
-import mongoose, { Collection } from "mongoose";
-import { User } from "../../Domain/Entities/UserEntites";
-import { ObjectId } from "mongodb";
-import UserRepository from "../../Infrastructure/Persistences/Respositories/UserRepository";
+import { CreateUserRequest } from './../../Application/Features/User/Requests/CreateUserRequest';
+import { Request, Response, query } from 'express';
 import LoginHandler from "../../Application/Features/User/Handlers/LoginHandler";
 import { LoginRequest } from "../../Application/Features/User/Requests/LoginRequest";
-import { LoginResponse } from "../../Application/Features/User/Response/LoginResponse";
-import { error } from "console";
-class UserController {
-    private userRepository: UserRepository;
-    constructor() {
-        this.userRepository = new UserRepository();
-
-    }
-    async login(req: Request<any, any, LoginRequest>, res: Response): Promise<void> {
+import { CreateUserHandler } from '../../Application/Features/User/Handlers/CreateUserHandler';
+import UserRepository from '../../Infrastructure/Persistences/Respositories/UserRepository';
+export default class UserController {
+    // private userRepository: UserRepository;
+    // constructor() {
+    //     this.userRepository = new UserRepository();
+    // }
+    async login(req: Request<any, any, LoginRequest>, res: Response): Promise<Response> {
+    // #swagger.description = 'get role by Id'
+    // #swagger.tags = ["User"]
         try {
             const { email, password } = req.body;
             const deviceId = req.headers['user-agent'] || 'Unknown Device';
@@ -21,13 +19,36 @@ class UserController {
             const data = {deviceId, ipAddress, email, password}
             const result: any = await LoginHandler(data);
 
-            res.status(result.statusCode).json({ data: result });
             if (result.error != undefined || result.error) {
-                res.status(result.statusCode).json({ error: result.error });
+                return res.status(result.statusCode).json({ error: result.error });
             }
+            return res.status(result.statusCode).json({ data: result });
         } catch (error: any) {
             console.error('Login failed:', error);
-             res.status(500).json({error: error.message});
+            return res.status(500).json({error: error.message});
+        }
+    }
+    
+    async createUser(req: Request<any, any, CreateUserRequest>, res: Response): Promise<Response> {
+    // #swagger.description = 'get role by Id'
+    // #swagger.tags = ["User"]
+        try {
+            const {email, fullname, password, phoneNumber, username} = req.body;
+            const data: any = { 
+                email: email,
+                fullname: fullname,
+                password: password,
+                phoneNumber: phoneNumber,
+                username: username,
+            };
+            const result: any = await CreateUserHandler(data);
+            if(result.error != undefined || result.error) {
+                return res.status(result.statusCode).json({ error: result.error })
+            };
+
+            return res.status(result.statusCode).json({ data: result });
+        } catch (error: any) {
+            return res.status(500).json({error: error.messgae});
         }
     }
     //     async newUser(req: Request, res: Response): Promise<void> {
@@ -74,5 +95,4 @@ class UserController {
     //     }
 }
 
-export default UserController;
 

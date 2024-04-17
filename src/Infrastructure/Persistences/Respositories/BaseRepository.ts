@@ -1,4 +1,4 @@
-import { FilterQuery, UpdateQuery, UpdateWriteOpResult } from "mongoose";
+import { FilterQuery, UpdateQuery, UpdateWriteOpResult } from 'mongoose';
 
 import {
   Collection,
@@ -10,7 +10,7 @@ import {
   OptionalUnlessRequiredId,
   FilterOperations,
   Document,
-} from "mongodb";
+} from 'mongodb';
 const {MongoClient} = require("mongodb");
 require('dotenv').config();
 const URI = process.env.CONNECTION_STRING;
@@ -27,10 +27,14 @@ abstract class BaseRepository<T extends Document> implements IBaseRepository {
     this.collectionName = collectionName;
   }
   async connectDB() {
-    const client = new MongoClient(URI, { useNewUrlParser: true, useUnifiedTopology: true });
-    await client.connect();
-    console.log("Connected successfully to database !");
-    return client.db(dbName);
+    try {
+      const client = new MongoClient(URI, { useNewUrlParser: true, useUnifiedTopology: true });
+      await client.connect();
+      console.log("Connected successfully to database !");
+      return client.db(dbName);
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
 }
 
 async insertDocuments<T>(data: T): Promise<InsertOneResult<T>> {
@@ -41,8 +45,8 @@ async insertDocuments<T>(data: T): Promise<InsertOneResult<T>> {
       const result = await collection.insertOne(data);
       console.log("Inserted documents into the colleciotn");
       return result;
-    } catch (error) {
-      throw error;
+    } catch (error: any) {
+      throw new Error(error.message);
     }
   }
 
@@ -69,9 +73,9 @@ async insertDocuments<T>(data: T): Promise<InsertOneResult<T>> {
         .toArray();
       console.log("docs found: " + docs);
       return docs as T[];
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
-      throw error;
+      throw new Error(error.message);
     }
   }
 
@@ -85,8 +89,8 @@ async insertDocuments<T>(data: T): Promise<InsertOneResult<T>> {
       const result = await collection.updateOne(query, {$set: update});
       console.log("Updated result: " + result);
       return result;
-    } catch (error) {
-      throw error;
+    } catch (error: any) {
+      throw new Error(error.message);
     }
   }
 
@@ -97,8 +101,8 @@ async insertDocuments<T>(data: T): Promise<InsertOneResult<T>> {
       const result = await collection.deleteOne(query);
       console.log("Delete documents: " + result);
       return result;
-    } catch (error) {
-      throw error;
+    } catch (error: any) {
+      throw new Error(error.message);
     }
   }
 }

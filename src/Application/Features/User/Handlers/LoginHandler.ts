@@ -13,17 +13,12 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
         const userRepository = new UserRepository();
         const sessionRepository = new SessionRepository();
         const { deviceId, ipAddress, email, password } = data;
-        const result = {
-            email: email,
-            password: password,
-            hehe: 123
-        }
+
         const queryData: any = {
             isDelete: false,
             isActive: true,
             emailConfirmed: true,
         }
-
         const user: any = await userRepository.getUserByEmail(email, queryData);
 
         const isMatch = await comparePassword(password, user.password);
@@ -42,7 +37,7 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
 
         const session: any = await sessionRepository.findSessionByEmailAndIP(queryDataSession);
         if (session != null) {
-            await sessionRepository.deleteSession(session._id);
+                await sessionRepository.deleteSession(session._id); 
         } 
 
         const tokenExpiryDate = addDuration(token.expiresIn || "");
@@ -58,6 +53,20 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
         }
 
         await CreateSessionHandler(dataForCreateSession);
+
+        // await sessionRepository.createSession({
+        //     userId: user._id,
+        //     email: user.email,
+        //     name: user.name || "unknown", 
+        //     username: user.username.toLowerCase(), 
+        //     jwttoken: token.token, 
+        //     refreshToken: token.refreshToken,
+        //     ExpireRefreshToken: refreshTokenExpiryDate,
+        //     expireDate: tokenExpiryDate,
+        //     deviceId: deviceId,
+        //     ipAddress: ipAddress,
+        // });
+
         const dataTokenResponse = {
             accessToken: token.token,
             refreshToken: token.refreshToken,
