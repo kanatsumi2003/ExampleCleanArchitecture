@@ -9,6 +9,30 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
     const collectionName: string = "users";
     super(collectionName);
   }
+
+
+  async updateUserById(userId: string, userData: any) {
+    try{
+      const user:any = new User(
+        userData.fullname,
+        userData.email,
+        userData.username,
+        userData.password,
+        userData.phoneNumber,
+        userData.role_id,
+        null
+      );
+      const query :any ={
+        _id : new mongoose.Types.ObjectId(userId)  
+      }
+      await this.updateDocument(query,user);
+    }catch(error:any){
+      throw new Error("Error at updateUserById in UserRepository: " + error.message);
+    }
+
+  }
+
+
   async getUserByEmail(email: string, queryData: any): Promise<UserWithBase> {
     try {
       const query: any = {
@@ -73,6 +97,11 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
       throw new Error("Error at getUserById in UserRepository: " + error.meesage);
     }
   }
+
+
+
+
+
   //     constructor() {
   //         const collectionName: string = "User";
   //         super(collectionName);

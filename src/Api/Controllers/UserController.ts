@@ -7,6 +7,9 @@ import UserRepository from '../../Infrastructure/Persistences/Respositories/User
 import { ForgotPasswordHandler } from '../../Application/Features/User/Handlers/ForgotPasswordHandler';
 import { ChangePasswordRequest } from '../../Application/Features/User/Requests/ChangePasswordRequest';
 import { ChangePasswordHandler } from '../../Application/Features/User/Handlers/ChangePasswordHandler';
+import { VerifyForgotPasswordByEmailCodeRequest } from '../../Application/Features/User/Requests/VerifyForgotPasswordByEmailCodeRequest';
+import { VerifyForgotPasswordByEmailCodeHandeler } from '../../Application/Features/User/Handlers/VerifyForgotPasswordByEmailCodeHandler';
+import { timeStamp } from 'console';
 export default class UserController {
     // private userRepository: UserRepository;
     // constructor() {
@@ -84,6 +87,24 @@ export default class UserController {
             return res.status(500).json({ error: error.mesagge });
         }
     }
+
+    async verifyForgotPasswordByEmailCode(req: Request<any, any, VerifyForgotPasswordByEmailCodeRequest>, res:Response){
+         // #swagger.description = 'User verify'
+        // #swagger.tags = ["User"]
+        try {
+            const {hash, email, t} = req.body;
+            const data : any = {
+                hash : hash,
+                email : email,
+                t: t
+            }
+            const result: any = await VerifyForgotPasswordByEmailCodeHandeler(data);
+            return res.status(result.statusCode).json(result);
+        } catch (error:any) {
+            return res.status(500).json({ error: error.mesagge });
+        }
+    }
+
     
     //     async newUser(req: Request, res: Response): Promise<void> {
     //         try {
