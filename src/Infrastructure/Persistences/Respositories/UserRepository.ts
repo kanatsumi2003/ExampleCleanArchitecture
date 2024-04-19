@@ -3,19 +3,42 @@ import BaseRepository from "./BaseRepository";
 import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
 import IUserRepository from "../../../Application/Persistences/IRepositories/IUserRepository";
 import mongoose from "mongoose";
-const { hashPassword } = require("../../../Application/Common/Helpers/passwordUtils");
+import { hashPassword } from "../../../Application/Common/Helpers/passwordUtils";
 class UserRepository extends BaseRepository<User> implements IUserRepository {
   constructor() {
     const collectionName: string = "users";
     super(collectionName);
   }
+
+
+  async updateUserById(userId: string, userData: any) {
+    try{
+      const user:any = new User(
+        userData.fullname,
+        userData.email,
+        userData.username,
+        userData.password,
+        userData.phoneNumber,
+        userData.role_id,
+        null
+      );
+      const query :any ={
+        _id : new mongoose.Types.ObjectId(userId)  
+      }
+      await this.updateDocument(query,user);
+    }catch(error:any){
+      throw new Error("Error at updateUserById in UserRepository: " + error.message);
+    }
+
+  }
+
+
   async getUserByEmail(email: string, queryData: any): Promise<UserWithBase> {
     try {
       const query: any = {
         email: email,
         isDelete: queryData.isDelete,
         isActive: queryData.isActive,
-        emailConfirmed: queryData.emailConfirmed,
       };
       const users: UserWithBase[] = await this.findDocuments(query, null, {});
       if (users === null || users.length <= 0) {
@@ -59,6 +82,33 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
       throw new Error("Error at createUser in UserRepository: " + error.message);
     }
   }
+  
+  async uploadPass(data: any): Promise<void> {
+    try {
+      // Hash mật khẩu mới trước khi cập nhật
+      const {email, newPassword, emailConfirmed} = data
+      const hashedPassword = await hashPassword(newPassword);
+  
+      // Xây dựng điều kiện tìm kiếm user theo email
+      const query: any = {
+        email: email,
+        isDelete: false, // Bạn có thể thêm các điều kiện khác nếu cần
+        isActive: true,
+      };
+  
+      // Xây dựng dữ liệu cập nhật với phép cập nhật trường hợp $set
+      const updateData: any = {
+          password: hashedPassword,
+          emailConfirmed: emailConfirmed
+      };
+  
+      // Thực hiện phép cập nhật sử dụng $set
+      await this.updateDocument(query, updateData);
+    } catch (error: any) {
+      throw new Error("Error updating password: " + error.message);
+    }
+  }
+  
 
   async getUserById(userId: string, queryData: any): Promise<UserWithBase>{
     try {
@@ -73,6 +123,11 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
       throw new Error("Error at getUserById in UserRepository: " + error.meesage);
     }
   }
+
+
+
+
+
   //     constructor() {
   //         const collectionName: string = "User";
   //         super(collectionName);

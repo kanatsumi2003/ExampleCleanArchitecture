@@ -1,7 +1,7 @@
 const {MongoClient} = require("mongodb");
 require('dotenv').config();
 const URI = process.env.CONNECTION_STRING;
-const dbName = "QuizDB";
+const dbName = "NoahQuizDB";
 
 async function connectDB() {
     const client = new MongoClient(URI, { useNewUrlParser: true, useUnifiedTopology: true });

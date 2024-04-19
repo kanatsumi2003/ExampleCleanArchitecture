@@ -103,7 +103,7 @@
         "tags": [
           "User"
         ],
-        "description": "get role by Id",
+        "description": "Login with email and password",
         "parameters": [
           {
             "name": "user-agent",
@@ -164,6 +164,96 @@
                   "example": "any"
                 },
                 "username": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/user/forgot-password": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Forgot old password",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/user/verify-forgot-password": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Verify forgot password",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "hash": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "timeStamp": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/user/updatePassword": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Update new Password",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                },
+                "newpassword": {
                   "example": "any"
                 }
               }
