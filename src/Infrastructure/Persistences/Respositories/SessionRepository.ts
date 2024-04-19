@@ -8,6 +8,20 @@ class SessionRepository extends BaseRepository<SessionLogin> implements ISession
         const collectionName: string = "sessions";
         super(collectionName);
     }
+    async findSessionByEmail(queryData: any): Promise<SessionWithBase[]> {
+        try {
+            const query ={
+                email:queryData.email,
+                isDelete:queryData.isDelete,
+                isActive: queryData.isActive
+            }
+            const session: SessionWithBase[] = await this.findDocuments(query,null,{})
+            return session;
+        } catch (error:any) {
+            throw new Error("Error at findSessionByEmail in SessionRepository: " + error.message);
+        }
+    }
+
     async findSessionByEmailAndIP(queryData: any): Promise<SessionWithBase[]> {
         try {
             const query = {
@@ -26,10 +40,13 @@ class SessionRepository extends BaseRepository<SessionLogin> implements ISession
         }
     }
 
-    async deleteSession(_id: mongoose.Types.ObjectId): Promise<void> {
+
+
+    
+    async deleteSession(_id: string): Promise<void> {
         try {
             const query = {
-                id: _id,
+                id: new mongoose.Types.ObjectId(_id)
             }
             await this.deleteDocument(query);
         } catch (error: any) {

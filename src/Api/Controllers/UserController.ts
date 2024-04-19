@@ -7,13 +7,17 @@ import { CreateUserHandler } from '../../Application/Features/User/Handlers/Crea
 import  UpdatePassHandler  from '../../Application/Features/User/Handlers/UpdatePassHandler';
 import UserRepository from '../../Infrastructure/Persistences/Respositories/UserRepository';
 import { ForgotPasswordHandler } from '../../Application/Features/User/Handlers/ForgotPasswordHandler';
+import { ChangePasswordRequest } from '../../Application/Features/User/Requests/ChangePasswordRequest';
+import { ChangePasswordHandler } from '../../Application/Features/User/Handlers/ChangePasswordHandler';
+import { VerifyForgotPasswordByEmailCodeRequest } from '../../Application/Features/User/Requests/VerifyForgotPasswordByEmailCodeRequest';
+import { VerifyForgotPasswordByEmailCodeHandler } from '../../Application/Features/User/Handlers/VerifyForgotPasswordByEmailCodeHandler';
 export default class UserController {
     // private userRepository: UserRepository;
     // constructor() {
     //     this.userRepository = new UserRepository();
     // }
     async login(req: Request<any, any, LoginRequest>, res: Response): Promise<Response> {
-        // #swagger.description = 'get role by Id'
+        // #swagger.description = 'Login with email and password'
         // #swagger.tags = ["User"]
         try {
             const { email, password } = req.body;
@@ -53,6 +57,8 @@ export default class UserController {
     }
 
     async forgotPassword(req: Request, res: Response): Promise<Response> {
+        // #swagger.description = 'Forgot old password'
+        // #swagger.tags = ["User"]
         try {
             const email: string = req.body.email;
             const result: any = await ForgotPasswordHandler(email);
@@ -67,7 +73,7 @@ export default class UserController {
     }
 
     async updatePassword(req: Request<any, any, UpdatePassRequest>, res: Response): Promise<Response> {
-        // #swagger.description = 'Update Password'
+        // #swagger.description = 'Update new Password'
         // #swagger.tags = ["User"]
         try {
             const { email, newpassword } = req.body;
@@ -81,6 +87,24 @@ export default class UserController {
             return res.status(500).json({ error: error.message });
         }
     }
+
+    async verifyForgotPasswordByEmailCode(req: Request<any, any, VerifyForgotPasswordByEmailCodeRequest>, res:Response){
+        // #swagger.description = 'Verify forgot password'
+        // #swagger.tags = ["User"]
+        try {
+            const {hash, email, t} = req.body;
+            const data : any = {
+                hash : hash,
+                email : email,
+                t: t
+            }
+            const result: any = await VerifyForgotPasswordByEmailCodeHandler(data);
+            return res.status(result.statusCode).json(result);
+        } catch (error:any) {
+            return res.status(500).json({ error: error.mesagge });
+        }
+    }
+
 
     //     async newUser(req: Request, res: Response): Promise<void> {
     //         try {

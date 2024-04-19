@@ -103,7 +103,7 @@
         "tags": [
           "User"
         ],
-        "description": "get role by Id",
+        "description": "Login with email and password",
         "parameters": [
           {
             "name": "user-agent",
@@ -179,7 +179,10 @@
     },
     "/user/forgot-password": {
       "post": {
-        "description": "",
+        "tags": [
+          "User"
+        ],
+        "description": "Forgot old password",
         "parameters": [
           {
             "name": "body",
@@ -201,12 +204,45 @@
         }
       }
     },
+    "/user/verify-forgot-password": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Verify forgot password",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "hash": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "t": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/user/updatePassword": {
       "post": {
         "tags": [
           "User"
         ],
-        "description": "Update Password",
+        "description": "Update new Password",
         "parameters": [
           {
             "name": "body",
