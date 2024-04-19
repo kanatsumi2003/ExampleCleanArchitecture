@@ -1,12 +1,12 @@
+import { UpdatePassRequest } from './../../Application/Features/User/Requests/UpdatePassRequest';
 import { CreateUserRequest } from './../../Application/Features/User/Requests/CreateUserRequest';
 import { Request, Response, query } from 'express';
 import LoginHandler from "../../Application/Features/User/Handlers/LoginHandler";
 import { LoginRequest } from "../../Application/Features/User/Requests/LoginRequest";
 import { CreateUserHandler } from '../../Application/Features/User/Handlers/CreateUserHandler';
+import  UpdatePassHandler  from '../../Application/Features/User/Handlers/UpdatePassHandler';
 import UserRepository from '../../Infrastructure/Persistences/Respositories/UserRepository';
 import { ForgotPasswordHandler } from '../../Application/Features/User/Handlers/ForgotPasswordHandler';
-import { ChangePasswordRequest } from '../../Application/Features/User/Requests/ChangePasswordRequest';
-import { ChangePasswordHandler } from '../../Application/Features/User/Handlers/ChangePasswordHandler';
 export default class UserController {
     // private userRepository: UserRepository;
     // constructor() {
@@ -31,7 +31,7 @@ export default class UserController {
             return res.status(500).json({ error: error.message });
         }
     }
-
+    
     async createUser(req: Request<any, any, CreateUserRequest>, res: Response): Promise<Response> {
         // #swagger.description = 'Create new User'
         // #swagger.tags = ["User"]
@@ -65,26 +65,23 @@ export default class UserController {
             return res.status(500).json({error: error.messgae});
         }
     }
-    async changePassword(req: Request<any, any, ChangePasswordRequest>, res: Response) {
-        // #swagger.description = 'User change password'
+
+    async updatePassword(req: Request<any, any, UpdatePassRequest>, res: Response): Promise<Response> {
+        // #swagger.description = 'Update Password'
         // #swagger.tags = ["User"]
         try {
-            const request: any = req;
-            const userId  = request.user.userId
-            console.log("==============================" + req);
-            const { oldPassword, newPassword } = req.body;
-            const data: any = {
-                userId: userId,
-                oldPassword: oldPassword,
-                newPassword: newPassword,
-            };
-            const result: any = await ChangePasswordHandler(data);
-            return res.status(result.statusCode).json( result );
+            const { email, newpassword } = req.body;
+           
+            const data = {  email, newpassword }
+            const result: any = await UpdatePassHandler(data);
+
+            return res.status(result.statusCode).json({ data: result });
         } catch (error: any) {
-            return res.status(500).json({ error: error.mesagge });
+            console.error('Update Password failed:', error);
+            return res.status(500).json({ error: error.message });
         }
     }
-    
+
     //     async newUser(req: Request, res: Response): Promise<void> {
     //         try {
     //             const user = new User("b", "asd", "1", "123", "123", new ObjectId(123), "123")
@@ -128,5 +125,3 @@ export default class UserController {
     //         }
     //     }
 }
-
-

@@ -1,12 +1,13 @@
 import moment from "moment";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { ForgotPasswordResponse } from "../Response/ForgotPasswordResponse";
+import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 const { md5Encrypt } = require("../../../Common/Helpers/passwordUtils");
 const { sendMail } = require("../../../Common/Helpers/emailUtils")
 
 export async function ForgotPasswordHandler(email: string): Promise<ForgotPasswordResponse> {
     try {
-        const userRepository = new UserRepository();
+        const userRepository: IUserRepository = new UserRepository();
         const queryData: any = {
             isDelete: false,
             isActive: true,

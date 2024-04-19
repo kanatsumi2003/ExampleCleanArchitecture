@@ -3,7 +3,7 @@ import BaseRepository from "./BaseRepository";
 import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
 import IUserRepository from "../../../Application/Persistences/IRepositories/IUserRepository";
 import mongoose from "mongoose";
-const { hashPassword } = require("../../../Application/Common/Helpers/passwordUtils");
+import { hashPassword } from "../../../Application/Common/Helpers/passwordUtils";
 class UserRepository extends BaseRepository<User> implements IUserRepository {
   constructor() {
     const collectionName: string = "users";
@@ -15,7 +15,6 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
         email: email,
         isDelete: queryData.isDelete,
         isActive: queryData.isActive,
-        emailConfirmed: queryData.emailConfirmed,
       };
       const users: UserWithBase[] = await this.findDocuments(query, null, {});
       if (users === null || users.length <= 0) {
@@ -59,6 +58,33 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
       throw new Error("Error at createUser in UserRepository: " + error.message);
     }
   }
+  
+  async uploadPass(data: any): Promise<void> {
+    try {
+      // Hash mật khẩu mới trước khi cập nhật
+      const {email, newPassword} = data
+      const hashedPassword = await hashPassword(newPassword);
+  
+      // Xây dựng điều kiện tìm kiếm user theo email
+      const query: any = {
+        email: email,
+        isDelete: false, // Bạn có thể thêm các điều kiện khác nếu cần
+        isActive: true,
+        emailConfirmed: true,
+      };
+  
+      // Xây dựng dữ liệu cập nhật với phép cập nhật trường hợp $set
+      const updateData: any = {
+          password: hashedPassword,
+      };
+  
+      // Thực hiện phép cập nhật sử dụng $set
+      await this.updateDocument(query, updateData);
+    } catch (error: any) {
+      throw new Error("Error updating password: " + error.message);
+    }
+  }
+  
 
   async getUserById(userId: string, queryData: any): Promise<UserWithBase>{
     try {

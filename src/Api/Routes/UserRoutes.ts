@@ -16,6 +16,8 @@ const userController = new UserController();
 router.post("/user/login", userController.login);
 router.post("/user/register", userController.createUser);
 router.post("/user/forgot-password", userController.forgotPassword);
+router.post("/user/updatePassword", userController.updatePassword)
+
 
 module.exports = router;
 
