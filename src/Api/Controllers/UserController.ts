@@ -67,9 +67,6 @@ export default class UserController {
             const data = {  email, newpassword }
             const result: any = await UpdatePassHandler(data);
 
-            if (result.error != undefined || result.error) {
-                return res.status(result.statusCode).json({ error: result.error });
-            }
             return res.status(result.statusCode).json({ data: result });
         } catch (error: any) {
             console.error('Update Password failed:', error);

@@ -16,7 +16,6 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
         email: email,
         isDelete: queryData.isDelete,
         isActive: queryData.isActive,
-        emailConfirmed: queryData.emailConfirmed,
       };
       const users: UserWithBase[] = await this.findDocuments(query, null, {});
       if (users === null || users.length <= 0) {
@@ -61,9 +60,10 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
     }
   }
   
-  async uploadPass(email:any, newPassword:any): Promise<void> {
+  async uploadPass(data: any): Promise<void> {
     try {
       // Hash mật khẩu mới trước khi cập nhật
+      const {email, newPassword} = data
       const hashedPassword = await hashPassword(newPassword);
   
       // Xây dựng điều kiện tìm kiếm user theo email
@@ -76,9 +76,7 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
   
       // Xây dựng dữ liệu cập nhật với phép cập nhật trường hợp $set
       const updateData: any = {
-        $set: {
           password: hashedPassword,
-        },
       };
   
       // Thực hiện phép cập nhật sử dụng $set

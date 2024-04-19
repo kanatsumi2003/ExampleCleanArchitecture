@@ -14,7 +14,6 @@ async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> {
     const queryData: any = {
       isDelete: false,
       isActive: true,
-      emailConfirmed: true,
     };
     const user: any = await userRepository.getUserByEmail(email, queryData);
 
@@ -22,9 +21,13 @@ async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> {
     if (!user) {
       throw new Error("User not found");
     }
-
+    
+    const updateData = {
+      email: email,
+      newPassword: newpassword,
+    };
     // Gọi phương thức uploadPass để cập nhật mật khẩu
-    const result: any = await userRepository.uploadPass(email, newpassword);
+    const result: any = await userRepository.uploadPass(updateData);
 
     // Trả về thông báo thành công
     return new UpdatePassResponse("Password updated successfully", 200,result);
