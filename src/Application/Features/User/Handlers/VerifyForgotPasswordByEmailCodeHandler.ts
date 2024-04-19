@@ -11,22 +11,22 @@ const { md5Encrypt } = require("../../../Common/Helpers/passwordUtils");
 export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise<VerifyForgotPasswordByEmailCodeResponse> {
     const response = new VerifyForgotPasswordByEmailCodeResponse("", 200, {})
     try {
-        const repo: IUserRepository = new UserRepository();
-        const sessionRepo: ISessionRepository = new SessionRepository();
+        const userRepository: IUserRepository = new UserRepository();
+        const sessionRepository: ISessionRepository = new SessionRepository();
              const roleQueryData: any = {
                 isDelete: false,
                 isActive: true,
                 emailConfirmed: true
             }
             
-        const user:any = await repo.getUserByEmail(data.email, roleQueryData);
+        const user:any = await userRepository.getUserByEmail(data.email, roleQueryData);
         if (user === null) {
             const response = new VerifyForgotPasswordByEmailCodeResponse("Email not existed", 400, {})
             return response;
         }
 
         const currentTimeStamp:any = await generateTimeStamp();
-        const differenceInSecond:any = (currentTimeStamp - data.t);
+        const differenceInSecond:any = (currentTimeStamp - data.timeStamp);
 
 
         if (differenceInSecond > 1800) {
@@ -41,7 +41,7 @@ export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise
         }
         user.emailCode = Math.random().toString(36).substring(2, 5);
         
-        await repo.updateUserById(user._id, user)
+        await userRepository.updateUserById(user._id, user)
 
         const token = await encodejwt(user);
         const sessionQueryData:any ={
@@ -49,17 +49,17 @@ export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise
             isDelete: false,
             isActive:true
         }
-        const session: any = await sessionRepo.findSessionByEmail(sessionQueryData)
+        const session: any = await sessionRepository.findSessionByEmail(sessionQueryData)
         if (session !== null && session.length >= 0) {
             for (const sess of session) {
-                await sessionRepo.deleteSession(sess._id);
+                await sessionRepository.deleteSession(sess._id);
             }
         }
 
         const tokenExpiryDate = addDuration(token.expiresIn || "");
         const refreshTokenExpiryDate = addDuration(process.env.REACT_APP_EXPIRE_REFRESH_TOKEN || "");
 
-        sessionRepo.createSession({
+        sessionRepository.createSession({
             userId: user._id,
             email: user.email,
             name: user.name || "unknown",

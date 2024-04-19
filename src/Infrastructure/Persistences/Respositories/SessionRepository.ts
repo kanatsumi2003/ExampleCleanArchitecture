@@ -10,10 +10,11 @@ class SessionRepository extends BaseRepository<SessionLogin> implements ISession
     }
     async findSessionByEmail(queryData: any): Promise<SessionWithBase[]> {
         try {
-            const query ={
-                email:queryData.email,
-                isDelete:queryData.isDelete,
-                isActive: queryData.isActive
+            const {email, isDelete, isActive} = queryData;
+            const query = {
+                email: email,
+                isDelete: isDelete,
+                isActive: isActive
             }
             const session: SessionWithBase[] = await this.findDocuments(query,null,{})
             return session;
@@ -46,7 +47,7 @@ class SessionRepository extends BaseRepository<SessionLogin> implements ISession
     async deleteSession(_id: string): Promise<void> {
         try {
             const query = {
-                id: new mongoose.Types.ObjectId(_id)
+                _id: new mongoose.Types.ObjectId(_id)
             }
             await this.deleteDocument(query);
         } catch (error: any) {

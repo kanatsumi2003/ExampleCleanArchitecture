@@ -86,7 +86,7 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
   async uploadPass(data: any): Promise<void> {
     try {
       // Hash mật khẩu mới trước khi cập nhật
-      const {email, newPassword} = data
+      const {email, newPassword, emailConfirmed} = data
       const hashedPassword = await hashPassword(newPassword);
   
       // Xây dựng điều kiện tìm kiếm user theo email
@@ -94,12 +94,12 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
         email: email,
         isDelete: false, // Bạn có thể thêm các điều kiện khác nếu cần
         isActive: true,
-        emailConfirmed: true,
       };
   
       // Xây dựng dữ liệu cập nhật với phép cập nhật trường hợp $set
       const updateData: any = {
           password: hashedPassword,
+          emailConfirmed: emailConfirmed
       };
   
       // Thực hiện phép cập nhật sử dụng $set

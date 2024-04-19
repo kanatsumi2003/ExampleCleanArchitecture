@@ -92,11 +92,11 @@ export default class UserController {
         // #swagger.description = 'Verify forgot password'
         // #swagger.tags = ["User"]
         try {
-            const {hash, email, t} = req.body;
+            const {hash, email, timeStamp} = req.body;
             const data : any = {
                 hash : hash,
                 email : email,
-                t: t
+                timeStamp: timeStamp
             }
             const result: any = await VerifyForgotPasswordByEmailCodeHandler(data);
             return res.status(result.statusCode).json(result);

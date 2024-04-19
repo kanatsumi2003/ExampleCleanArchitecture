@@ -223,7 +223,7 @@
                 "email": {
                   "example": "any"
                 },
-                "t": {
+                "timeStamp": {
                   "example": "any"
                 }
               }

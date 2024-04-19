@@ -21,7 +21,13 @@ export async function ForgotPasswordHandler(email: string): Promise<ForgotPasswo
 
         user.emailCode = await md5Encrypt(user.emailCode);
         user.password = moment().valueOf();
-        const sendMailResponse: string = await sendMail(user.email, "Welcome to NoahQuiz", user, "forgotPasswordEmailTemplate.ejs");
+        const emailData: any = {
+            fullname: user.fullname,
+            email: user.email,
+            emailCode: user.emailCode,
+            password: user.password,
+        }
+        const sendMailResponse: string = await sendMail(user.email, "Welcome to NoahQuiz", emailData, "forgotPasswordEmailTemplate.ejs");
 
         return new ForgotPasswordResponse("Sent Mail Successfully", 201, sendMailResponse)
     } catch (error: any) {
