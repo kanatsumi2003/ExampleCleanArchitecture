@@ -15,9 +15,3 @@ export async function hashPassword(password: string): Promise<string>{
 export async function md5Encrypt(data: any) {
     return crypto.createHash('md5').update(data).digest('hex');
 }
-
-// module.exports = {
-//     comparePassword,
-//     hashPassword,
-//     md5Encrypt
-// }

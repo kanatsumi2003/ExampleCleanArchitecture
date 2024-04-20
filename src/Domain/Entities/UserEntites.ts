@@ -164,6 +164,7 @@ class UserWithBase extends BaseEntities {
     Object.assign(this, user);
   }
 
+
   getFullname(): string {
     return this.user.getFullname();
   }

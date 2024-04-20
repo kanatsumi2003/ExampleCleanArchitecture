@@ -21,6 +21,7 @@ declare global {
 
 
 const {authenticateToken, authorizationMiddleware} = require("../Middlewares/AuthMiddleware");
+import { upload} from "../Middlewares/upimage"; 
 const router = express.Router();
 const userController = new UserController();
 router.post("/user/login", userController.login);
@@ -28,6 +29,9 @@ router.post("/user/register", userController.createUser);
 router.post("/user/verifyEmail", userController.verifyEmail);
 router.get("/user/profile", authenticateToken , userController.getProfileUser);
 router.post("/user/forgot-password", userController.forgotPassword);
+router.post("/user/verify-forgot-password", userController.verifyForgotPasswordByEmailCode);
+router.post("/user/updatePassword", userController.updatePassword)
+router.post("/user/uploadImage", upload.single('filename'), userController.updateImage);
 
 module.exports = router;
 
