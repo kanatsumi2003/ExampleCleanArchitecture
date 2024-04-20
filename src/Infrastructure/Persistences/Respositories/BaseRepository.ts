@@ -81,7 +81,7 @@ async insertDocuments<T>(data: T): Promise<InsertOneResult<T>> {
 
   async updateDocument<T>(
     query: Object,
-    update: User
+    update: T
   ): Promise<UpdateWriteOpResult> {
     try {
       const db = await this.connectDB();

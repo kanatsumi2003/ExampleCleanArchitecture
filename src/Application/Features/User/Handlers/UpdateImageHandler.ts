@@ -5,13 +5,13 @@ import { UpdateImageResponse } from "../Response/UpdateImageResponse";
 
 async function UpdateImageHandler(data: any): Promise<UpdateImageResponse> {
   try {
-    const { email, imageFileName  } = data;
+    const { email, imageUser  } = data;
     
     const userRepository = new UserRepository();
     const queryData: any = {
       isDelete: false,
       isActive: true,
-      emailConfirmed: true,
+      emailConfirmed: false,
     };
     const user: any = await userRepository.getUserByEmail(email, queryData);
 
@@ -21,7 +21,7 @@ async function UpdateImageHandler(data: any): Promise<UpdateImageResponse> {
    
     const updateData = {
       email: email,
-      imageUser: imageFileName,
+      imageUser: imageUser,
     };
     const result: any = await userRepository.uploadImage(updateData);
     return new UpdateImageResponse("Image updated successfully", 200,result);

@@ -190,6 +190,37 @@
           }
         }
       }
+    },
+    "/user/updateImage": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Update Password",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "imageUser",
+            "in": "formData",
+            "type": "file",
+            "required": true
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "Email of the user"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
     }
   }
 }

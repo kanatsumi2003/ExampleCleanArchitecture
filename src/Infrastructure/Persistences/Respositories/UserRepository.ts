@@ -94,14 +94,10 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
         email: email,
         isDelete: false,
         isActive: true,
-        emailConfirmed: true,
       };
-  
-
       const updateData: any = {
-        imageUser: imageUser,
-      };
-  
+        imageUser: imageUser
+      }
       await this.updateDocument(query, updateData);
     } catch (error: any) {
       throw new Error("Error updating image: " + error.message);
