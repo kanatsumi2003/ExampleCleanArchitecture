@@ -3,40 +3,34 @@ import { CreateUserRequest } from "./../../Application/Features/User/Requests/Cr
 import { Request, Response, query } from "express";
 import LoginHandler from "../../Application/Features/User/Handlers/LoginHandler";
 import { LoginRequest } from "../../Application/Features/User/Requests/LoginRequest";
-import { UpdateImageRequest } from "../../Application/Features/User/Requests/UpdateImageRequest";
-import { CreateUserHandler } from "../../Application/Features/User/Handlers/CreateUserHandler";
-import UpdatePassHandler from "../../Application/Features/User/Handlers/UpdatePassHandler";
-import UserRepository from "../../Infrastructure/Persistences/Respositories/UserRepository";
-import UpdateImageHandler from "../../Application/Features/User/Handlers/UpdateImageHandler";
-import { ForgotPasswordHandler } from "../../Application/Features/User/Handlers/ForgotPasswordHandler";
-import { ChangePasswordRequest } from "../../Application/Features/User/Requests/ChangePasswordRequest";
-import { ChangePasswordHandler } from "../../Application/Features/User/Handlers/ChangePasswordHandler";
-import { VerifyForgotPasswordByEmailCodeRequest } from "../../Application/Features/User/Requests/VerifyForgotPasswordByEmailCodeRequest";
-import { VerifyForgotPasswordByEmailCodeHandler } from "../../Application/Features/User/Handlers/VerifyForgotPasswordByEmailCodeHandler";
-export default class UserController {
-  // private userRepository: UserRepository;
-  // constructor() {
-  //     this.userRepository = new UserRepository();
-  // }
-  async login(
-    req: Request<any, any, LoginRequest>,
-    res: Response
-  ): Promise<Response> {
-    // #swagger.description = 'Login with email and password'
-    // #swagger.tags = ["User"]
-    try {
-      const { email, password } = req.body;
-      const deviceId = req.headers["user-agent"] || "Unknown Device";
-      const ipAddress =
-        req.headers["x-forwarded-for"] ||
-        (req as any).socket?.remoteAddress ||
-        "Unknown IP";
-      const data = { deviceId, ipAddress, email, password };
-      const result: any = await LoginHandler(data);
+import { CreateUserHandler } from '../../Application/Features/User/Handlers/CreateUserHandler';
+import UserRepository from '../../Infrastructure/Persistences/Respositories/UserRepository';
+import { ForgotPasswordHandler } from '../../Application/Features/User/Handlers/ForgotPasswordHandler';
+import { ChangePasswordRequest } from '../../Application/Features/User/Requests/ChangePasswordRequest';
+import { ChangePasswordHandler } from '../../Application/Features/User/Handlers/ChangePasswordHandler';
 
-      if (result.error != undefined || result.error) {
-        return res.status(result.statusCode).json({ error: result.error });
-      }
+import { md5Encrypt} from '../../Application/Common/Helpers/passwordUtils';
+import IUserRepository from '../../Application/Persistences/IRepositories/IUserRepository';
+import { User } from '../../Domain/Entities/UserEntites';
+import { verifyEmailHandler } from '../../Application/Features/User/Handlers/VerifyEmailHandler';
+import { getProfileHandler } from '../../Application/Features/User/Handlers/GetProfileHandler';
+import { GetUserProfileRequest } from '../../Application/Features/User/Requests/GetUserProfileRequest';
+
+export default class UserController {
+    // private userRepository: UserRepository;
+    // constructor() {
+    //     this.userRepository = new UserRepository();
+    // }
+    async login(req: Request<any, any, LoginRequest>, res: Response): Promise<Response> {
+        // #swagger.description = 'get role by id'
+        // #swagger.tags = ["User"]
+        try {
+            const { email, password } = req.body;
+            const deviceId = req.headers['user-agent'] || 'Unknown Device';
+            const ipAddress = req.headers['x-forwarded-for'] || (req as any).socket?.remoteAddress || 'Unknown IP';
+            const data = { deviceId, ipAddress, email, password }
+            const result: any = await LoginHandler(data);
+          
       return res.status(result.statusCode).json({ data: result });
     } catch (error: any) {
       console.error("Login failed:", error);
@@ -68,23 +62,50 @@ export default class UserController {
     } catch (error: any) {
       return res.status(500).json({ error: error.messgae });
     }
-  }
+  
+    async verifyEmail(req: Request, res: Response) : Promise<Response> {
+        // #swagger.description = 'Verify Email'
+        // #swagger.tags = ["User"]
+        try {
 
-  async forgotPassword(req: Request, res: Response): Promise<Response> {
-    // #swagger.description = 'Forgot old password'
-    // #swagger.tags = ["User"]
-    try {
-      const email: string = req.body.email;
-      const result: any = await ForgotPasswordHandler(email);
-      if (result.error != undefined || result.error) {
-        return res.status(result.statusCode).json({ error: result.error });
-      }
-      console.log(result);
-      return res.status(result.statusCode).json({ message: result.message });
-    } catch (error: any) {
-      return res.status(500).json({ error: error.messgae });
+            const { hash, email} = req.body;
+            const result: any = await verifyEmailHandler({ hash, email });
+            //active
+            if (result.error != undefined || result.error) {
+                return res.status(result.statusCode).json({error: result.error});
+            }
+            console.log(result);
+            return res.status(result.statusCode).json({message: result.message});
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ message: 'Error verify user', error });
+        }
     }
-  }
+
+    async getProfileUser(req: Request<any, any, GetUserProfileRequest>, res: Response): Promise<Response> {
+        // #swagger.description = 'Get Profile User'
+        // #swagger.tags = ["User"]
+        try {
+            const {userId} = (req as any).user;
+            const result: any = await getProfileHandler(userId);
+            return res.status(result.statusCode).json({message: result});
+        } catch (error: any) {
+            return res.status(500).json({error: error.messgae});
+        }
+
+    }
+
+    async forgotPassword(req: Request, res: Response): Promise<Response> {
+        // #swagger.description = 'Forgot Password'
+        // #swagger.tags = ["User"]
+        try {
+            const email: string = req.body.email;
+            const result: any = await ForgotPasswordHandler(email);
+            return res.status(result.statusCode).json({message: result.message});
+        } catch (error: any) {
+            return res.status(500).json({error: error.messgae});
+        }
+    }
 
   async updatePassword(
     req: Request<any, any, UpdatePassRequest>,

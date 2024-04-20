@@ -1,9 +1,13 @@
 import { CreateUserResponse } from './../Response/CreateUserResponse';
 import RoleRepository from "../../../../Infrastructure/Persistences/Respositories/RoleRepository";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
-import { CreateRoleResponse } from "../../Role/Response/CreateRoleResponse";
 import IUserRepository from '../../../Persistences/IRepositories/IUserRepository';
 import IRoleRepository from '../../../Persistences/IRepositories/IRoleRepository';
+
+import {sendMail} from '../../../../Application/Common/Helpers/emailUtils'
+import { md5Encrypt } from '../../../Common/Helpers/passwordUtils';
+
+
 
 export async function CreateUserHandler(data: any): Promise<CreateUserResponse> {
   try {
@@ -24,7 +28,21 @@ export async function CreateUserHandler(data: any): Promise<CreateUserResponse> 
       role_id: role._id
     };
     const result: any = await userRepository.createUser(createUserRoleData);
-    return new CreateRoleResponse("Successful", 200, result);
+
+    const emailHash = await md5Encrypt(result.emailCode);
+
+
+    const emailData = { 
+      email: email,
+      fullname: fullname,
+      emailCode: emailHash,
+    }
+
+    await sendMail(email, "Welcome to Noah-Quiz!", emailData, "verifyEmailTemplate.ejs");
+
+
+    return new CreateUserResponse("Successful", 200, result);
+
   } catch (error: any) {
     throw new Error("Error at CreateUserHandler: " + error.message);
   }
