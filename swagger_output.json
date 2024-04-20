@@ -143,7 +143,7 @@
         "tags": [
           "User"
         ],
-        "description": "Create new User",
+        "description": "get role by Id",
         "parameters": [
           {
             "name": "body",
@@ -267,7 +267,7 @@
         }
       }
     },
-    "/user/updateImage": {
+    "/user/uploadImage": {
       "post": {
         "tags": [
           "User"
@@ -278,7 +278,7 @@
         ],
         "parameters": [
           {
-            "name": "imageUser",
+            "name": "filename",
             "in": "formData",
             "type": "file",
             "required": true

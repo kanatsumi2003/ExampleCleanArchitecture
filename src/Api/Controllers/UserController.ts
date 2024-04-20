@@ -7,11 +7,12 @@ import { UpdateImageRequest } from "../../Application/Features/User/Requests/Upd
 import { CreateUserHandler } from "../../Application/Features/User/Handlers/CreateUserHandler";
 import UpdatePassHandler from "../../Application/Features/User/Handlers/UpdatePassHandler";
 import UserRepository from "../../Infrastructure/Persistences/Respositories/UserRepository";
-import UpdateImageHandler from "../../Application/Features/User/Handlers/UpdateImageHandler";import { ForgotPasswordHandler } from '../../Application/Features/User/Handlers/ForgotPasswordHandler';
-import { ChangePasswordRequest } from '../../Application/Features/User/Requests/ChangePasswordRequest';
-import { ChangePasswordHandler } from '../../Application/Features/User/Handlers/ChangePasswordHandler';
-import { VerifyForgotPasswordByEmailCodeRequest } from '../../Application/Features/User/Requests/VerifyForgotPasswordByEmailCodeRequest';
-import { VerifyForgotPasswordByEmailCodeHandler } from '../../Application/Features/User/Handlers/VerifyForgotPasswordByEmailCodeHandler';
+import UpdateImageHandler from "../../Application/Features/User/Handlers/UpdateImageHandler";
+import { ForgotPasswordHandler } from "../../Application/Features/User/Handlers/ForgotPasswordHandler";
+import { ChangePasswordRequest } from "../../Application/Features/User/Requests/ChangePasswordRequest";
+import { ChangePasswordHandler } from "../../Application/Features/User/Handlers/ChangePasswordHandler";
+import { VerifyForgotPasswordByEmailCodeRequest } from "../../Application/Features/User/Requests/VerifyForgotPasswordByEmailCodeRequest";
+import { VerifyForgotPasswordByEmailCodeHandler } from "../../Application/Features/User/Handlers/VerifyForgotPasswordByEmailCodeHandler";
 export default class UserController {
   // private userRepository: UserRepository;
   // constructor() {
@@ -21,8 +22,8 @@ export default class UserController {
     req: Request<any, any, LoginRequest>,
     res: Response
   ): Promise<Response> {
-        // #swagger.description = 'Login with email and password'
-        // #swagger.tags = ["User"]
+    // #swagger.description = 'Login with email and password'
+    // #swagger.tags = ["User"]
     try {
       const { email, password } = req.body;
       const deviceId = req.headers["user-agent"] || "Unknown Device";
@@ -30,7 +31,7 @@ export default class UserController {
         req.headers["x-forwarded-for"] ||
         (req as any).socket?.remoteAddress ||
         "Unknown IP";
-      const data = {  deviceId, ipAddress, email, password  };
+      const data = { deviceId, ipAddress, email, password };
       const result: any = await LoginHandler(data);
 
       if (result.error != undefined || result.error) {
@@ -64,22 +65,22 @@ export default class UserController {
       }
 
       return res.status(result.statusCode).json({ data: result });
-        } catch (error: any) {
-            return res.status(500).json({ error: error.messgae });
-        }
+    } catch (error: any) {
+      return res.status(500).json({ error: error.messgae });
     }
+  }
 
-    async forgotPassword(req: Request, res: Response): Promise<Response> {
-        // #swagger.description = 'Forgot old password'
-        // #swagger.tags = ["User"]
-        try {
-            const email: string = req.body.email;
-            const result: any = await ForgotPasswordHandler(email);
-            if (result.error != undefined || result.error) {
-                return res.status(result.statusCode).json({error: result.error});
-            }
-            console.log(result);
-            return res.status(result.statusCode).json({message: result.message});
+  async forgotPassword(req: Request, res: Response): Promise<Response> {
+    // #swagger.description = 'Forgot old password'
+    // #swagger.tags = ["User"]
+    try {
+      const email: string = req.body.email;
+      const result: any = await ForgotPasswordHandler(email);
+      if (result.error != undefined || result.error) {
+        return res.status(result.statusCode).json({ error: result.error });
+      }
+      console.log(result);
+      return res.status(result.statusCode).json({ message: result.message });
     } catch (error: any) {
       return res.status(500).json({ error: error.messgae });
     }
@@ -126,12 +127,15 @@ export default class UserController {
     } */
     try {
       const { email } = req.body;
-      if (!req.file) {
+      if (!(req as any).file) {
         return res.status(400).json({ error: "No image uploaded" });
       }
-      const request: any = req;
-      const imageUser = request.file.filename;
-      const data = { email, imageUser };
+      const filename = (req as any).file.filename;
+      const fullUploadFolderPath = `uploads${req.url}/${filename}`;
+      const data = {
+        email: email,
+        filename: fullUploadFolderPath,
+      };
       const result: any = await UpdateImageHandler(data);
 
       return res.status(result.statusCode).json({ data: result });
@@ -141,23 +145,25 @@ export default class UserController {
     }
   }
 
-    async verifyForgotPasswordByEmailCode(req: Request<any, any, VerifyForgotPasswordByEmailCodeRequest>, res:Response){
-        // #swagger.description = 'Verify forgot password'
-        // #swagger.tags = ["User"]
-        try {
-            const {hash, email, timeStamp} = req.body;
-            const data : any = {
-                hash : hash,
-                email : email,
-                timeStamp: timeStamp
-            }
-            const result: any = await VerifyForgotPasswordByEmailCodeHandler(data);
-            return res.status(result.statusCode).json(result);
-        } catch (error:any) {
-            return res.status(500).json({ error: error.mesagge });
-        }
+  async verifyForgotPasswordByEmailCode(
+    req: Request<any, any, VerifyForgotPasswordByEmailCodeRequest>,
+    res: Response
+  ) {
+    // #swagger.description = 'Verify forgot password'
+    // #swagger.tags = ["User"]
+    try {
+      const { hash, email, timeStamp } = req.body;
+      const data: any = {
+        hash: hash,
+        email: email,
+        timeStamp: timeStamp,
+      };
+      const result: any = await VerifyForgotPasswordByEmailCodeHandler(data);
+      return res.status(result.statusCode).json(result);
+    } catch (error: any) {
+      return res.status(500).json({ error: error.mesagge });
     }
-
+  }
 
   //     async newUser(req: Request, res: Response): Promise<void> {
   //         try {

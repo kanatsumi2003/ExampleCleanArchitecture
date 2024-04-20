@@ -1,4 +1,3 @@
-import { response } from "express";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { UpdatePassResponse } from "../Response/UpdatePassResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";

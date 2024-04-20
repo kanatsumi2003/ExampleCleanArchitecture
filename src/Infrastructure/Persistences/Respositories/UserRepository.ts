@@ -108,10 +108,10 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
     }
   }
 
-  async uploadImage(data: any): Promise<void> {
+  async uploadImage(data: any): Promise<string> {
     try {
       
-      const {email, imageUser} = data
+      const {email, filename} = data
       
       const query: any = {
         email: email,
@@ -119,9 +119,10 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
         isActive: true,
       };
       const updateData: any = {
-        imageUser: imageUser
+        imageUser: filename
       }
       await this.updateDocument(query, updateData);
+      return filename;
     } catch (error: any) {
       throw new Error("Error updating image: " + error.message);
     }
