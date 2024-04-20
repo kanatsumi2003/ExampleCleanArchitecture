@@ -12,6 +12,8 @@ import { md5Encrypt} from '../../Application/Common/Helpers/passwordUtils';
 import IUserRepository from '../../Application/Persistences/IRepositories/IUserRepository';
 import { User } from '../../Domain/Entities/UserEntites';
 import { RequestWithUser } from '../../Application/Features/User/Requests/RequestWithUser';
+import { verifyEmailHandler } from '../../Application/Features/User/Handlers/VerifyEmailHandler';
+import { getProfileHandler } from '../../Application/Features/User/Handlers/GetProfileHandler.';
 
 export default class UserController {
     // private userRepository: UserRepository;
@@ -63,30 +65,14 @@ export default class UserController {
         // #swagger.tags = ["User"]
         try {
 
-            const { hash, email } = req.body;
-            const userRepository: IUserRepository = new UserRepository();
-
-            const queryData: any = {
-                isDelete: false,
-                isActive: true,
-                emailConfirmed: false,
-            }
-            const user: any = await userRepository.getUserByEmail(email, queryData);
-            if (!user) {
-             return res.status(400).json({ message: "Cannot find email" });
-            }     
-
-            const emailHash = await md5Encrypt(user.emailCode);
-            console.log(emailHash);
-            if (hash != emailHash) {
-                return res.status(400).json({ message: "Cannot verify please try again" });
-            }
-            user.emailCode = Math.random().toString(36).substr(2, 5);
-            user.emailConfirmed = true;
-            console.log(user._id.toString());
-            await userRepository.updateDocument(queryData, user);
+            const { hash, email} = req.body;
+            const result: any = await verifyEmailHandler({ hash, email });
             //active
-            return res.status(200).json({ message: "xác thực mail thành công" });
+            if (result.error != undefined || result.error) {
+                return res.status(result.statusCode).json({error: result.error});
+            }
+            console.log(result);
+            return res.status(result.statusCode).json({message: result.message});
         } catch (error) {
             console.log(error);
             return res.status(500).json({ message: 'Error verify user', error });
@@ -97,21 +83,17 @@ export default class UserController {
         // #swagger.description = 'Get Profile User'
         // #swagger.tags = ["User"]
         try {
-            const userRepository: IUserRepository = new UserRepository();
-            const queryData: any = {
-                isDelete: false,
-                isActive: true,
-                emailConfirmed: false || true,
-            }
+
             const user:User = req.user;
             const userId : any = user?.getId();
-            const userProfile = await userRepository.getUserById(userId, queryData);
-            if (!userProfile) {
-                return res.status(400).json({ message: "Cannot find user" });
+            const result: any = await getProfileHandler(userId);
+            if (result.error != undefined || result.error) {
+                return res.status(result.statusCode).json({error: result.error});
             }
-            return res.status(200).json(userProfile);
+            console.log(result);
+            return res.status(result.statusCode).json({message: result.message});
         } catch (error) {
-            return res.status(500).json({ message: 'Error get profile user', error});
+            return res.status(500).json({error: error.messgae});
         }
 
     }
