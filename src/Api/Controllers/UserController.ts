@@ -3,6 +3,7 @@ import { Request, Response, query } from 'express';
 import LoginHandler from "../../Application/Features/User/Handlers/LoginHandler";
 import { LoginRequest } from "../../Application/Features/User/Requests/LoginRequest";
 import { CreateUserHandler } from '../../Application/Features/User/Handlers/CreateUserHandler';
+import {ChangePasswordRequest} from '../../Application/Features/User/Requests/ChangePasswordRequest'
 import UserRepository from '../../Infrastructure/Persistences/Respositories/UserRepository';
 import {ChangePasswordRequest} from '../../Application/Features/User/Requests/ChangePasswordRequest'
 import ChangePasswordHandler from "../../Application/Features/User/Handlers/ChangePasswordHandler";
@@ -30,6 +31,8 @@ export default class UserController {
             return res.status(500).json({error: error.message});
         }
     }
+
+    
     
     async createUser(req: Request<any, any, CreateUserRequest>, res: Response): Promise<Response> {
     // #swagger.description = 'get role by Id'
