@@ -1,0 +1,34 @@
+import { response } from "express";
+import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
+import { UpdateImageResponse } from "../Response/UpdateImageResponse";
+
+
+async function UpdateImageHandler(data: any): Promise<UpdateImageResponse> {
+  try {
+    const { email, imageUser  } = data;
+    
+    const userRepository = new UserRepository();
+    const queryData: any = {
+      isDelete: false,
+      isActive: true,
+      emailConfirmed: false,
+    };
+    const user: any = await userRepository.getUserByEmail(email, queryData);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+   
+    const updateData = {
+      email: email,
+      imageUser: imageUser,
+    };
+    const result: any = await userRepository.uploadImage(updateData);
+    return new UpdateImageResponse("Image updated successfully", 200,result);
+  } catch (error: any) {
+   
+    throw new Error(error.message);
+  }
+}
+
+export default UpdateImageHandler;
