@@ -103,7 +103,7 @@
         "tags": [
           "User"
         ],
-        "description": "get role by Id",
+        "description": "get role by id",
         "parameters": [
           {
             "name": "user-agent",
@@ -177,12 +177,12 @@
         }
       }
     },
-    "/users/verifyEmail": {
+    "/user/verifyEmail": {
       "post": {
         "tags": [
           "User"
         ],
-        "description": "Use to request all posts",
+        "description": "Verify Email",
         "parameters": [
           {
             "name": "body",
@@ -201,11 +201,31 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/user/profile": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "Get Profile User",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
           },
-          "400": {
-            "description": "Bad Request"
+          "403": {
+            "description": "Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
@@ -234,11 +254,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }

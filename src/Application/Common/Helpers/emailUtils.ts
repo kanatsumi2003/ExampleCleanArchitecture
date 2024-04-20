@@ -9,7 +9,7 @@ let transporter = nodemailer.createTransport({
     }
 })
 
-async function renderTemplate(data: any, path: string) {
+export async function renderTemplate(data: any, path: string) {
     return new Promise((resolve, reject) => {
         ejs.renderFile(path, data, (err: any, html: any) => {
             if (err) {

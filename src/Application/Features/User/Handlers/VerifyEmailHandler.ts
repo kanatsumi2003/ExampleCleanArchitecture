@@ -28,8 +28,8 @@ export async function verifyEmailHandler (data : any) : Promise<VerifyEmailRespo
     user.emailConfirmed = true;
     console.log(user._id.toString());
     const result = await userRepository.updateDocument(queryData, user);
-    return new VerifyEmailResponse("Xác thực thành công", 200, result);
-  } catch (error) {
+    return new VerifyEmailResponse("Verify email successful", 200, result);
+  } catch (error: any) {
     throw new Error("Error at ForgotPasswordHandler:" + error.message);
   }
 }

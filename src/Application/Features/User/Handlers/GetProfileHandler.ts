@@ -4,7 +4,7 @@ import { ForgotPasswordResponse } from "../Response/ForgotPasswordResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { GetProfileUserResponse } from "../Response/GetProfileUserRespone";
 
-export async function getProfileHandler(userId: string): Promise<ForgotPasswordResponse> {
+export async function getProfileHandler(userId: string): Promise<GetProfileUserResponse> {
     try {
       const userRepository: IUserRepository = new UserRepository();
       const queryData: any = {
@@ -16,7 +16,7 @@ export async function getProfileHandler(userId: string): Promise<ForgotPasswordR
       if (!userProfile) {
         throw new Error("User with email can't get profile");
       }
-      return new GetProfileUserResponse("Xác thực thành công", 200, userProfile);
+      return new GetProfileUserResponse("Get user profile successful", 200, userProfile);
     } catch (error: any) {
         throw new Error("Error at ForgotPasswordHandler:" + error.message);
     }

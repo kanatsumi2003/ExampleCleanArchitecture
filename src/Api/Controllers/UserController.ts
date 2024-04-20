@@ -11,9 +11,9 @@ import { ChangePasswordHandler } from '../../Application/Features/User/Handlers/
 import { md5Encrypt} from '../../Application/Common/Helpers/passwordUtils';
 import IUserRepository from '../../Application/Persistences/IRepositories/IUserRepository';
 import { User } from '../../Domain/Entities/UserEntites';
-import { RequestWithUser } from '../../Application/Features/User/Requests/RequestWithUser';
 import { verifyEmailHandler } from '../../Application/Features/User/Handlers/VerifyEmailHandler';
-import { getProfileHandler } from '../../Application/Features/User/Handlers/GetProfileHandler.';
+import { getProfileHandler } from '../../Application/Features/User/Handlers/GetProfileHandler';
+import { GetUserProfileRequest } from '../../Application/Features/User/Requests/GetUserProfileRequest';
 
 export default class UserController {
     // private userRepository: UserRepository;
@@ -79,18 +79,14 @@ export default class UserController {
         }
     }
 
-    async getProfileUser(req: RequestWithUser, res: Response): Promise<Response> {
+    async getProfileUser(req: Request<any, any, GetUserProfileRequest>, res: Response): Promise<Response> {
         // #swagger.description = 'Get Profile User'
         // #swagger.tags = ["User"]
         try {
-            const userId : any = req.user?.userId;
+            const {userId} = (req as any).user;
             const result: any = await getProfileHandler(userId);
-            if (result.error != undefined || result.error) {
-                return res.status(result.statusCode).json({error: result.error});
-            }
-            console.log(result);
-            return res.status(result.statusCode).json({message: result.message});
-        } catch (error) {
+            return res.status(result.statusCode).json({message: result});
+        } catch (error: any) {
             return res.status(500).json({error: error.messgae});
         }
 

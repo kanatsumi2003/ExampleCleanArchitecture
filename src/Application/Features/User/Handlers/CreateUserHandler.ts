@@ -1,7 +1,6 @@
 import { CreateUserResponse } from './../Response/CreateUserResponse';
 import RoleRepository from "../../../../Infrastructure/Persistences/Respositories/RoleRepository";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
-import { CreateRoleResponse } from "../../Role/Response/CreateRoleResponse";
 import IUserRepository from '../../../Persistences/IRepositories/IUserRepository';
 import IRoleRepository from '../../../Persistences/IRepositories/IRoleRepository';
 
@@ -39,10 +38,10 @@ export async function CreateUserHandler(data: any): Promise<CreateUserResponse> 
       emailCode: emailHash,
     }
 
-    await sendMail(email, "hello  world", emailData, "verifyEmailTemplate.ejs");
+    await sendMail(email, "Welcome to Noah-Quiz!", emailData, "verifyEmailTemplate.ejs");
 
 
-    return new CreateRoleResponse("Successful", 200, result);
+    return new CreateUserResponse("Successful", 200, result);
 
   } catch (error: any) {
     throw new Error("Error at CreateUserHandler: " + error.message);
