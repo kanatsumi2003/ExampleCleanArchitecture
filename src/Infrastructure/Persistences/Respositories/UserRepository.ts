@@ -60,10 +60,11 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
       throw new Error("Error at createUser in UserRepository: " + error.message);
     }
   }
-  
-  async uploadPass(email:any, newPassword:any): Promise<void> {
+
+  async uploadPass(data: any): Promise<void> {
     try {
       // Hash mật khẩu mới trước khi cập nhật
+      const {email, newPassword} = data
       const hashedPassword = await hashPassword(newPassword);
   
       // Xây dựng điều kiện tìm kiếm user theo email
@@ -76,15 +77,36 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
   
       // Xây dựng dữ liệu cập nhật với phép cập nhật trường hợp $set
       const updateData: any = {
-        $set: {
           password: hashedPassword,
-        },
       };
   
       // Thực hiện phép cập nhật sử dụng $set
       await this.updateDocument(query, updateData);
     } catch (error: any) {
       throw new Error("Error updating password: " + error.message);
+    }
+  }
+
+  async uploadImage(data: any): Promise<void> {
+    try {
+      
+      const {email, imageUser} = data
+      
+      const query: any = {
+        email: email,
+        isDelete: false,
+        isActive: true,
+        emailConfirmed: true,
+      };
+  
+
+      const updateData: any = {
+        imageUser: imageUser,
+      };
+  
+      await this.updateDocument(query, updateData);
+    } catch (error: any) {
+      throw new Error("Error updating image: " + error.message);
     }
   }
   

@@ -1,16 +1,13 @@
 import { response } from "express";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
-import { UpdatePassResponse } from "../Response/UpdatePassResponse";
+import { UpdateImageResponse } from "../Response/UpdateImageResponse";
 
 
-async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> {
+async function UpdateImageHandler(data: any): Promise<UpdateImageResponse> {
   try {
-    const { email, newpassword } = data;
-
-    // Tạo một đối tượng UserRepository
+    const { email, imageFileName  } = data;
+    
     const userRepository = new UserRepository();
-
-    // Sử dụng phương thức getUserByEmail để lấy thông tin người dùng dựa trên email
     const queryData: any = {
       isDelete: false,
       isActive: true,
@@ -24,14 +21,14 @@ async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> {
    
     const updateData = {
       email: email,
-      newPassword: newpassword,
+      imageUser: imageFileName,
     };
-    const result: any = await userRepository.uploadPass(updateData);
-    return new UpdatePassResponse("Password updated successfully", 200,result);
+    const result: any = await userRepository.uploadImage(updateData);
+    return new UpdateImageResponse("Image updated successfully", 200,result);
   } catch (error: any) {
    
     throw new Error(error.message);
   }
 }
 
-export default UpdatePassHandler;
+export default UpdateImageHandler;

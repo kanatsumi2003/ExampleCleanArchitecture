@@ -3,9 +3,11 @@ import { CreateUserRequest } from './../../Application/Features/User/Requests/Cr
 import { Request, Response, query } from 'express';
 import LoginHandler from "../../Application/Features/User/Handlers/LoginHandler";
 import { LoginRequest } from "../../Application/Features/User/Requests/LoginRequest";
+import {UpdateImageRequest } from "../../Application/Features/User/Requests/UpdateImageRequest";
 import { CreateUserHandler } from '../../Application/Features/User/Handlers/CreateUserHandler';
 import  UpdatePassHandler  from '../../Application/Features/User/Handlers/UpdatePassHandler';
 import UserRepository from '../../Infrastructure/Persistences/Respositories/UserRepository';
+import UpdateImageHandler from '../../Application/Features/User/Handlers/UpdateImageHandler';
 
 
 export default class UserController {
@@ -67,12 +69,28 @@ export default class UserController {
             const data = {  email, newpassword }
             const result: any = await UpdatePassHandler(data);
 
-            if (result.error != undefined || result.error) {
-                return res.status(result.statusCode).json({ error: result.error });
-            }
             return res.status(result.statusCode).json({ data: result });
         } catch (error: any) {
             console.error('Update Password failed:', error);
+            return res.status(500).json({ error: error.message });
+        }
+    }
+
+    async updateImage(req: Request<any, any, UpdateImageRequest>, res: Response): Promise<Response> {
+        // #swagger.description = 'Update Password'
+        // #swagger.tags = ["User"]
+        try {
+            const { email } = req.body;
+            if (!req.file) {
+                return res.status(400).json({ error: 'No image uploaded' });
+            }
+            const imageFileName = req.file.filename; 
+            const data = {  email, imageFileName }
+            const result: any = await UpdateImageHandler(data);
+
+            return res.status(result.statusCode).json({ data: result });
+        } catch (error: any) {
+            console.error('Update Image failed:', error);
             return res.status(500).json({ error: error.message });
         }
     }
