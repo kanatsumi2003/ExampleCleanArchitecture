@@ -12,7 +12,7 @@ export async function getProfileHandler(userId: string): Promise<ForgotPasswordR
           isActive: true,
           emailConfirmed: false || true,
       }
-      const userProfile = await userRepository.getUserById(userId, queryData);
+      const userProfile: any = await userRepository.getUserById(userId, queryData);
       if (!userProfile) {
         throw new Error("User with email can't get profile");
       }

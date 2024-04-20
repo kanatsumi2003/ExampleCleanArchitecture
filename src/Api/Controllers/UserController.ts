@@ -83,9 +83,7 @@ export default class UserController {
         // #swagger.description = 'Get Profile User'
         // #swagger.tags = ["User"]
         try {
-
-            const user:User = req.user;
-            const userId : any = user?.getId();
+            const userId : any = req.user?.userId;
             const result: any = await getProfileHandler(userId);
             if (result.error != undefined || result.error) {
                 return res.status(result.statusCode).json({error: result.error});
