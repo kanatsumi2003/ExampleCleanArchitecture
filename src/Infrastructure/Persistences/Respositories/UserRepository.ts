@@ -16,6 +16,7 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
         isDelete: queryData.isDelete,
         isActive: queryData.isActive,
         emailConfirmed: queryData.emailConfirmed,
+        
       };
       const users: UserWithBase[] = await this.findDocuments(query, null, {});
       if (users === null || users.length <= 0) {
@@ -41,7 +42,7 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
     }
   }
 
-  async createUser(userData: any): Promise<void>{
+  async createUser(userData: any ): Promise<UserWithBase>{
     try {
       const user: any = new User(
         userData.fullname,
@@ -53,8 +54,10 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
         null
       )
       const userWithBase: any = new UserWithBase(user);
+      
       userWithBase.password = await hashPassword(user.password);
-      await this.insertDocuments(userWithBase);
+       await this.insertDocuments(userWithBase);
+       return userWithBase;
     } catch (error: any) {
       throw new Error("Error at createUser in UserRepository: " + error.message);
     }

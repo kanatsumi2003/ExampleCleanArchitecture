@@ -5,6 +5,11 @@ import { CreateRoleResponse } from "../../Role/Response/CreateRoleResponse";
 import IUserRepository from '../../../Persistences/IRepositories/IUserRepository';
 import IRoleRepository from '../../../Persistences/IRepositories/IRoleRepository';
 
+import {sendMail} from '../../../../Application/Common/Helpers/emailUtils'
+import { md5Encrypt } from '../../../Common/Helpers/passwordUtils';
+
+
+
 export async function CreateUserHandler(data: any): Promise<CreateUserResponse> {
   try {
     const userRepository: IUserRepository = new UserRepository();
@@ -24,7 +29,21 @@ export async function CreateUserHandler(data: any): Promise<CreateUserResponse> 
       role_id: role._id
     };
     const result: any = await userRepository.createUser(createUserRoleData);
+
+    const emailHash = await md5Encrypt(result.emailCode);
+
+
+    const emailData = { 
+      email: email,
+      fullname: fullname,
+      emailCode: emailHash,
+    }
+
+    await sendMail(email, "hello  world", emailData, "verifyEmailTemplate.ejs");
+
+
     return new CreateRoleResponse("Successful", 200, result);
+
   } catch (error: any) {
     throw new Error("Error at CreateUserHandler: " + error.message);
   }

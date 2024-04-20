@@ -7,13 +7,19 @@ import UserRepository from '../../Infrastructure/Persistences/Respositories/User
 import { ForgotPasswordHandler } from '../../Application/Features/User/Handlers/ForgotPasswordHandler';
 import { ChangePasswordRequest } from '../../Application/Features/User/Requests/ChangePasswordRequest';
 import { ChangePasswordHandler } from '../../Application/Features/User/Handlers/ChangePasswordHandler';
+
+import { md5Encrypt} from '../../Application/Common/Helpers/passwordUtils';
+import IUserRepository from '../../Application/Persistences/IRepositories/IUserRepository';
+import { User } from '../../Domain/Entities/UserEntites';
+import { RequestWithUser } from '../../Application/Features/User/Requests/RequestWithUser';
+
 export default class UserController {
     // private userRepository: UserRepository;
     // constructor() {
     //     this.userRepository = new UserRepository();
     // }
     async login(req: Request<any, any, LoginRequest>, res: Response): Promise<Response> {
-        // #swagger.description = 'get role by Id'
+        // #swagger.description = 'get role by id'
         // #swagger.tags = ["User"]
         try {
             const { email, password } = req.body;
@@ -51,8 +57,68 @@ export default class UserController {
             return res.status(500).json({ error: error.messgae });
         }
     }
+    
+    async verifyEmail(req: Request, res: Response) : Promise<Response> {
+        // #swagger.description = 'Verify Email'
+        // #swagger.tags = ["User"]
+        try {
+
+            const { hash, email } = req.body;
+            const userRepository: IUserRepository = new UserRepository();
+
+            const queryData: any = {
+                isDelete: false,
+                isActive: true,
+                emailConfirmed: false,
+            }
+            const user: any = await userRepository.getUserByEmail(email, queryData);
+            if (!user) {
+             return res.status(400).json({ message: "Cannot find email" });
+            }     
+
+            const emailHash = await md5Encrypt(user.emailCode);
+            console.log(emailHash);
+            if (hash != emailHash) {
+                return res.status(400).json({ message: "Cannot verify please try again" });
+            }
+            user.emailCode = Math.random().toString(36).substr(2, 5);
+            user.emailConfirmed = true;
+            console.log(user._id.toString());
+            await userRepository.updateDocument(queryData, user);
+            //active
+            return res.status(200).json({ message: "xác thực mail thành công" });
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({ message: 'Error verify user', error });
+        }
+    }
+
+    async getProfileUser(req: RequestWithUser, res: Response): Promise<Response> {
+        // #swagger.description = 'Get Profile User'
+        // #swagger.tags = ["User"]
+        try {
+            const userRepository: IUserRepository = new UserRepository();
+            const queryData: any = {
+                isDelete: false,
+                isActive: true,
+                emailConfirmed: false || true,
+            }
+            const user:User = req.user;
+            const userId : any = user?.getId();
+            const userProfile = await userRepository.getUserById(userId, queryData);
+            if (!userProfile) {
+                return res.status(400).json({ message: "Cannot find user" });
+            }
+            return res.status(200).json(userProfile);
+        } catch (error) {
+            return res.status(500).json({ message: 'Error get profile user', error});
+        }
+
+    }
 
     async forgotPassword(req: Request, res: Response): Promise<Response> {
+        // #swagger.description = 'Forgot Password'
+        // #swagger.tags = ["User"]
         try {
             const email: string = req.body.email;
             const result: any = await ForgotPasswordHandler(email);
