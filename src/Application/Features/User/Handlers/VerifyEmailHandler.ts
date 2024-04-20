@@ -1,7 +1,7 @@
+import { VerifyEmailResponse } from './../Response/VerifyEmailResponse';
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { md5Encrypt } from "../../../Common/Helpers/passwordUtils";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
-import { VerifyEmailResponse } from "../Response/VerifyEmailResponse";
 
 export async function verifyEmailHandler (data : any) : Promise<VerifyEmailResponse> {
   try {

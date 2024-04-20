@@ -4,7 +4,7 @@ import { UpdateImageResponse } from "../Response/UpdateImageResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 
 
-async function UpdateImageHandler(data: any): Promise<UpdateImageResponse> {
+export async function UpdateImageHandler(data: any): Promise<UpdateImageResponse> {
   try {
     const { email, filename } = data;
     
