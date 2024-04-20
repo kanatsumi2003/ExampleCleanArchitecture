@@ -27,11 +27,6 @@
         "description": "get role by Id",
         "parameters": [
           {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
-          {
             "name": "body",
             "in": "body",
             "schema": {
@@ -45,14 +40,8 @@
           }
         ],
         "responses": {
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "500": {
-            "description": "Internal Server Error"
+          "default": {
+            "description": ""
           }
         }
       }
@@ -64,11 +53,6 @@
         ],
         "description": "get role by Id",
         "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -92,14 +76,8 @@
           }
         ],
         "responses": {
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "500": {
-            "description": "Internal Server Error"
+          "default": {
+            "description": ""
           }
         }
       }
@@ -170,6 +148,36 @@
                   "example": "any"
                 },
                 "username": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/user/updatePassword": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Update Password",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "example": "any"
+                },
+                "newpassword": {
                   "example": "any"
                 }
               }
