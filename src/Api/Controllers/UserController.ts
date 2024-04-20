@@ -5,8 +5,7 @@ import { LoginRequest } from "../../Application/Features/User/Requests/LoginRequ
 import { CreateUserHandler } from '../../Application/Features/User/Handlers/CreateUserHandler';
 import {ChangePasswordRequest} from '../../Application/Features/User/Requests/ChangePasswordRequest'
 import UserRepository from '../../Infrastructure/Persistences/Respositories/UserRepository';
-import {ChangePasswordRequest} from '../../Application/Features/User/Requests/ChangePasswordRequest'
-import ChangePasswordHandler from "../../Application/Features/User/Handlers/ChangePasswordHandler";
+
 export default class UserController {
     // private userRepository: UserRepository;
     // constructor() {
