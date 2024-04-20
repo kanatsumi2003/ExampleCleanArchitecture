@@ -32,6 +32,7 @@ router.post("/user/forgot-password", userController.forgotPassword);
 router.post("/user/verify-forgot-password", userController.verifyForgotPasswordByEmailCode);
 router.post("/user/updatePassword", userController.updatePassword)
 router.post("/user/uploadImage", upload.single('filename'), userController.updateImage);
+router.post("/user/changepassword", authenticateToken, userController.changepassword);
 
 module.exports = router;
 

@@ -11,6 +11,7 @@ interface IUserRepository extends IBaseRepository {
     updateUserById(userId:string,  userData: any):Promise<void>;
     uploadPass(data: any): Promise<void>;
     uploadImage(data: any): Promise<string>;
+    changePasswordUser(queryData: any): Promise<void>;
 }
 
 export default IUserRepository;

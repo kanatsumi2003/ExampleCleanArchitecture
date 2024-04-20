@@ -3,7 +3,7 @@ import { UpdatePassResponse } from "../Response/UpdatePassResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 
 
-async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> {
+export async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> {
   try {
     const { email, newpassword } = data;
 

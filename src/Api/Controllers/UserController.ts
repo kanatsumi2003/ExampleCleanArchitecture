@@ -5,6 +5,7 @@ import { Request, Response, query } from "express";
 import LoginHandler from "../../Application/Features/User/Handlers/LoginHandler";
 import { LoginRequest } from "../../Application/Features/User/Requests/LoginRequest";
 import { CreateUserHandler } from '../../Application/Features/User/Handlers/CreateUserHandler';
+import {ChangePasswordRequest} from '../../Application/Features/User/Requests/ChangePasswordRequest'
 import { ForgotPasswordHandler } from '../../Application/Features/User/Handlers/ForgotPasswordHandler';
 import { verifyEmailHandler } from '../../Application/Features/User/Handlers/VerifyEmailHandler';
 import { getProfileHandler } from '../../Application/Features/User/Handlers/GetProfileHandler';
@@ -12,6 +13,9 @@ import { GetUserProfileRequest } from '../../Application/Features/User/Requests/
 import { VerifyForgotPasswordByEmailCodeRequest } from '../../Application/Features/User/Requests/VerifyForgotPasswordByEmailCodeRequest';
 import UpdateImageHandler from '../../Application/Features/User/Handlers/UpdateImageHandler';
 import { VerifyForgotPasswordByEmailCodeHandler } from '../../Application/Features/User/Handlers/VerifyForgotPasswordByEmailCodeHandler';
+
+import ChangePasswordHandler from '../../Application/Features/User/Handlers/ChangePasswordHandler';
+import UpdatePassHandler from '../../Application/Features/User/Handlers/UpdatePassHandler';
 
 export default class UserController {
     // private userRepository: UserRepository;
@@ -34,6 +38,8 @@ export default class UserController {
       return res.status(500).json({ error: error.message });
     }
   }
+
+    
 
   async createUser(
     req: Request<any, any, CreateUserRequest>,
@@ -184,6 +190,32 @@ export default class UserController {
     }
   }
   
+
+
+    async changepassword(req: Request<any, any, ChangePasswordRequest>, res: Response): Promise<Response> {
+        // #swagger.description = 'Change password'
+        // #swagger.tags = ["User"]
+            try {
+                const {oldpassword, newpassword} = req.body;
+                const userId = (req as any).user.userId;
+                const data = {userId, oldpassword, newpassword}
+                const result: any = await ChangePasswordHandler(data);
+    
+                return res.status(result.statusCode).json({ data: result });
+            } catch (error: any) {
+                console.error('Login failed:', error);
+                return res.status(500).json({error: error.message});
+            }
+        }
+}
+
+
+
+
+
+
+
+
   //     async newUser(req: Request, res: Response): Promise<void> {
   //         try {
   //             const user = new User("b", "asd", "1", "123", "123", new ObjectId(123), "123")
@@ -226,8 +258,5 @@ export default class UserController {
   //             throw error;
   //         }
   //     }
-}
-function UpdatePassHandler(data: { email: string; newpassword: string; }): any {
-    throw new Error("Function not implemented.");
-}
+
 
