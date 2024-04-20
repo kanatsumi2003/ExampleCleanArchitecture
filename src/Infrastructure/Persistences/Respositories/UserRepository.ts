@@ -116,6 +116,41 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
   //             throw error;
   //         }
   //     }
+
+  async getUserById(userId: string, queryData: any): Promise<UserWithBase>{
+    try {
+      const query: any = {
+        _id: new mongoose.Types.ObjectId(userId),
+        isDelete: queryData.isDelete,
+        isActive: queryData.isActive,
+      };
+      const user: UserWithBase[] = await this.findDocuments(query, null, {});
+      return user[0];
+    } catch (error: any) {
+      throw new Error("Error at getUserById in UserRepository: " + error.meesage);
+    }
+  }
+
+  async changePasswordUser(data: any): Promise<void> {
+    try {
+      const {userId, oldPassword, newPassword} = data
+
+      const query: any = {
+        isDelete: false, 
+        isActive: true,
+      };
+
+      const hashedPassword = await hashPassword(newPassword);
+      const updateData: any = {
+        userId: userId,
+        password: hashedPassword,
+    };
+
+        await this.updateDocument(query, updateData);
+    } catch (error: any) {
+        throw new Error('Error change password: ' + error.message);
+    }
+}
 }
 
 export default UserRepository;
