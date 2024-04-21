@@ -179,6 +179,13 @@
   dependencies:
     undici-types "~5.26.4"
 
+"@types/nodemon@^1.19.6":
+  version "1.19.6"
+  resolved "https://registry.yarnpkg.com/@types/nodemon/-/nodemon-1.19.6.tgz#1c14bac51dfd3d354e2b5046949f925a742412c4"
+  integrity sha512-vjKuaQOLUA5EY2zkUmWG1ipXbKt9Wd+H/0SiIuHVeH4cHtt6509iRUGH9ZR0iqgUrtj3BrP9KqoTuV3ZCbQcYA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/qs@*":
   version "6.9.14"
   resolved "https://registry.npmjs.org/@types/qs/-/qs-6.9.14.tgz"
@@ -1199,7 +1206,7 @@ nodemailer@^6.9.13:
 
 nodemon@^3.1.0:
   version "3.1.0"
-  resolved "https://registry.npmjs.org/nodemon/-/nodemon-3.1.0.tgz"
+  resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-3.1.0.tgz#ff7394f2450eb6a5e96fe4180acd5176b29799c9"
   integrity sha512-xqlktYlDMCepBJd43ZQhjWwMw2obW/JRvkrLxq5RCNcuDDX1DbcPT+qT1IlIIdf+DhnWs90JpTMe+Y5KxOchvA==
   dependencies:
     chokidar "^3.5.2"
@@ -1613,7 +1620,7 @@ tr46@^4.1.1:
 
 ts-node@^10.9.2:
   version "10.9.2"
-  resolved "https://registry.npmjs.org/ts-node/-/ts-node-10.9.2.tgz"
+  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-10.9.2.tgz#70f021c9e185bccdca820e26dc413805c101c71f"
   integrity sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==
   dependencies:
     "@cspotcode/source-map-support" "^0.8.0"
