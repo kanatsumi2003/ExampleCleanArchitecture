@@ -103,7 +103,7 @@
         "tags": [
           "User"
         ],
-        "description": "Login with email and password",
+        "description": "get role by id",
         "parameters": [
           {
             "name": "user-agent",
@@ -143,7 +143,7 @@
         "tags": [
           "User"
         ],
-        "description": "Create new User",
+        "description": "get role by Id",
         "parameters": [
           {
             "name": "body",
@@ -177,12 +177,68 @@
         }
       }
     },
+    "/user/verifyEmail": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Verify Email",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "hash": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/user/profile": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "description": "Get Profile User",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/user/forgot-password": {
       "post": {
         "tags": [
           "User"
         ],
-        "description": "Forgot old password",
+        "description": "Forgot Password",
         "parameters": [
           {
             "name": "body",
@@ -263,6 +319,78 @@
         "responses": {
           "default": {
             "description": ""
+          }
+        }
+      }
+    },
+    "/user/uploadImage": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Update Password",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "formData",
+            "type": "file",
+            "required": true
+          },
+          {
+            "name": "email",
+            "in": "formData",
+            "type": "string",
+            "required": true,
+            "description": "Email of the user"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/user/changepassword": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "description": "Change password",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "oldpassword": {
+                  "example": "any"
+                },
+                "newpassword": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }

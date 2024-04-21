@@ -9,7 +9,7 @@ let transporter = nodemailer.createTransport({
     }
 })
 
-async function renderTemplate(data: any, path: string) {
+export async function renderTemplate(data: any, path: string) {
     return new Promise((resolve, reject) => {
         ejs.renderFile(path, data, (err: any, html: any) => {
             if (err) {
@@ -18,10 +18,10 @@ async function renderTemplate(data: any, path: string) {
                 resolve(html);
             }
         })
-        })
+    })
 }
 
-async function sendMail(Mailto: string, subject: string, user: any, templateName: string): Promise<string> {
+export async function sendMail(Mailto: string, subject: string, user: any, templateName: string): Promise<string> {
     const path = "./src/view/emailTemplate/" + templateName;
     const htmlContent = await renderTemplate(user, path);
     const mailOptions = {
@@ -40,6 +40,3 @@ async function sendMail(Mailto: string, subject: string, user: any, templateName
     })
     return "Sent Mail Successfully"
 }
-module.exports = {
-    sendMail
-};

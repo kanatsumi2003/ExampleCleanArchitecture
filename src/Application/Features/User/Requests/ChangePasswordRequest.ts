@@ -1,4 +1,5 @@
-export class ChangePasswordRequest{
-    public oldPassword: string;
-    public newPassword: string;
+export class ChangePasswordRequest {
+    public userId: string;
+    public oldpassword: string;
+    public newpassword: string;
 }

@@ -69,7 +69,7 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
         return loginResponse
 
     } catch (error: any) {
-        throw new Error("Error at LoginHandler:" + error.message)
+        throw new Error("Error at LoginHandler: " + error.message)
     }
 }
 
