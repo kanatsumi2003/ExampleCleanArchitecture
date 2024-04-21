@@ -11,7 +11,7 @@ function authenticateToken(req: any, res: any, next: any){
     if (!token) {
         return res.sendStatus(401); // No token provided
     }
-
+ 
     // Find the session associated with the token
      sessionRepository.findSessionByToken(token).then( session => {
 
