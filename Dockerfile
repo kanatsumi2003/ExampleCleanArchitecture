@@ -5,4 +5,4 @@ COPY yarn.lock /.
 RUN yarn --force
 COPY . .
 EXPOSE 3000
-CMD ["yarn", "start"]
+CMD ["yarn", "dev"]
