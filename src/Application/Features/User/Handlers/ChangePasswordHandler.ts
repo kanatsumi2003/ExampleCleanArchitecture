@@ -9,18 +9,19 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
    
     try {
         const userRepository = new UserRepository();
-        const {userId, oldPassword, newPassword} = data;
+        const {userId, oldpassword, newpassword} = data;
         const queryData = {
             isDelete: false,
             isActive: true,
         }
-        const user = await userRepository.getUserById(userId, queryData);
+        const user: any = await userRepository.getUserById(userId, queryData);
+        
         if (user == null) {
             throw new Error("Không tìm thấy user");
         }
 
           // So sánh mật k
-        const isMatch = await comparePassword(oldPassword, user.getPassword());
+        const isMatch = await comparePassword(oldpassword, user.password);
         if (!isMatch) {
             throw new Error( "Password cũ không đúng");
         }
@@ -30,8 +31,8 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
         // Cập nhật mật khẩu trong cơ sở dữ liệu
         const updateData = {
             userId: userId,
-            oldPassword: oldPassword,
-            newPassword: newPassword
+            oldPassword: oldpassword,
+            newPassword: newpassword
           };
         const result: any = await userRepository.changePasswordUser(updateData);
 
@@ -41,7 +42,6 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
         } else {
             throw new Error("Không thể cập nhật mật khẩu");
         }
-
         
     } catch (error: any) {
         throw new Error(error.message);

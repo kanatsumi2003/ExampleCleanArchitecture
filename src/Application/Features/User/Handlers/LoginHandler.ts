@@ -20,6 +20,7 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
             emailConfirmed: true,
         }
         const user: any = await userRepository.getUserByEmail(email, queryData);
+        
 
         const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
