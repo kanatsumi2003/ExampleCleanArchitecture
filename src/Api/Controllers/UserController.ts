@@ -5,7 +5,7 @@ import { LoginRequest } from "../../Application/Features/User/Requests/LoginRequ
 import { CreateUserHandler } from '../../Application/Features/User/Handlers/CreateUserHandler';
 import {ChangePasswordRequest} from '../../Application/Features/User/Requests/ChangePasswordRequest'
 import UserRepository from '../../Infrastructure/Persistences/Respositories/UserRepository';
-import ChangePasswordHandler from "../../Application/Features/User/Handlers/ChangePasswordHandler";
+import ChangePasswordHandler from '../../Application/Features/User/Handlers/ChangePasswordHandler';
 
 export default class UserController {
     // private userRepository: UserRepository;
@@ -56,6 +56,32 @@ export default class UserController {
             return res.status(500).json({error: error.messgae});
         }
     }
+
+
+    async changepassword(req: Request<any, any, ChangePasswordRequest>, res: Response): Promise<Response> {
+        // #swagger.description = 'Change password'
+        // #swagger.tags = ["User"]
+            try {
+                const {oldpassword, newpassword} = req.body;
+                const userId = (req as any).user.userId;
+                const data = {userId, oldpassword, newpassword}
+                const result: any = await ChangePasswordHandler(data);
+    
+                return res.status(result.statusCode).json({ data: result });
+            } catch (error: any) {
+                console.error('Login failed:', error);
+                return res.status(500).json({error: error.message});
+            }
+        }
+}
+
+
+
+
+
+
+
+
     //     async newUser(req: Request, res: Response): Promise<void> {
     //         try {
     //             const user = new User("b", "asd", "1", "123", "123", new ObjectId(123), "123")
@@ -98,24 +124,3 @@ export default class UserController {
     //             throw error;
     //         }
     //     }
-
-    async changepassword(req: Request<any, any, ChangePasswordRequest>, res: Response): Promise<Response> {
-        // #swagger.description = 'Change password'
-        // #swagger.tags = ["User"]
-            try {
-                const {oldpassword, newpassword } = req.body;
-                const data = {oldpassword, newpassword}
-                const result: any = await ChangePasswordHandler(data);
-    
-                if (result.error != undefined || result.error) {
-                    return res.status(result.statusCode).json({ error: result.error });
-                }
-                return res.status(result.statusCode).json({ data: result });
-            } catch (error: any) {
-                console.error('Change Password failed:', error);
-                return res.status(500).json({error: error.message});
-            }
-        }
-}
-
-

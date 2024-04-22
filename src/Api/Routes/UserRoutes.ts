@@ -15,7 +15,7 @@ const router = express.Router();
 const userController = new UserController();
 router.post("/user/login", userController.login);
 router.post("/user/register", userController.createUser);
-router.post("/user/changepassword", userController.changePassword);
+router.post("/user/changepassword", authenticateToken, userController.changepassword);
 
 module.exports = router;
 

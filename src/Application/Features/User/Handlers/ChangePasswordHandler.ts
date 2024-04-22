@@ -1,4 +1,3 @@
-import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { ChangePasswordResponse } from "../../User/Response/ChangePasswordResponse";
@@ -8,14 +7,13 @@ import { comparePassword } from "../../../Common/Helpers/passwordUtils";
 export async function ChangePasswordHandler(data: any): Promise<ChangePasswordResponse>{
    
     try {
-        const userRepository = new UserRepository();
+        const userRepository: IUserRepository = new UserRepository();
         const {userId, oldpassword, newpassword} = data;
-        const queryData = {
+        const userQueryData = {
             isDelete: false,
             isActive: true,
         }
-        const user: any = await userRepository.getUserById(userId, queryData);
-        
+        const user: any = await userRepository.getUserById(userId, userQueryData);
         if (user == null) {
             throw new Error("Không tìm thấy user");
         }
@@ -29,20 +27,15 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
         // Băm mật khẩu mới
         // const hashedPassword = await hashPassword(newPassword);
         // Cập nhật mật khẩu trong cơ sở dữ liệu
-        const updateData = {
+          const changePasswordUserQueryData = {
             userId: userId,
-            oldPassword: oldpassword,
-            newPassword: newpassword
+            newPassword: newpassword,
+            isActive: true,
+            isDelete: false,
           };
-        const result: any = await userRepository.changePasswordUser(updateData);
-
+        const result: any = await userRepository.changePasswordUser(changePasswordUserQueryData);
         // xóa session
-        if (result) {
-            return new ChangePasswordResponse("Đổi mật khẩu và đăng xuất thành công!", 200, result);
-        } else {
-            throw new Error("Không thể cập nhật mật khẩu");
-        }
-        
+        return new ChangePasswordResponse("Đổi mật khẩu và đăng xuất thành công!", 200, result);
     } catch (error: any) {
         throw new Error(error.message);
     }
