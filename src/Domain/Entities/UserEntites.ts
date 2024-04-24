@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import speakeasy from "speakeasy";
 
 class User {
+  private id ?: string;
   private fullname: string;
   private email: string;
   private username: string;
@@ -25,6 +26,10 @@ class User {
 
   public setFullname(fullname: string): void {
     this.fullname = fullname;
+  }
+
+  public getId(): any {
+    return this.id;
   }
 
   public getEmail(): string {
@@ -158,6 +163,7 @@ class UserWithBase extends BaseEntities {
     super();
     Object.assign(this, user);
   }
+
 
   getFullname(): string {
     return this.user.getFullname();

@@ -2,11 +2,15 @@ import UserRepository from "../../../../Infrastructure/Persistences/Respositorie
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { ChangePasswordResponse } from "../../User/Response/ChangePasswordResponse";
 import { comparePassword } from "../../../Common/Helpers/passwordUtils";
+import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
+import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 
 
 export async function ChangePasswordHandler(data: any): Promise<ChangePasswordResponse>{
    
     try {
+        const sessionRepository: ISessionRepository = new SessionRepository();
         const userRepository: IUserRepository = new UserRepository();
         const {userId, oldpassword, newpassword} = data;
         const userQueryData = {
@@ -35,6 +39,17 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
           };
         const result: any = await userRepository.changePasswordUser(changePasswordUserQueryData);
         // xóa session
+        const sessionQueryData:any ={
+          email: user.email,
+          isDelete: false,
+          isActive:true
+      }
+        const session: any = await sessionRepository.findSessionByEmail(sessionQueryData)
+        if (session !== null && session.length >= 0) {
+            for (const sess of session) {
+                await sessionRepository.deleteSession(sess._id);
+            }
+        }
         return new ChangePasswordResponse("Đổi mật khẩu và đăng xuất thành công!", 200, result);
     } catch (error: any) {
         throw new Error(error.message);

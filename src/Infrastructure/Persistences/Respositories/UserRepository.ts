@@ -9,6 +9,30 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
     const collectionName: string = "users";
     super(collectionName);
   }
+
+
+  async updateUserById(userId: string, userData: any) {
+    try{
+      const user:any = new User(
+        userData.fullname,
+        userData.email,
+        userData.username,
+        userData.password,
+        userData.phoneNumber,
+        userData.role_id,
+        null
+      );
+      const query :any ={
+        _id : new mongoose.Types.ObjectId(userId)  
+      }
+      await this.updateDocument(query,user);
+    }catch(error:any){
+      throw new Error("Error at updateUserById in UserRepository: " + error.message);
+    }
+
+  }
+
+
   async getUserByEmail(email: string, queryData: any): Promise<UserWithBase> {
     try {
       const query: any = {
@@ -49,7 +73,7 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
     }
   }
 
-  async createUser(userData: any): Promise<void> {
+  async createUser(userData: any ): Promise<UserWithBase> {
     try {
       const user: any = new User(
         userData.fullname,
@@ -61,8 +85,10 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
         null
       );
       const userWithBase: any = new UserWithBase(user);
+      
       userWithBase.password = await hashPassword(user.password);
-      await this.insertDocuments(userWithBase);
+       await this.insertDocuments(userWithBase);
+       return userWithBase;
     } catch (error: any) {
       throw new Error(
         "Error at createUser in UserRepository: " + error.message
@@ -86,6 +112,7 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
     }
   }
 
+
   async changePasswordUser(queryData: any): Promise<void> {
     try {
       const { userId, newPassword, isActive, isDelete } = queryData;
@@ -106,6 +133,58 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
       throw new Error("Error change password: " + error.message);
     }
   }
+  async uploadPass(data: any): Promise<void> {
+    try {
+      // Hash mật khẩu mới trước khi cập nhật
+      const {email, newPassword, emailConfirmed} = data
+      const hashedPassword = await hashPassword(newPassword);
+  
+      // Xây dựng điều kiện tìm kiếm user theo email
+      const query: any = {
+        email: email,
+        isDelete: false, // Bạn có thể thêm các điều kiện khác nếu cần
+        isActive: true,
+      };
+  
+      // Xây dựng dữ liệu cập nhật với phép cập nhật trường hợp $set
+      const updateData: any = {
+          password: hashedPassword,
+          emailConfirmed: emailConfirmed
+      };
+  
+      // Thực hiện phép cập nhật sử dụng $set
+      await this.updateDocument(query, updateData);
+    } catch (error: any) {
+      throw new Error("Error updating password: " + error.message);
+    }
+  }
+
+  async uploadImage(data: any): Promise<string> {
+    try {
+      
+      const {email, filename} = data
+      
+      const query: any = {
+        email: email,
+        isDelete: false,
+        isActive: true,
+      };
+      const updateData: any = {
+        imageUser: filename
+      }
+      await this.updateDocument(query, updateData);
+      return filename;
+    } catch (error: any) {
+      throw new Error("Error updating image: " + error.message);
+    }
+  }
+  
+
+  
+
+
+
+
 }
 
 export default UserRepository;
