@@ -2,8 +2,9 @@ import { VerifyEmailResponse } from './../Response/VerifyEmailResponse';
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { md5Encrypt } from "../../../Common/Helpers/passwordUtils";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
+import { CoreException } from '../../../Common/Exceptions/CoreException';
 
-export async function verifyEmailHandler (data : any) : Promise<VerifyEmailResponse> {
+export async function verifyEmailHandler (data : any) : Promise<VerifyEmailResponse|CoreException> {
   try {
     const {email, hash} = data
     const userRepository: IUserRepository = new UserRepository();
@@ -15,13 +16,13 @@ export async function verifyEmailHandler (data : any) : Promise<VerifyEmailRespo
     }
     const user: any = await userRepository.getUserByEmail(email, queryData);
     if (!user) {
-      throw new Error("User with email" + email + "doesn't exist!");
+      return new CoreException(500, "User not found!");
     }     
 
     const emailHash = await md5Encrypt(user.emailCode);
     console.log(emailHash);
     if (hash != emailHash) {
-      throw new Error("Cannot verify please try again");
+      return new CoreException(500, "Can not verify");
     }
 
     user.emailCode = Math.random().toString(36).substr(2, 5);
@@ -30,6 +31,6 @@ export async function verifyEmailHandler (data : any) : Promise<VerifyEmailRespo
     const result = await userRepository.updateDocument(queryData, user);
     return new VerifyEmailResponse("Verify email successful", 200, result);
   } catch (error: any) {
-    throw new Error("Error at ForgotPasswordHandler:" + error.message);
+    return new CoreException(500, error.mesagge);
   }
 }

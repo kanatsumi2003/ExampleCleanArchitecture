@@ -2,12 +2,13 @@ import { response } from "express";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { UpdateImageResponse } from "../Response/UpdateImageResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
+import { CoreException } from "../../../Common/Exceptions/CoreException";
 
 
-export async function UpdateImageHandler(data: any): Promise<UpdateImageResponse> {
+export async function UpdateImageHandler(data: any): Promise<UpdateImageResponse | CoreException> {
   try {
     const { email, filename } = data;
-    
+
     const userRepository: IUserRepository = new UserRepository();
     const queryData: any = {
       isDelete: false,
@@ -17,9 +18,9 @@ export async function UpdateImageHandler(data: any): Promise<UpdateImageResponse
     const user: any = await userRepository.getUserByEmail(email, queryData);
 
     if (!user) {
-      throw new Error("User not found");
+      return new CoreException(500, "User not found!");
     }
-   
+
     const updateData = {
       email: email,
       filename: filename,
@@ -30,8 +31,7 @@ export async function UpdateImageHandler(data: any): Promise<UpdateImageResponse
     };
     return new UpdateImageResponse("Image updated successfully", 200, imagePathData);
   } catch (error: any) {
-   
-    throw new Error(error.message);
+    return new CoreException(500, error.mesagge);
   }
 }
 

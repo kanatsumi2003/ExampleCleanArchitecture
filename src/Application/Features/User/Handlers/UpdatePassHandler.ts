@@ -1,9 +1,10 @@
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { UpdatePassResponse } from "../Response/UpdatePassResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
+import { CoreException } from "../../../Common/Exceptions/CoreException";
 
 
-export async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> {
+export async function UpdatePassHandler(data: any): Promise<UpdatePassResponse|CoreException> {
   try {
     const { email, newpassword } = data;
 
@@ -18,7 +19,7 @@ export async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> 
     const user: any = await userRepository.getUserByEmail(email, queryData);
 
     if (!user) {
-      throw new Error("User not found");
+      return new CoreException(500, "User not found!");
     }
     let emailConfirmed = user.emailConfirmed;
     if(!emailConfirmed) emailConfirmed = true;
@@ -33,8 +34,7 @@ export async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> 
     // Trả về thông báo thành công
     return new UpdatePassResponse("Password updated successfully", 200,result);
   } catch (error: any) {
-   
-    throw new Error(error.message);
+    return new CoreException(500, error.mesagge);
   }
 }
 

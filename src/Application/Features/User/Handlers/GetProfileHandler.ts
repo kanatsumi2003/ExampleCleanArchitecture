@@ -3,8 +3,9 @@ import UserRepository from "../../../../Infrastructure/Persistences/Respositorie
 import { ForgotPasswordResponse } from "../Response/ForgotPasswordResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { GetProfileUserResponse } from "../Response/GetProfileUserRespone";
+import { CoreException } from "../../../Common/Exceptions/CoreException";
 
-export async function getProfileHandler(userId: string): Promise<GetProfileUserResponse> {
+export async function getProfileHandler(userId: string): Promise<GetProfileUserResponse|CoreException> {
     try {
       const userRepository: IUserRepository = new UserRepository();
       const queryData: any = {
@@ -14,10 +15,10 @@ export async function getProfileHandler(userId: string): Promise<GetProfileUserR
       }
       const userProfile: any = await userRepository.getUserById(userId, queryData);
       if (!userProfile) {
-        throw new Error("User with email can't get profile");
+        return new CoreException(500, "User not found!");
       }
       return new GetProfileUserResponse("Get user profile successful", 200, userProfile);
     } catch (error: any) {
-        throw new Error("Error at ForgotPasswordHandler:" + error.message);
+        return new CoreException(500, error.mesagge);
     }
 }

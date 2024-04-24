@@ -42,9 +42,6 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
         emailConfirmed: queryData.emailConfirmed,
       };
       const users: UserWithBase[] = await this.findDocuments(query, null, {});
-      if (users === null || users.length <= 0) {
-        throw new Error("No user found!");
-      }
       return users[0];
     } catch (error: any) {
       throw new Error(

@@ -5,9 +5,10 @@ import { comparePassword } from "../../../Common/Helpers/passwordUtils";
 import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
+import { CoreException } from "../../../Common/Exceptions/CoreException";
 
 
-export async function ChangePasswordHandler(data: any): Promise<ChangePasswordResponse>{
+export async function ChangePasswordHandler(data: any): Promise<ChangePasswordResponse|CoreException>{
    
     try {
         const sessionRepository: ISessionRepository = new SessionRepository();
@@ -19,13 +20,13 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
         }
         const user: any = await userRepository.getUserById(userId, userQueryData);
         if (user == null) {
-            throw new Error("Không tìm thấy user");
+            return new CoreException(500 , "User not found!");
         }
 
           // So sánh mật k
         const isMatch = await comparePassword(oldpassword, user.password);
         if (!isMatch) {
-            throw new Error( "Password cũ không đúng");
+            return new CoreException(401, "Old password is incorrect!");
         }
 
         // Băm mật khẩu mới
@@ -52,7 +53,7 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
         }
         return new ChangePasswordResponse("Đổi mật khẩu và đăng xuất thành công!", 200, result);
     } catch (error: any) {
-        throw new Error(error.message);
+        return new CoreException(500, error.mesagge);
     }
 }
 

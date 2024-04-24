@@ -9,8 +9,9 @@ import { CreateSessionHandler } from "../../Session/Handlers/CreateSessionHandle
 const { comparePassword } = require("../../../Common/Helpers/passwordUtils");
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
+import { CoreException } from "../../../Common/Exceptions/CoreException";
 
-async function LoginHandler(data: any): Promise<LoginResponse> {
+async function LoginHandler(data: any): Promise<LoginResponse|CoreException> {
     try {
         const userRepository: IUserRepository = new UserRepository();
         const sessionRepository: ISessionRepository = new SessionRepository();
@@ -23,11 +24,11 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
         }
         const user: any = await userRepository.getUserByEmail(email, queryData);
         if (!user) {
-            throw new Error("User with email" + email + "doesn't exist!");
+            return new CoreException(500, "User not found!");
         }
         const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
-            throw new Error("Password is not match!");
+            return new CoreException(401, "Password is not match!")
         }
 
         const token = await encodejwt(user);
@@ -69,7 +70,7 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
         return loginResponse
 
     } catch (error: any) {
-        throw new Error("Error at LoginHandler: " + error.message)
+        return new CoreException(500, error.mesagge);
     }
 }
 
