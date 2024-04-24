@@ -4,6 +4,7 @@ import { ChangePasswordResponse } from "../../User/Response/ChangePasswordRespon
 import { comparePassword } from "../../../Common/Helpers/passwordUtils";
 import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 
 
 export async function ChangePasswordHandler(data: any): Promise<ChangePasswordResponse>{
