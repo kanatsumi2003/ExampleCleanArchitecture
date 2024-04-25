@@ -6,9 +6,10 @@ import { addDuration, encodejwt } from "../../../Common/Helpers/jwtUtils";
 import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { generateTimeStamp } from "../../../Common/Helpers/stringUtils";
+import { CoreException } from "../../../Common/Exceptions/CoreException";
 const { md5Encrypt } = require("../../../Common/Helpers/passwordUtils");
 
-export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise<VerifyForgotPasswordByEmailCodeResponse> {
+export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise<VerifyForgotPasswordByEmailCodeResponse|CoreException> {
     const response = new VerifyForgotPasswordByEmailCodeResponse("", 200, {})
     try {
         const userRepository: IUserRepository = new UserRepository();
@@ -70,9 +71,8 @@ export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise
             expireDate: tokenExpiryDate,
         })
 
-    } catch (error) {
-        const response = new VerifyForgotPasswordByEmailCodeResponse("Server error", 500, {})
-        return response;
+    } catch (error:any) {
+        return new CoreException(500, error.mesagge);
     }
 
     return response;

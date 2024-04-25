@@ -1,7 +1,8 @@
 import RoleRepository from "../../../../Infrastructure/Persistences/Respositories/RoleRepository";
+import { CoreException } from "../../../Common/Exceptions/CoreException";
 import GetRoleByIdResponse from "../Response/GetRoleByIdResponse";
 
-export async function GetRoleByIdHandler(data: any): Promise<GetRoleByIdResponse> {
+export async function GetRoleByIdHandler(data: any): Promise<GetRoleByIdResponse|CoreException> {
     try {
         const {id} = data;
         const roleRepository = new RoleRepository();
@@ -25,6 +26,7 @@ export async function GetRoleByIdHandler(data: any): Promise<GetRoleByIdResponse
             responseData,
         );
     } catch (error) {
-        throw new Error("Error at GetRoleByIdHandler: " + error);
+        return new CoreException(500, error.mesagge);
+
     }
 }
