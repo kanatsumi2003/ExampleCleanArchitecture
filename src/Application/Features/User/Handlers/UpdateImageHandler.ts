@@ -1,14 +1,18 @@
 import { response } from "express";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { UpdateImageResponse } from "../Response/UpdateImageResponse";
+<<<<<<< HEAD
+=======
+import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
+>>>>>>> duc
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 
 
-async function UpdateImageHandler(data: any): Promise<UpdateImageResponse> {
+export async function UpdateImageHandler(data: any): Promise<UpdateImageResponse> {
   try {
-    const { email, imageFileName  } = data;
+    const { email, filename } = data;
     
-    const userRepository = new UserRepository();
+    const userRepository: IUserRepository = new UserRepository();
     const queryData: any = {
       isDelete: false,
       isActive: true,
@@ -22,10 +26,17 @@ async function UpdateImageHandler(data: any): Promise<UpdateImageResponse> {
    
     const updateData = {
       email: email,
-      imageUser: imageFileName,
+      filename: filename,
     };
     const result: any = await userRepository.uploadImage(updateData);
+<<<<<<< HEAD
     return new UpdateImageResponse("Image updated successfully", StatusCodeEnums.OK_200,result);
+=======
+    const imagePathData = {
+      imageUser: result,
+    };
+    return new UpdateImageResponse("Image updated successfully", StatusCodeEnums.OK_200, imagePathData);
+>>>>>>> duc
   } catch (error: any) {
    
     throw new Error(error.message);

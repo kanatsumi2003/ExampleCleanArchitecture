@@ -4,6 +4,7 @@ import SessionRepository from "../../Infrastructure/Persistences/Respositories/S
 import mongoose from 'mongoose';
 import RoleRepository from '../../Infrastructure/Persistences/Respositories/RoleRepository';
 const moment = require('moment-timezone');
+
 function authenticateToken(req: any, res: any, next: any){
     const sessionRepository = new SessionRepository();
     const authHeader = req.headers['authorization'];
@@ -11,7 +12,7 @@ function authenticateToken(req: any, res: any, next: any){
     if (!token) {
         return res.sendStatus(401); // No token provided
     }
-
+ 
     // Find the session associated with the token
      sessionRepository.findSessionByToken(token).then( session => {
 

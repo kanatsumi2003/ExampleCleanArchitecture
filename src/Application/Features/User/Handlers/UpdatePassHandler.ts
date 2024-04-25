@@ -1,15 +1,18 @@
-import { response } from "express";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { UpdatePassResponse } from "../Response/UpdatePassResponse";
+<<<<<<< HEAD
+=======
+import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
+>>>>>>> duc
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 
 
-async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> {
+export async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> {
   try {
     const { email, newpassword } = data;
 
     // Tạo một đối tượng UserRepository
-    const userRepository = new UserRepository();
+    const userRepository: IUserRepository = new UserRepository();
 
     // Sử dụng phương thức getUserByEmail để lấy thông tin người dùng dựa trên email
     const queryData: any = {
@@ -21,9 +24,12 @@ async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> {
     if (!user) {
       throw new Error("User not found");
     }
+    let emailConfirmed = user.emailConfirmed;
+    if(!emailConfirmed) emailConfirmed = true;
     const updateData = {
       email: email,
       newPassword: newpassword,
+      emailConfirmed: emailConfirmed
     };
 
     const result: any = await userRepository.uploadPass(updateData);
