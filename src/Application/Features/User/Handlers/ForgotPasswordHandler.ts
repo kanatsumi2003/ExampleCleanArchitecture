@@ -4,6 +4,7 @@ import { ForgotPasswordResponse } from "../Response/ForgotPasswordResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 const { md5Encrypt } = require("../../../Common/Helpers/passwordUtils");
 const { sendMail } = require("../../../Common/Helpers/emailUtils")
+import { validationUtils } from '../../../Common/Helpers/validationUtils';
 
 export async function ForgotPasswordHandler(email: string): Promise<ForgotPasswordResponse> {
     try {
@@ -14,6 +15,11 @@ export async function ForgotPasswordHandler(email: string): Promise<ForgotPasswo
             emailConfirmed: true,
         }
 
+        const emailError = validationUtils.validateEmail(email);
+        if (emailError){
+             return new ForgotPasswordResponse("Validation failed", 400, {}, emailError);
+        }
+        
         const user: any = await userRepository.getUserByEmail(email, queryData);
         if (!user) {
             throw new Error("User with email" + email + "doesn't exist!");

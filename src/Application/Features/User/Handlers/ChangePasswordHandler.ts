@@ -5,8 +5,8 @@ import { comparePassword } from "../../../Common/Helpers/passwordUtils";
 import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
-
-
+import { validationUtils } from '../../../Common/Helpers/validationUtils';
+import { CreateUserResponse } from './../Response/CreateUserResponse';
 export async function ChangePasswordHandler(data: any): Promise<ChangePasswordResponse>{
    
     try {
@@ -17,6 +17,13 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
             isDelete: false,
             isActive: true,
         }
+
+        const passwordError = validationUtils.validatePassword(newpassword);
+
+        if (passwordError){
+            return new CreateUserResponse("Validation failed", 400, {}, "New " + passwordError);
+        }
+        
         const user: any = await userRepository.getUserById(userId, userQueryData);
         if (user == null) {
             throw new Error("Không tìm thấy user");
