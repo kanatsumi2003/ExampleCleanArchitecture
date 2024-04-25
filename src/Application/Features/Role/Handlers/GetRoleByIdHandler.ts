@@ -1,3 +1,4 @@
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 import RoleRepository from "../../../../Infrastructure/Persistences/Respositories/RoleRepository";
 import GetRoleByIdResponse from "../Response/GetRoleByIdResponse";
 
@@ -17,11 +18,11 @@ export async function GetRoleByIdHandler(data: any): Promise<GetRoleByIdResponse
             isAdmin: result.isAdmin,
             listClaim: result.listClaim,
         }
-        const a = new GetRoleByIdResponse("Successfull", 200, responseData);
+        const a = new GetRoleByIdResponse("Successfull", StatusCodeEnums.OK_200, responseData);
         console.log(a);
         return new GetRoleByIdResponse(
             "Successfull",
-            200,
+            StatusCodeEnums.OK_200,
             responseData,
         );
     } catch (error) {

@@ -7,6 +7,7 @@ import { comparePassword } from "../../../Common/Helpers/passwordUtils";
 import { addDuration, encodejwt } from "../../../Common/Helpers/jwtUtils";
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { CreateSessionHandler } from "../../Session/Handlers/CreateSessionHandler";
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 
 async function LoginHandler(data: any): Promise<LoginResponse> {
     try {
@@ -60,7 +61,7 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
             expireIn: token.expiresIn || ""
         }
 
-        const loginResponse = new LoginResponse("Success", 200, dataTokenResponse);
+        const loginResponse = new LoginResponse("Success", StatusCodeEnums.OK_200, dataTokenResponse);
 
         return loginResponse
 
