@@ -9,6 +9,7 @@ import { CreateSessionHandler } from "../../Session/Handlers/CreateSessionHandle
 const { comparePassword } = require("../../../Common/Helpers/passwordUtils");
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 
 async function LoginHandler(data: any): Promise<LoginResponse> {
     try {
@@ -64,7 +65,7 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
             expireIn: token.expiresIn || ""
         }
 
-        const loginResponse = new LoginResponse("Success", 200, dataTokenResponse);
+        const loginResponse = new LoginResponse("Success", StatusCodeEnums.OK_200, dataTokenResponse);
 
         return loginResponse
 

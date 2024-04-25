@@ -2,6 +2,7 @@ import moment from "moment";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { ForgotPasswordResponse } from "../Response/ForgotPasswordResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 const { md5Encrypt } = require("../../../Common/Helpers/passwordUtils");
 const { sendMail } = require("../../../Common/Helpers/emailUtils")
 
@@ -29,7 +30,7 @@ export async function ForgotPasswordHandler(email: string): Promise<ForgotPasswo
         }
         const sendMailResponse: string = await sendMail(user.email, "Welcome to NoahQuiz", emailData, "forgotPasswordEmailTemplate.ejs");
 
-        return new ForgotPasswordResponse("Sent Mail Successfully", 201, sendMailResponse)
+        return new ForgotPasswordResponse("Sent Mail Successfully", StatusCodeEnums.Created_201, sendMailResponse)
     } catch (error: any) {
         throw new Error("Error at ForgotPasswordHandler:" + error.message);
     }

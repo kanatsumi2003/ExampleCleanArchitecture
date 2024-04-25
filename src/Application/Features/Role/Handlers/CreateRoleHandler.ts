@@ -1,3 +1,4 @@
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 import RoleRepository from "../../../../Infrastructure/Persistences/Respositories/RoleRepository";
 import { CreateRoleResponse } from "../Response/CreateRoleResponse";
 
@@ -15,7 +16,7 @@ export async function CreateRoleHandler(
       listClaim: listClaim,
     };
     const result = await roleRepository.createRole(createRoledata);
-    return new CreateRoleResponse("Create role successful", 201, result);
+    return new CreateRoleResponse("Create role successful", StatusCodeEnums.Created_201, result);
   } catch (error: any) {
     throw new Error("Error at CreateRoleHandler: " + error.message);
   }

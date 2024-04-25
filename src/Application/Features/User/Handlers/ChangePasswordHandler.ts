@@ -50,7 +50,7 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
                 await sessionRepository.deleteSession(sess._id);
             }
         }
-        return new ChangePasswordResponse("Đổi mật khẩu và đăng xuất thành công!", 200, result);
+        return new ChangePasswordResponse("Đổi mật khẩu và đăng xuất thành công!", StatusCodeEnums.OK_200, result);
     } catch (error: any) {
         throw new Error(error.message);
     }

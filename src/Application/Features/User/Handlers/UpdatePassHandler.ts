@@ -1,6 +1,7 @@
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { UpdatePassResponse } from "../Response/UpdatePassResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 
 
 export async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> {
@@ -31,7 +32,7 @@ export async function UpdatePassHandler(data: any): Promise<UpdatePassResponse> 
     const result: any = await userRepository.uploadPass(updateData);
 
     // Trả về thông báo thành công
-    return new UpdatePassResponse("Password updated successfully", 200,result);
+    return new UpdatePassResponse("Password updated successfully", StatusCodeEnums.OK_200,result);
   } catch (error: any) {
    
     throw new Error(error.message);

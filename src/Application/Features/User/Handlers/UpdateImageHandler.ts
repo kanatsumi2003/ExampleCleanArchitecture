@@ -2,6 +2,7 @@ import { response } from "express";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { UpdateImageResponse } from "../Response/UpdateImageResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 
 
 export async function UpdateImageHandler(data: any): Promise<UpdateImageResponse> {
@@ -28,7 +29,7 @@ export async function UpdateImageHandler(data: any): Promise<UpdateImageResponse
     const imagePathData = {
       imageUser: result,
     };
-    return new UpdateImageResponse("Image updated successfully", 200, imagePathData);
+    return new UpdateImageResponse("Image updated successfully", StatusCodeEnums.OK_200, imagePathData);
   } catch (error: any) {
    
     throw new Error(error.message);

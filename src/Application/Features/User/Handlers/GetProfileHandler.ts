@@ -3,6 +3,7 @@ import UserRepository from "../../../../Infrastructure/Persistences/Respositorie
 import { ForgotPasswordResponse } from "../Response/ForgotPasswordResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { GetProfileUserResponse } from "../Response/GetProfileUserRespone";
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 
 export async function getProfileHandler(userId: string): Promise<GetProfileUserResponse> {
     try {
@@ -16,7 +17,7 @@ export async function getProfileHandler(userId: string): Promise<GetProfileUserR
       if (!userProfile) {
         throw new Error("User with email can't get profile");
       }
-      return new GetProfileUserResponse("Get user profile successful", 200, userProfile);
+      return new GetProfileUserResponse("Get user profile successful", StatusCodeEnums.OK_200, userProfile);
     } catch (error: any) {
         throw new Error("Error at ForgotPasswordHandler:" + error.message);
     }
