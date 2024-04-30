@@ -1,4 +1,4 @@
-interface IBaseEntites {
+export interface IBaseEntites {
     isDelete: boolean;
     createTime: Date;
     updateTime: Date;
