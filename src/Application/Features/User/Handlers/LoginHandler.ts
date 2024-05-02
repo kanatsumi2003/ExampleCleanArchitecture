@@ -9,8 +9,11 @@ import { CreateSessionHandler } from "../../Session/Handlers/CreateSessionHandle
 const { comparePassword } = require("../../../Common/Helpers/passwordUtils");
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
+import { CoreException } from "../../../Common/Exceptions/CoreException";
 
-async function LoginHandler(data: any): Promise<LoginResponse> {
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
+
+async function LoginHandler(data: any): Promise<LoginResponse|CoreException> {
     try {
         const userRepository: IUserRepository = new UserRepository();
         const sessionRepository: ISessionRepository = new SessionRepository();
@@ -23,11 +26,11 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
         }
         const user: any = await userRepository.getUserByEmail(email, queryData);
         if (!user) {
-            throw new Error("User with email" + email + "doesn't exist!");
+            return new CoreException(StatusCodeEnums.InternalServerError_500, "User not found!");
         }
         const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
-            throw new Error("Password is not match!");
+            return new CoreException(StatusCodeEnums.Unauthorized_401, "Password is not match!")
         }
 
         const token = await encodejwt(user);
@@ -64,12 +67,12 @@ async function LoginHandler(data: any): Promise<LoginResponse> {
             expireIn: token.expiresIn || ""
         }
 
-        const loginResponse = new LoginResponse("Success", 200, dataTokenResponse);
+        const loginResponse = new LoginResponse("Success", StatusCodeEnums.OK_200, dataTokenResponse);
 
         return loginResponse
 
     } catch (error: any) {
-        throw new Error("Error at LoginHandler: " + error.message)
+        return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
     }
 }
 

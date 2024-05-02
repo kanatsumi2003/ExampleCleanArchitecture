@@ -32,7 +32,7 @@ export default class UserController {
             const data = { deviceId, ipAddress, email, password }
             const result: any = await LoginHandler(data);
           
-      return res.status(result.statusCode).json({ data: result });
+      return res.status(result.statusCode).json(result);
     } catch (error: any) {
       console.error("Login failed:", error);
       return res.status(500).json({ error: error.message });
@@ -61,7 +61,7 @@ export default class UserController {
         return res.status(result.statusCode).json({ error: result.error });
       }
 
-      return res.status(result.statusCode).json({ data: result });
+      return res.status(result.statusCode).json(result);
     } catch (error: any) {
       return res.status(500).json({ error: error.messgae });
     }
@@ -79,7 +79,7 @@ export default class UserController {
                 return res.status(result.statusCode).json({error: result.error});
             }
             console.log(result);
-            return res.status(result.statusCode).json({message: result.message});
+            return res.status(result.statusCode).json(result);
         } catch (error) {
             console.log(error);
             return res.status(500).json({ message: 'Error verify user', error });
@@ -105,7 +105,7 @@ export default class UserController {
         try {
             const email: string = req.body.email;
             const result: any = await ForgotPasswordHandler(email);
-            return res.status(result.statusCode).json({message: result.message});
+            return res.status(result.statusCode).json( result );
         } catch (error: any) {
             return res.status(500).json({error: error.messgae});
         }
@@ -123,7 +123,7 @@ export default class UserController {
       const data = { email, newpassword };
       const result: any = await UpdatePassHandler(data);
 
-      return res.status(result.statusCode).json({ data: result });
+      return res.status(result.statusCode).json(result);
     } catch (error: any) {
       console.error("Update Password failed:", error);
       return res.status(500).json({ error: error.message });
@@ -163,7 +163,7 @@ export default class UserController {
       };
       const result: any = await UpdateImageHandler(data);
 
-      return res.status(result.statusCode).json({ data: result });
+      return res.status(result.statusCode).json(result);
     } catch (error: any) {
       console.error("Update Image failed:", error);
       return res.status(500).json({ error: error.message });
@@ -201,7 +201,7 @@ export default class UserController {
                 const data = {userId, oldpassword, newpassword}
                 const result: any = await ChangePasswordHandler(data);
     
-                return res.status(result.statusCode).json({ data: result });
+                return res.status(result.statusCode).json(result);
             } catch (error: any) {
                 console.error('Login failed:', error);
                 return res.status(500).json({error: error.message});

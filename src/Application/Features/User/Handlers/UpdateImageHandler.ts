@@ -2,12 +2,14 @@ import { response } from "express";
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { UpdateImageResponse } from "../Response/UpdateImageResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
+import { CoreException } from "../../../Common/Exceptions/CoreException";
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 
 
-export async function UpdateImageHandler(data: any): Promise<UpdateImageResponse> {
+export async function UpdateImageHandler(data: any): Promise<UpdateImageResponse | CoreException> {
   try {
     const { email, filename } = data;
-    
+
     const userRepository: IUserRepository = new UserRepository();
     const queryData: any = {
       isDelete: false,
@@ -17,21 +19,17 @@ export async function UpdateImageHandler(data: any): Promise<UpdateImageResponse
     const user: any = await userRepository.getUserByEmail(email, queryData);
 
     if (!user) {
-      throw new Error("User not found");
+      return new CoreException(StatusCodeEnums.InternalServerError_500, "User not found!");
     }
-   
+
     const updateData = {
       email: email,
       filename: filename,
     };
     const result: any = await userRepository.uploadImage(updateData);
-    const imagePathData = {
-      imageUser: result,
-    };
-    return new UpdateImageResponse("Image updated successfully", 200, imagePathData);
+    return new UpdateImageResponse("Image updated successfully", StatusCodeEnums.OK_200,result);
   } catch (error: any) {
-   
-    throw new Error(error.message);
+    return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
   }
 }
 

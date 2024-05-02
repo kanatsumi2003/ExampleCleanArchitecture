@@ -6,10 +6,12 @@ import IRoleRepository from '../../../Persistences/IRepositories/IRoleRepository
 
 import {sendMail} from '../../../../Application/Common/Helpers/emailUtils'
 import { md5Encrypt } from '../../../Common/Helpers/passwordUtils';
+import { CoreException } from '../../../Common/Exceptions/CoreException';
+import { StatusCodeEnums } from '../../../../Domain/Enums/StatusCodeEnums';
 
 
 
-export async function CreateUserHandler(data: any): Promise<CreateUserResponse> {
+export async function CreateUserHandler(data: any): Promise<CreateUserResponse|CoreException> {
   try {
     const userRepository: IUserRepository = new UserRepository();
     const roleRepository: IRoleRepository = new RoleRepository();
@@ -41,9 +43,9 @@ export async function CreateUserHandler(data: any): Promise<CreateUserResponse> 
     await sendMail(email, "Welcome to Noah-Quiz!", emailData, "verifyEmailTemplate.ejs");
 
 
-    return new CreateUserResponse("Successful", 200, result);
+    return new CreateUserResponse("Successful", StatusCodeEnums.OK_200, result);
 
   } catch (error: any) {
-    throw new Error("Error at CreateUserHandler: " + error.message);
+    return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
   }
 }
