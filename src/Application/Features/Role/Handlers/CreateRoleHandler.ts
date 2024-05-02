@@ -1,10 +1,13 @@
 import RoleRepository from "../../../../Infrastructure/Persistences/Respositories/RoleRepository";
+import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
 import { CreateRoleResponse } from "../Response/CreateRoleResponse";
 
 export async function CreateRoleHandler(
   data: any
 ): Promise<CreateRoleResponse> {
   try {
+    const unitOfWork = new UnitOfWork();
+    await unitOfWork.startTransaction();
     const roleRepository = new RoleRepository();
     const { name, description, isAdmin, listClaim } = data;
 
