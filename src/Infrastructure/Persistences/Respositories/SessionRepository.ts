@@ -3,12 +3,12 @@ import ISessionRepository from "../../../Application/Persistences/IRepositories/
 import { SessionLogin, SessionWithBase } from "../../../Domain/Entities/SessionEntites";
 import BaseRepository from "./BaseRepository";
 
-class SessionRepository extends BaseRepository<SessionLogin> implements ISessionRepository {
+class SessionRepository extends BaseRepository<typeof SessionLogin> implements ISessionRepository {
     constructor() {
         const collectionName: string = "sessions";
         super(collectionName);
     }
-    async findSessionByEmail(queryData: any): Promise<SessionWithBase[]> {
+    async findSessionByEmail(queryData: any) {
         try {
             const {email, isDelete, isActive} = queryData;
             const query = {
@@ -16,14 +16,16 @@ class SessionRepository extends BaseRepository<SessionLogin> implements ISession
                 isDelete: isDelete,
                 isActive: isActive
             }
-            const session: SessionWithBase[] = await this.findDocuments(query,null,{})
-            return session;
+            const session = await SessionWithBase.find(query);
+            if(session == null) return null;
+            return session[0];
+          
         } catch (error:any) {
             throw new Error("Error at findSessionByEmail in SessionRepository: " + error.message);
         }
     }
 
-    async findSessionByEmailAndIP(queryData: any): Promise<SessionWithBase[]> {
+    async findSessionByEmailAndIP(queryData: any) {
         try {
             const query = {
                 email: queryData.email,
@@ -31,11 +33,12 @@ class SessionRepository extends BaseRepository<SessionLogin> implements ISession
                 deviceId: queryData.deviceId,
                 isDelete: queryData.isDelete
             }
-            const sessions: SessionWithBase[] = await this.findDocuments(query, null, {});
             // if (sessions === null || sessions.length <= 0) {
             //     throw new Error('No session found!');
             // }
-            return sessions;
+            const session = await SessionWithBase.find(query);
+            if(session == null) return null;
+            return session[0];
         } catch (error: any) {
             throw new Error("Error at findSessionByEmailAndIP in SessionRepository: " + error.message);
         }
@@ -56,7 +59,7 @@ class SessionRepository extends BaseRepository<SessionLogin> implements ISession
 
     }
 
-    async createSession(sessionData: any): Promise<SessionWithBase>{
+    async createSession(sessionData: any){
 
         try {
             const fullSession = new SessionWithBase(sessionData)
@@ -73,8 +76,9 @@ class SessionRepository extends BaseRepository<SessionLogin> implements ISession
                 jwttoken: token,
                 isDelete: false,
             };
-            const sessions: SessionWithBase[] = await this.findDocuments(query, null, {});
-            return sessions[0];
+            const session = await SessionWithBase.find(query);
+            if(session == null) return null;
+            return session[0];
         } catch (error: any) {
             throw new Error("Error at findSessionByToken in SessionRepository: " + error.message);
         }

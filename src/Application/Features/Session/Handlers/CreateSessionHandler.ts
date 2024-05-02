@@ -1,9 +1,11 @@
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
+import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
 import { CreateSessionDTO } from "../DTO/CreateSessionDTO";
 
 export async function CreateSessionHandler(data: any): Promise<void> {
+    const unitOfWork = new UnitOfWork();
     try {
-        const sessionRepository = new SessionRepository();
+        await unitOfWork.startTransaction();
         const createSessionDTO = new CreateSessionDTO(
             data.user._id,
             data.user.email,
@@ -16,9 +18,11 @@ export async function CreateSessionHandler(data: any): Promise<void> {
             data.deviceId,
             data.ipAddress,
         )
-        await sessionRepository.createSession(createSessionDTO);
+        await unitOfWork.sessionRepository.createSession(createSessionDTO);
+        await unitOfWork.commitTransaction();
 
     } catch (error: any) {
+        await unitOfWork.abortTransaction();
         throw new Error("Error at CreateSessionHandler in CreateSessionHandler: " + error.message);
     }
 }
