@@ -1,15 +1,18 @@
 import RoleRepository from "../../../../Infrastructure/Persistences/Respositories/RoleRepository";
+import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
 import GetRoleByIdResponse from "../Response/GetRoleByIdResponse";
 
 export async function GetRoleByIdHandler(data: any): Promise<GetRoleByIdResponse> {
     try {
+        const unitOfWork = new UnitOfWork();
+        unitOfWork.startTransaction();
         const {id} = data;
-        const roleRepository = new RoleRepository();
+        // const roleRepository = new RoleRepository();
         const queryData: any = {
             isActive: true,
             isDelete: false,
         }
-        const result: any = await roleRepository.getRoleById(id, queryData);
+        const result: any = await unitOfWork.roleRepository.getRoleById(id, queryData);
         if(result == null) throw new Error("Can not find this role");
         const responseData = {
             name: result.name,
