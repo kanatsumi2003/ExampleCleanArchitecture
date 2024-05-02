@@ -17,8 +17,8 @@ export async function CreateRoleHandler(
       isAdmin: isAdmin,
       listClaim: listClaim,
     };
-    const result = await roleRepository.createRole(createRoledata);
-    return new CreateRoleResponse("Create role successful", 201, result);
+    const result = await unitOfWork.roleRepository.createRole(createRoledata);
+    return new CreateRoleResponse("Create role successful", 201, {});
   } catch (error: any) {
     throw new Error("Error at CreateRoleHandler: " + error.message);
   }

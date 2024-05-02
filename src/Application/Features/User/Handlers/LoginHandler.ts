@@ -10,11 +10,14 @@ const { comparePassword } = require("../../../Common/Helpers/passwordUtils");
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
+import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
 
 async function LoginHandler(data: any): Promise<LoginResponse|CoreException> {
     try {
         const userRepository: IUserRepository = new UserRepository();
         const sessionRepository: ISessionRepository = new SessionRepository();
+        const unitOfWork = new UnitOfWork();
+        await unitOfWork.startTransaction();
         const { deviceId, ipAddress, email, password } = data;
 
         const queryData: any = {

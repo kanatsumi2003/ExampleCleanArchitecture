@@ -4,36 +4,35 @@ import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
 import IUserRepository from "../../../Application/Persistences/IRepositories/IUserRepository";
 import mongoose from "mongoose";
 import { hashPassword } from "../../../Application/Common/Helpers/passwordUtils";
-class UserRepository extends BaseRepository<User> implements IUserRepository {
-  constructor() {
-    const collectionName: string = "users";
-    super(collectionName);
-  }
-
+// class UserRepository extends BaseRepository<User> implements IUserRepository {
+//   constructor() {
+//     const collectionName: string = "users";
+//     super(collectionName);
+//   }
+class UserRepository implements IUserRepository {
 
   async updateUserById(userId: string, userData: any) {
-    try{
-      const user:any = new User(
-        userData.fullname,
-        userData.email,
-        userData.username,
-        userData.password,
-        userData.phoneNumber,
-        userData.role_id,
-        null
-      );
-      const query :any ={
-        _id : new mongoose.Types.ObjectId(userId)  
+    try {
+      const user: any = new UserWithBase({
+        fullname: userData.fullname,
+        email: userData.email,
+        username: userData.username,
+        password: userData.password,
+        phoneNumber: userData.phoneNumber,
+        role_id: userData.role_id,
+    });
+      const query: any = {
+        _id: new mongoose.Types.ObjectId(userId)
       }
-      await this.updateDocument(query,user);
-    }catch(error:any){
+      // await this.updateDocument(query, user);
+    } catch (error: any) {
       throw new Error("Error at updateUserById in UserRepository: " + error.message);
     }
 
   }
 
 
-  async getUserByEmail(email: string, queryData: any): Promise<UserWithBase> {
+  async getUserByEmail(email: string, queryData: any): Promise<typeof UserWithBase> {
     try {
       const query: any = {
         email: email,
@@ -41,7 +40,7 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
         isActive: queryData.isActive,
         emailConfirmed: queryData.emailConfirmed,
       };
-      const users: UserWithBase[] = await this.findDocuments(query, null, {});
+      const users: typeof UserWithBase[] = await UserWithBase.find(query)
       return users[0];
     } catch (error: any) {
       throw new Error(
@@ -53,14 +52,14 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
     email: string,
     username: string,
     queryData: any
-  ): Promise<UserWithBase | null> {
+  ): Promise<typeof UserWithBase | null> {
     try {
       const query: any = {
         $or: [{ email: email }, { username: username }],
         isActive: queryData.isActive,
         isDelete: queryData.isDelete,
       };
-      const users: UserWithBase[] = await this.findDocuments(query, null, {});
+      const users: typeof UserWithBase[] = await UserWithBase.find(query)
       if (users == null) return null;
       return users[0];
     } catch (error: any) {
@@ -70,22 +69,28 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
     }
   }
 
-  async createUser(userData: any ): Promise<UserWithBase> {
+  async createUser(userData: any): Promise<typeof UserWithBase> {
     try {
-      const user: any = new User(
-        userData.fullname,
-        userData.email,
-        userData.username,
-        userData.password,
-        userData.phoneNumber,
-        userData.role_id,
-        null
-      );
-      const userWithBase: any = new UserWithBase(user);
-      
-      userWithBase.password = await hashPassword(user.password);
-       await this.insertDocuments(userWithBase);
-       return userWithBase;
+
+      const user: any = new UserWithBase({
+        fullname: userData.fullname,
+        email: userData.email,
+        username: userData.username,
+        password: userData.password,
+        phoneNumber: userData.phoneNumber,
+        role_id: userData.role_id,
+        // imageUser: null,
+        // emailConfirmed: false,
+        // phoneConfirmed: false,
+        // emailCode: "awjkdalskd",
+        // enable2FA: true,
+        // twoFASecret: "asdkajlkwdjalkw"
+      });
+      // const userWithBase: any = new UserWithBase(user);
+
+      user.password = await hashPassword(userData.password);
+      // await this.insertDocuments(userWithBase);
+      return user;
     } catch (error: any) {
       throw new Error(
         "Error at createUser in UserRepository: " + error.message
@@ -93,14 +98,14 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
     }
   }
 
-  async getUserById(userId: string, queryData: any): Promise<UserWithBase> {
+  async getUserById(userId: string, queryData: any): Promise<typeof UserWithBase> {
     try {
       const query: any = {
         _id: new mongoose.Types.ObjectId(userId),
         isDelete: queryData.isDelete,
         isActive: queryData.isActive,
       };
-      const user: UserWithBase[] = await this.findDocuments(query, null, {});
+      const user: typeof UserWithBase[] = await UserWithBase.find(query);
       return user[0];
     } catch (error: any) {
       throw new Error(
@@ -125,7 +130,7 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
         password: hashedPassword,
       };
 
-      await this.updateDocument(query, updateData);
+      // await this.updateDocument(query, updateData);
     } catch (error: any) {
       throw new Error("Error change password: " + error.message);
     }
@@ -133,24 +138,24 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
   async uploadPass(data: any): Promise<void> {
     try {
       // Hash mật khẩu mới trước khi cập nhật
-      const {email, newPassword, emailConfirmed} = data
+      const { email, newPassword, emailConfirmed } = data
       const hashedPassword = await hashPassword(newPassword);
-  
+
       // Xây dựng điều kiện tìm kiếm user theo email
       const query: any = {
         email: email,
         isDelete: false, // Bạn có thể thêm các điều kiện khác nếu cần
         isActive: true,
       };
-  
+
       // Xây dựng dữ liệu cập nhật với phép cập nhật trường hợp $set
       const updateData: any = {
-          password: hashedPassword,
-          emailConfirmed: emailConfirmed
+        password: hashedPassword,
+        emailConfirmed: emailConfirmed
       };
-  
+
       // Thực hiện phép cập nhật sử dụng $set
-      await this.updateDocument(query, updateData);
+      // await this.updateDocument(query, updateData);
     } catch (error: any) {
       throw new Error("Error updating password: " + error.message);
     }
@@ -158,9 +163,9 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
 
   async uploadImage(data: any): Promise<string> {
     try {
-      
-      const {email, filename} = data
-      
+
+      const { email, filename } = data
+
       const query: any = {
         email: email,
         isDelete: false,
@@ -169,15 +174,15 @@ class UserRepository extends BaseRepository<User> implements IUserRepository {
       const updateData: any = {
         imageUser: filename
       }
-      await this.updateDocument(query, updateData);
+      // await this.updateDocument(query, updateData);
       return filename;
     } catch (error: any) {
       throw new Error("Error updating image: " + error.message);
     }
   }
-  
 
-  
+
+
 
 
 

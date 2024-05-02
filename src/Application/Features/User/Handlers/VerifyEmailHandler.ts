@@ -28,8 +28,9 @@ export async function verifyEmailHandler (data : any) : Promise<VerifyEmailRespo
     user.emailCode = Math.random().toString(36).substr(2, 5);
     user.emailConfirmed = true;
     console.log(user._id.toString());
-    const result = await userRepository.updateDocument(queryData, user);
-    return new VerifyEmailResponse("Verify email successful", 200, result);
+    // const result = await userRepository.updateDocument(queryData, user);
+    // return new VerifyEmailResponse("Verify email successful", 200, result);
+    return new VerifyEmailResponse("Verify email successful", 200, "");
   } catch (error: any) {
     return new CoreException(500, error.mesagge);
   }
