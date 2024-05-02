@@ -2,7 +2,7 @@ import { Collection, Db } from "mongodb";
 import BaseRepository from "./BaseRepository";
 import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
 import IUserRepository from "../../../Application/Persistences/IRepositories/IUserRepository";
-import mongoose from "mongoose";
+import mongoose, { ClientSession } from "mongoose";
 import { hashPassword } from "../../../Application/Common/Helpers/passwordUtils";
 // class UserRepository extends BaseRepository<User> implements IUserRepository {
 //   constructor() {
@@ -20,7 +20,7 @@ class UserRepository implements IUserRepository {
         password: userData.password,
         phoneNumber: userData.phoneNumber,
         role_id: userData.role_id,
-    });
+      });
       const query: any = {
         _id: new mongoose.Types.ObjectId(userId)
       }
@@ -69,28 +69,36 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  async createUser(userData: any): Promise<typeof UserWithBase> {
+  async createUser(userData: any, session: ClientSession): Promise<typeof UserWithBase> {
     try {
+      const hashedPassword = await hashPassword(userData.password);
 
-      const user: any = new UserWithBase({
+      const user: any = await UserWithBase.create([{
         fullname: userData.fullname,
         email: userData.email,
         username: userData.username,
-        password: userData.password,
+        password: hashedPassword,
         phoneNumber: userData.phoneNumber,
         role_id: userData.role_id,
-        // imageUser: null,
-        // emailConfirmed: false,
-        // phoneConfirmed: false,
-        // emailCode: "awjkdalskd",
-        // enable2FA: true,
-        // twoFASecret: "asdkajlkwdjalkw"
-      });
-      // const userWithBase: any = new UserWithBase(user);
-
-      user.password = await hashPassword(userData.password);
+      }], {session});
+      
+      return user[0];
+      // const user: any = new UserWithBase({
+      //   fullname: userData.fullname,
+      //   email: userData.email,
+      //   username: userData.username,
+      //   password: userData.password,
+      //   phoneNumber: userData.phoneNumber,
+      //   role_id: userData.role_id,
+      //   // imageUser: null,
+      //   // emailConfirmed: false,
+      //   // phoneConfirmed: false,
+      //   // emailCode: "awjkdalskd",
+      //   // enable2FA: true,
+      //   // twoFASecret: "asdkajlkwdjalkw"
+      // });
+      // // const userWithBase: any = new UserWithBase(user);
       // await this.insertDocuments(userWithBase);
-      return user;
     } catch (error: any) {
       throw new Error(
         "Error at createUser in UserRepository: " + error.message
@@ -98,10 +106,10 @@ class UserRepository implements IUserRepository {
     }
   }
 
-  async getUserById(userId: string, queryData: any): Promise<typeof UserWithBase> {
+  async getUserById(queryData: any): Promise<typeof UserWithBase> {
     try {
       const query: any = {
-        _id: new mongoose.Types.ObjectId(userId),
+        _id: new mongoose.Types.ObjectId(queryData.userId),
         isDelete: queryData.isDelete,
         isActive: queryData.isActive,
       };

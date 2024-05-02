@@ -10,12 +10,14 @@ export async function getProfileHandler(userId: string): Promise<GetProfileUserR
     try {
       const unitOfWork = new UnitOfWork();
       await unitOfWork.startTransaction();
+     
       const queryData: any = {
+          userId: userId,
           isDelete: false,
           isActive: true,
           emailConfirmed: false || true,
       }
-      const userProfile: any = await unitOfWork.userRepository.getUserById(userId, queryData);
+      const userProfile: any = await unitOfWork.userRepository.getUserById(queryData);
       if (!userProfile) {
         return new CoreException(500, "User not found!");
       }

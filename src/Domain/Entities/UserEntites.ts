@@ -1,6 +1,10 @@
 import mongoose, { Types } from "mongoose";
 import { Basev2Schema } from "./BaseEntitiesv2";
+import speakeasy from "speakeasy";
 
+const isValidObjectId = (value: Types.ObjectId) => {
+  return mongoose.Types.ObjectId.isValid(value);
+};
 
 export const User = new mongoose.Schema({
   fullname: {
@@ -20,6 +24,9 @@ export const User = new mongoose.Schema({
   },
   role_id: {
     type: Types.ObjectId,
+    validate: {
+      validator: isValidObjectId,
+    }
   },
   imageUser: {
     type: String || null,
@@ -27,20 +34,26 @@ export const User = new mongoose.Schema({
   },
   emailConfirmed: {
     type: Boolean,
+    default: false,
   },
   phoneConfirmed: {
     type: Boolean,
+    default: false,
   },
   emailCode: {
     type: String,
+    default: Math.random().toString(36).substring(2, 7),
   },
   enable2FA: {
     type: Boolean,
+    default: false,
   },
   twoFASecret: {
     type: String,
+    default: speakeasy.generateSecret({ length: 20 }).base32,
   }
 })
+
 
 const UserWithBaseSchema = new mongoose.Schema({
   ...User.obj,

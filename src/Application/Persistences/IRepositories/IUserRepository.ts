@@ -1,3 +1,4 @@
+import { ClientSession } from "mongoose";
 import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
 import { ForgotPasswordResponse } from "../../Features/User/Response/ForgotPasswordResponse";
 import { UpdateImageResponse } from "../../Features/User/Response/UpdateImageResponse";
@@ -17,7 +18,7 @@ import IBaseRepository from "./IBaseRepository";
 interface IUserRepository {
     getUserByEmail(email: string, queryData: typeof UserWithBase);
     getUserByEmailAndName(email: string, username: string, queryData: any): Promise<typeof UserWithBase | null>;
-    createUser(userData: any): Promise<typeof UserWithBase>;
+    createUser(userData: any, session: ClientSession): Promise<typeof UserWithBase>;
     getUserById(userId: string, queryData: any): Promise<typeof UserWithBase>;
     updateUserById(userId:string,  userData: any):Promise<void>;
     uploadPass(data: any): Promise<void>;

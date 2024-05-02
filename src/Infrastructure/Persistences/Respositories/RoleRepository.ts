@@ -42,7 +42,7 @@ export default class RoleRepository extends BaseRepository<typeof Role> implemen
                 isActive: queryData.isActive,
                 isDelete: queryData.isDelete,
             }
-            const role: typeof RoleWithBase[] = await this.findDocuments(query, null, {});
+            const role: typeof RoleWithBase[] = await RoleWithBase.find(query);
             if(role == null) return null;
             return role[0];
         } catch (error: any) {

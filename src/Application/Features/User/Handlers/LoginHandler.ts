@@ -13,11 +13,9 @@ import { CoreException } from "../../../Common/Exceptions/CoreException";
 import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
 
 async function LoginHandler(data: any): Promise<LoginResponse|CoreException> {
+    const unitOfWork = new UnitOfWork();
     try {
-        const userRepository: IUserRepository = new UserRepository();
-        const sessionRepository: ISessionRepository = new SessionRepository();
-        const unitOfWork = new UnitOfWork();
-        await unitOfWork.startTransaction();
+        const session = await unitOfWork.startTransaction();
         const { deviceId, ipAddress, email, password } = data;
 
         const queryData: any = {
@@ -25,7 +23,7 @@ async function LoginHandler(data: any): Promise<LoginResponse|CoreException> {
             isActive: true,
             emailConfirmed: true,
         }
-        const user: any = await userRepository.getUserByEmail(email, queryData);
+        const user: any = await unitOfWork.userRepository.getUserByEmail(email, queryData);
         if (!user) {
             return new CoreException(500, "User not found!");
         }
@@ -43,9 +41,9 @@ async function LoginHandler(data: any): Promise<LoginResponse|CoreException> {
             isDelete: true
         }
 
-        const session: any = await sessionRepository.findSessionByEmailAndIP(queryDataSession);
-        if (session != null) {
-                await sessionRepository.deleteSession(session._id); 
+        const sessionUser: any = await unitOfWork.sessionRepository.findSessionByEmailAndIP(queryDataSession);
+        if (sessionUser != null) {
+                await unitOfWork.sessionRepository.deleteSession(sessionUser._id); 
         } 
 
         const tokenExpiryDate = addDuration(token.expiresIn || "");
@@ -69,10 +67,11 @@ async function LoginHandler(data: any): Promise<LoginResponse|CoreException> {
         }
 
         const loginResponse = new LoginResponse("Success", 200, dataTokenResponse);
-
+        await unitOfWork.commitTransaction();
         return loginResponse
 
     } catch (error: any) {
+        await unitOfWork.abortTransaction();
         return new CoreException(500, error.mesagge);
     }
 }
