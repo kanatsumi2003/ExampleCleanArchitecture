@@ -29,7 +29,7 @@ export default class RoleRepository extends BaseRepository<typeof Role> implemen
     async createRole(createRoleData: any) {
         try {
             const roleWithBase = new RoleWithBase(createRoleData);
-            await this.insertDocuments(roleWithBase);
+            await roleWithBase.save();
             return roleWithBase;
         } catch (error: any) {
             throw new Error("Error at createRole in RoleRepository: " + error.message);
@@ -43,7 +43,7 @@ export default class RoleRepository extends BaseRepository<typeof Role> implemen
                 isActive: queryData.isActive,
                 isDelete: queryData.isDelete,
             }
-            const role = await this.findDocuments(query, null, {});
+            const role = await RoleWithBase.find(query);
             if(role == null) return null;
             return role[0];
         } catch (error: any) {

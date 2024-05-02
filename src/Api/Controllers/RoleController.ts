@@ -28,7 +28,7 @@ export default class RoleController {
     }
   }
   async createRole(req: Request<any, any, CreateRoleRequest>, res: Response): Promise<void>{
-    // #swagger.description = 'get role by Id'
+    // #swagger.description = 'Creat role'
     // #swagger.tags = ["Role"]
     try {
       const { name, description, isAdmin, listClaim } = req.body;

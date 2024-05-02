@@ -9,6 +9,6 @@ const {authenticateToken, authorizationMiddleware} = require("../Middlewares/Aut
 
 // router.post("/roles", roleController.getRoleById.bind(roleController));
 // router.post("/roles/create-role", roleController.createRole.bind(roleController));
-router.post("/role/:roleId", authenticateToken, authorizationMiddleware(["Admin"]), roleController.getRoleById);
-router.post("/role/create-role", authenticateToken, authorizationMiddleware(["Admin"]), roleController.createRole);
+router.post("/role/:roleId", roleController.getRoleById);
+router.post("/role/create-role", roleController.createRole);
 module.exports = router
