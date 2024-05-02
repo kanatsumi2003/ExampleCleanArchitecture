@@ -11,6 +11,8 @@ import IUserRepository from "../../../Persistences/IRepositories/IUserRepository
 import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
 
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
+
 async function LoginHandler(data: any): Promise<LoginResponse|CoreException> {
     try {
         const userRepository: IUserRepository = new UserRepository();
@@ -24,11 +26,11 @@ async function LoginHandler(data: any): Promise<LoginResponse|CoreException> {
         }
         const user: any = await userRepository.getUserByEmail(email, queryData);
         if (!user) {
-            return new CoreException(500, "User not found!");
+            return new CoreException(StatusCodeEnums.InternalServerError_500, "User not found!");
         }
         const isMatch = await comparePassword(password, user.password);
         if (!isMatch) {
-            return new CoreException(401, "Password is not match!")
+            return new CoreException(StatusCodeEnums.Unauthorized_401, "Password is not match!")
         }
 
         const token = await encodejwt(user);
@@ -65,12 +67,12 @@ async function LoginHandler(data: any): Promise<LoginResponse|CoreException> {
             expireIn: token.expiresIn || ""
         }
 
-        const loginResponse = new LoginResponse("Success", 200, dataTokenResponse);
+        const loginResponse = new LoginResponse("Success", StatusCodeEnums.OK_200, dataTokenResponse);
 
         return loginResponse
 
     } catch (error: any) {
-        return new CoreException(500, error.mesagge);
+        return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
     }
 }
 

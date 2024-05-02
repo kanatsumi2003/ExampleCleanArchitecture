@@ -7,10 +7,11 @@ import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepo
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { generateTimeStamp } from "../../../Common/Helpers/stringUtils";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 const { md5Encrypt } = require("../../../Common/Helpers/passwordUtils");
 
-export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise<VerifyForgotPasswordByEmailCodeResponse|CoreException> {
-    const response = new VerifyForgotPasswordByEmailCodeResponse("", 200, {})
+export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise<VerifyForgotPasswordByEmailCodeResponse> {
+    const response = new VerifyForgotPasswordByEmailCodeResponse("", StatusCodeEnums.InternalServerError_500, {})
     try {
         const userRepository: IUserRepository = new UserRepository();
         const sessionRepository: ISessionRepository = new SessionRepository();
@@ -22,7 +23,7 @@ export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise
             
         const user:any = await userRepository.getUserByEmail(data.email, roleQueryData);
         if (user === null) {
-            const response = new VerifyForgotPasswordByEmailCodeResponse("Email not existed", 400, {})
+            const response = new VerifyForgotPasswordByEmailCodeResponse("Email not existed",  StatusCodeEnums.BadRequest_400, {})
             return response;
         }
 
@@ -31,13 +32,13 @@ export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise
 
 
         if (differenceInSecond > 1800) {
-            const response = new VerifyForgotPasswordByEmailCodeResponse("Email timeout!", 400, {})
+            const response = new VerifyForgotPasswordByEmailCodeResponse("Email timeout!",  StatusCodeEnums.BadRequest_400, {})
             return response;
         }
 
         const emailHash = await md5Encrypt(user.emailCode)
         if (data.hash !== emailHash) {
-            const response = new VerifyForgotPasswordByEmailCodeResponse("Cannot verify please try again", 400, {})
+            const response = new VerifyForgotPasswordByEmailCodeResponse("Cannot verify please try again", StatusCodeEnums.BadRequest_400, {})
             return response;
         }
         user.emailCode = Math.random().toString(36).substring(2, 5);
@@ -71,8 +72,9 @@ export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise
             expireDate: tokenExpiryDate,
         })
 
-    } catch (error:any) {
-        return new CoreException(500, error.mesagge);
+    } catch (error) {
+        const response = new VerifyForgotPasswordByEmailCodeResponse("Server error", StatusCodeEnums.InternalServerError_500, {})
+        return response;
     }
 
     return response;

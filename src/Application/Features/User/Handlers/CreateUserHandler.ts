@@ -7,6 +7,7 @@ import IRoleRepository from '../../../Persistences/IRepositories/IRoleRepository
 import {sendMail} from '../../../../Application/Common/Helpers/emailUtils'
 import { md5Encrypt } from '../../../Common/Helpers/passwordUtils';
 import { CoreException } from '../../../Common/Exceptions/CoreException';
+import { StatusCodeEnums } from '../../../../Domain/Enums/StatusCodeEnums';
 
 
 
@@ -42,9 +43,9 @@ export async function CreateUserHandler(data: any): Promise<CreateUserResponse|C
     await sendMail(email, "Welcome to Noah-Quiz!", emailData, "verifyEmailTemplate.ejs");
 
 
-    return new CreateUserResponse("Successful", 200, result);
+    return new CreateUserResponse("Successful", StatusCodeEnums.OK_200, result);
 
   } catch (error: any) {
-    return new CoreException(500, error.mesagge);
+    return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
   }
 }

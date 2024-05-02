@@ -1,3 +1,4 @@
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
 import { CreateSessionDTO } from "../DTO/CreateSessionDTO";
@@ -20,6 +21,6 @@ export async function CreateSessionHandler(data: any): Promise<void|CoreExceptio
         await sessionRepository.createSession(createSessionDTO);
 
     } catch (error: any) {
-        return new CoreException(500, error.mesagge);
+        return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
     }
 }

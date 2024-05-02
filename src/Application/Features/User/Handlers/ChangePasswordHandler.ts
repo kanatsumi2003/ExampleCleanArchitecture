@@ -20,13 +20,13 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
         }
         const user: any = await userRepository.getUserById(userId, userQueryData);
         if (user == null) {
-            return new CoreException(500 , "User not found!");
+            return new CoreException(StatusCodeEnums.InternalServerError_500 , "User not found!");
         }
 
           // So sánh mật k
         const isMatch = await comparePassword(oldpassword, user.password);
         if (!isMatch) {
-            return new CoreException(401, "Old password is incorrect!");
+            return new CoreException(StatusCodeEnums.Unauthorized_401, "Old password is incorrect!");
         }
 
         // Băm mật khẩu mới
@@ -51,9 +51,9 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
                 await sessionRepository.deleteSession(sess._id);
             }
         }
-        return new ChangePasswordResponse("Đổi mật khẩu và đăng xuất thành công!", 200, result);
+        return new ChangePasswordResponse("Đổi mật khẩu và đăng xuất thành công!", StatusCodeEnums.OK_200, result);
     } catch (error: any) {
-        return new CoreException(500, error.mesagge);
+        return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
     }
 }
 

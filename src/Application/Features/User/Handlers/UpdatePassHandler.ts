@@ -2,6 +2,7 @@ import UserRepository from "../../../../Infrastructure/Persistences/Respositorie
 import { UpdatePassResponse } from "../Response/UpdatePassResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
+import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 
 
 export async function UpdatePassHandler(data: any): Promise<UpdatePassResponse|CoreException> {
@@ -19,7 +20,7 @@ export async function UpdatePassHandler(data: any): Promise<UpdatePassResponse|C
     const user: any = await userRepository.getUserByEmail(email, queryData);
 
     if (!user) {
-      return new CoreException(500, "User not found!");
+      return new CoreException(StatusCodeEnums.InternalServerError_500, "User not found!");
     }
     let emailConfirmed = user.emailConfirmed;
     if(!emailConfirmed) emailConfirmed = true;
@@ -32,9 +33,9 @@ export async function UpdatePassHandler(data: any): Promise<UpdatePassResponse|C
     const result: any = await userRepository.uploadPass(updateData);
 
     // Trả về thông báo thành công
-    return new UpdatePassResponse("Password updated successfully", 200,result);
+    return new UpdatePassResponse("Password updated successfully", StatusCodeEnums.OK_200,result);
   } catch (error: any) {
-    return new CoreException(500, error.mesagge);
+    return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
   }
 }
 

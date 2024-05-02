@@ -3,6 +3,7 @@ import UserRepository from "../../../../Infrastructure/Persistences/Respositorie
 import { md5Encrypt } from "../../../Common/Helpers/passwordUtils";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { CoreException } from '../../../Common/Exceptions/CoreException';
+import { StatusCodeEnums } from '../../../../Domain/Enums/StatusCodeEnums';
 
 export async function verifyEmailHandler (data : any) : Promise<VerifyEmailResponse|CoreException> {
   try {
@@ -16,21 +17,21 @@ export async function verifyEmailHandler (data : any) : Promise<VerifyEmailRespo
     }
     const user: any = await userRepository.getUserByEmail(email, queryData);
     if (!user) {
-      return new CoreException(500, "User not found!");
+      return new CoreException(StatusCodeEnums.InternalServerError_500, "User not found!");
     }     
 
     const emailHash = await md5Encrypt(user.emailCode);
     console.log(emailHash);
     if (hash != emailHash) {
-      return new CoreException(500, "Can not verify");
+      return new CoreException(StatusCodeEnums.InternalServerError_500, "Can not verify");
     }
 
     user.emailCode = Math.random().toString(36).substr(2, 5);
     user.emailConfirmed = true;
     console.log(user._id.toString());
     const result = await userRepository.updateDocument(queryData, user);
-    return new VerifyEmailResponse("Verify email successful", 200, result);
+    return new VerifyEmailResponse("Verify email successful", StatusCodeEnums.OK_200, result);
   } catch (error: any) {
-    return new CoreException(500, error.mesagge);
+    return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
   }
 }
