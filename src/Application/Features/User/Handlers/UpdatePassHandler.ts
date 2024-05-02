@@ -1,9 +1,6 @@
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { UpdatePassResponse } from "../Response/UpdatePassResponse";
-<<<<<<< HEAD
-=======
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
->>>>>>> duc
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 
 

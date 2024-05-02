@@ -6,12 +6,10 @@ import { UserWithBase } from "../../../../Domain/Entities/UserEntites";
 import { addDuration, encodejwt } from "../../../Common/Helpers/jwtUtils";
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { CreateSessionHandler } from "../../Session/Handlers/CreateSessionHandler";
-<<<<<<< HEAD
-=======
 const { comparePassword } = require("../../../Common/Helpers/passwordUtils");
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
->>>>>>> duc
+
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 
 async function LoginHandler(data: any): Promise<LoginResponse> {
