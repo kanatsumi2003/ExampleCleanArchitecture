@@ -25,7 +25,7 @@ export async function GetRoleByIdHandler(data: any): Promise<GetRoleByIdResponse
             200,
             responseData,
         );
-    } catch (error) {
+    } catch (error: any) {
         return new CoreException(500, error.mesagge);
 
     }
