@@ -33,11 +33,7 @@ export const SessionLogin = new mongoose.Schema({
     },
     ipAddress: {
         type: String
-    },
-    dbname: {
-        type: String
     }
-
 })
 
 const SessionWithBaseSchema = new mongoose.Schema({
