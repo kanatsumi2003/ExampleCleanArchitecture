@@ -5,7 +5,7 @@ import { CreateSessionDTO } from "../DTO/CreateSessionDTO";
 export async function CreateSessionHandler(data: any): Promise<void> {
     const unitOfWork = new UnitOfWork();
     try {
-        await unitOfWork.startTransaction();
+        const session = await unitOfWork.startTransaction();
         const createSessionDTO = new CreateSessionDTO(
             data.user._id,
             data.user.email,
@@ -18,7 +18,7 @@ export async function CreateSessionHandler(data: any): Promise<void> {
             data.deviceId,
             data.ipAddress,
         )
-        await unitOfWork.sessionRepository.createSession(createSessionDTO);
+        await unitOfWork.sessionRepository.createSession(createSessionDTO, session);
         await unitOfWork.commitTransaction();
 
     } catch (error: any) {

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { ClientSession } from "mongoose";
 import ISessionRepository from "../../../Application/Persistences/IRepositories/ISessionRepository";
 import { SessionLogin, SessionWithBase } from "../../../Domain/Entities/SessionEntites";
 import BaseRepository from "./BaseRepository";
@@ -36,7 +36,7 @@ class SessionRepository extends BaseRepository<typeof SessionLogin> implements I
             // if (sessions === null || sessions.length <= 0) {
             //     throw new Error('No session found!');
             // }
-            const session = await SessionWithBase.find(query);
+            const session: typeof SessionWithBase[] = await SessionWithBase.find(query);
             if(session == null) return null;
             return session[0];
         } catch (error: any) {
@@ -47,23 +47,35 @@ class SessionRepository extends BaseRepository<typeof SessionLogin> implements I
 
 
     
-    async deleteSession(_id: string): Promise<void> {
+    async deleteSession(_id: string, session: ClientSession): Promise<void> {
         try {
-            const query = {
-                _id: new mongoose.Types.ObjectId(_id)
-            }
-            await this.deleteDocument(query);
+            // const query = {
+            //     _id: new mongoose.Types.ObjectId(_id)
+            // }
+            await SessionWithBase.findByIdAndDelete(_id, {session});
         } catch (error: any) {
             throw new Error("Error at deleteSession in SessionRepository: " + error.message);
         }
 
     }
 
-    async createSession(sessionData: any){
+    async createSession(sessionData: any, session: ClientSession){
 
         try {
-            const fullSession = new SessionWithBase(sessionData)
-            await this.insertDocuments(fullSession);
+            const fullSession = new SessionWithBase({
+                userId: sessionData.userId,
+                email: sessionData.email,
+                name: sessionData.name || "unknown", 
+                username: sessionData.username.toLowerCase(), 
+                jwttoken: sessionData.jwttoken, 
+                refreshToken: sessionData.refreshToken,
+                ExpireRefreshToken: sessionData.ExpireRefreshToken,
+                expireDate: sessionData.expireDate,
+                deviceId: sessionData.deviceId,
+                ipAddress: sessionData.ipAddress,
+            });
+            console.log(fullSession);
+            await SessionWithBase.create([fullSession], {session});
             return fullSession;
         } catch (error: any) {
             throw new Error("Error at createSession in SessionRepository: " + error.message);

@@ -45,7 +45,7 @@ const SessionWithBaseSchema = new mongoose.Schema({
     ...Basev2Schema.obj
 })
 
-export const SessionWithBase = mongoose.model("SessionWithBase", SessionWithBaseSchema, "usersession");
+export const SessionWithBase = mongoose.model("SessionWithBase", SessionWithBaseSchema, "sessions");
 
 
 /*class SessionLogin {

@@ -12,6 +12,7 @@
     import { validationUtils } from '../../../Common/Helpers/validationUtils';
     import { CoreException } from "../../../Common/Exceptions/CoreException";
     import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
+import { CreateUserSessionDTO } from "../Commands/CreateUserSessionDTO";
 
     async function LoginHandler(data: any): Promise<LoginResponse|CoreException> {
         const unitOfWork = new UnitOfWork();
@@ -56,23 +57,35 @@
 
         const sessionUser: any = await unitOfWork.sessionRepository.findSessionByEmailAndIP(queryDataSession);
         if (sessionUser != null) {
-                await unitOfWork.sessionRepository.deleteSession(sessionUser._id); 
+                await unitOfWork.sessionRepository.deleteSession(sessionUser._id, session); 
         } 
 
-            const tokenExpiryDate = addDuration(token.expiresIn || "");
+            const tokenExpiryDate: any = addDuration(token.expiresIn || "");
             const refreshTokenExpiryDate = addDuration(process.env.REACT_APP_EXPIRE_REFRESH_TOKEN || "");
 
-            const dataForCreateSession: any = {
-                user: user,
-                token: token,
-                deviceId: deviceId,
-                ipAddress: ipAddress,
-                refreshTokenExpiryDate: refreshTokenExpiryDate,
-                tokenExpiryDate: tokenExpiryDate,
-            }
-
-            await CreateSessionHandler(dataForCreateSession);
-
+            // const dataForCreateSession: any = {
+            //     user: user,
+            //     token: token,
+            //     deviceId: deviceId,
+            //     ipAddress: ipAddress,
+            //     refreshTokenExpiryDate: refreshTokenExpiryDate,
+            //     tokenExpiryDate: tokenExpiryDate,
+            // }
+            const createSessionDTO = new CreateUserSessionDTO(
+                user._id,
+                user.email,
+                user.name || "unknown", 
+                user.username.toLowerCase(), 
+                token.token, 
+                token.refreshToken,
+                refreshTokenExpiryDate,
+                tokenExpiryDate,
+                deviceId,
+                ipAddress,
+            )
+           await unitOfWork.sessionRepository.createSession(createSessionDTO, session);
+            // await CreateSessionHandler(dataForCreateSession);
+            
             const dataTokenResponse = {
                 accessToken: token.token,
                 refreshToken: token.refreshToken,
