@@ -6,19 +6,24 @@ import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepo
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
+import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
 
 
 export async function ChangePasswordHandler(data: any): Promise<ChangePasswordResponse|CoreException>{
-   
+    const unitOfWork = new UnitOfWork();
     try {
-        const sessionRepository: ISessionRepository = new SessionRepository();
-        const userRepository: IUserRepository = new UserRepository();
+        const session = await unitOfWork.startTransaction();
+      
+        // const sessionRepository: ISessionRepository = new SessionRepository();
+        // const userRepository: IUserRepository = new UserRepository();
         const {userId, oldpassword, newpassword} = data;
-        const userQueryData = {
+        const userQueryData: any = {
+            userId: userId,
             isDelete: false,
             isActive: true,
         }
-        const user: any = await userRepository.getUserById(userId, userQueryData);
+        // const user: any = await userRepository.getUserById(userId, userQueryData);
+         const user: any = await unitOfWork.userRepository.getUserById(userQueryData);
         if (user == null) {
             return new CoreException(500 , "User not found!");
         }
@@ -38,20 +43,24 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
             isActive: true,
             isDelete: false,
           };
-        const result: any = await userRepository.changePasswordUser(changePasswordUserQueryData);
+        // const result: any = await userRepository.changePasswordUser(changePasswordUserQueryData);
+
+        const result: any = await unitOfWork.userRepository.changePasswordUser(changePasswordUserQueryData, session);
+
         // xóa session
         const sessionQueryData:any ={
           email: user.email,
           isDelete: false,
           isActive:true
       }
-        const session: any = await sessionRepository.findSessionByEmail(sessionQueryData)
-        if (session !== null && session.length >= 0) {
-            for (const sess of session) {
-                await sessionRepository.deleteSession(sess._id);
+        const sessionUser: any = await unitOfWork.sessionRepository.findSessionByEmail(sessionQueryData)
+        if (sessionUser !== null && sessionUser.length >= 0) {
+            for (const sess of sessionUser) {
+                await unitOfWork.sessionRepository.deleteSession(sess._id);
             }
         }
-        return new ChangePasswordResponse("Đổi mật khẩu và đăng xuất thành công!", 200, result);
+        await unitOfWork.commitTransaction();
+        return new ChangePasswordResponse("Change password successfully!", 200, result);
     } catch (error: any) {
         return new CoreException(500, error.mesagge);
     }

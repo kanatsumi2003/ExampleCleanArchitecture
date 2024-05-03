@@ -3,19 +3,22 @@ import UserRepository from "../../../../Infrastructure/Persistences/Respositorie
 import { UpdateImageResponse } from "../Response/UpdateImageResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
+import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
 
 
 export async function UpdateImageHandler(data: any): Promise<UpdateImageResponse | CoreException> {
+  const unitOfWork = new UnitOfWork();
   try {
+    const session = await unitOfWork.startTransaction();
     const { email, filename } = data;
 
-    const userRepository: IUserRepository = new UserRepository();
+    // const userRepository: IUserRepository = new UserRepository();
     const queryData: any = {
       isDelete: false,
       isActive: true,
       emailConfirmed: true,
     };
-    const user: any = await userRepository.getUserByEmail(email, queryData);
+    const user: any = await unitOfWork.userRepository.getUserByEmail(email, queryData);
 
     if (!user) {
       return new CoreException(500, "User not found!");
@@ -25,7 +28,8 @@ export async function UpdateImageHandler(data: any): Promise<UpdateImageResponse
       email: email,
       filename: filename,
     };
-    const result: any = await userRepository.uploadImage(updateData);
+    const result: any = await unitOfWork.userRepository.uploadImage(updateData, session);
+
     const imagePathData = {
       imageUser: result,
     };

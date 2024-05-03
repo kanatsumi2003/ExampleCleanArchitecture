@@ -3,18 +3,21 @@ import UserRepository from "../../../../Infrastructure/Persistences/Respositorie
 import { md5Encrypt } from "../../../Common/Helpers/passwordUtils";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { CoreException } from '../../../Common/Exceptions/CoreException';
+import { UnitOfWork } from '../../../../Infrastructure/Persistences/Respositories/UnitOfWork';
 
 export async function verifyEmailHandler (data : any) : Promise<VerifyEmailResponse|CoreException> {
+  const unitOfWork = new UnitOfWork();
   try {
     const {email, hash} = data
-    const userRepository: IUserRepository = new UserRepository();
+    // const userRepository: IUserRepository = new UserRepository();
+
 
     const queryData: any = {
         isDelete: false,
         isActive: true,
         emailConfirmed: false,
     }
-    const user: any = await userRepository.getUserByEmail(email, queryData);
+    const user: any = await unitOfWork.userRepository.getUserByEmail(email, queryData);
     if (!user) {
       return new CoreException(500, "User not found!");
     }     
