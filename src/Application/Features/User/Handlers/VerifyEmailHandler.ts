@@ -2,6 +2,7 @@ import { VerifyEmailResponse } from './../Response/VerifyEmailResponse';
 import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { md5Encrypt } from "../../../Common/Helpers/passwordUtils";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
+import { validationUtils } from '../../../Common/Helpers/validationUtils';
 import { CoreException } from '../../../Common/Exceptions/CoreException';
 
 export async function verifyEmailHandler (data : any) : Promise<VerifyEmailResponse|CoreException> {
@@ -14,6 +15,11 @@ export async function verifyEmailHandler (data : any) : Promise<VerifyEmailRespo
         isActive: true,
         emailConfirmed: false,
     }
+    const emailError = validationUtils.validateEmail(email);
+    if (emailError){
+          return new VerifyEmailResponse("Validation failed", 400, {}, emailError);
+    }
+
     const user: any = await userRepository.getUserByEmail(email, queryData);
     if (!user) {
       return new CoreException(500, "User not found!");

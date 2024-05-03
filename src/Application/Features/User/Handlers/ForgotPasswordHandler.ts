@@ -6,6 +6,7 @@ import { CoreException } from "../../../Common/Exceptions/CoreException";
 import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
 const { md5Encrypt } = require("../../../Common/Helpers/passwordUtils");
 const { sendMail } = require("../../../Common/Helpers/emailUtils")
+import { validationUtils } from '../../../Common/Helpers/validationUtils';
 
 export async function ForgotPasswordHandler(email: string): Promise<ForgotPasswordResponse|CoreException> {
     try {
@@ -17,6 +18,11 @@ export async function ForgotPasswordHandler(email: string): Promise<ForgotPasswo
             emailConfirmed: true,
         }
 
+        // const emailError = validationUtils.validateEmail(email);
+        // if (emailError){
+        //      return new ForgotPasswordResponse("Validation failed", 400, {}, emailError);
+        // }
+        
         const user: any = await unitOfWork.userRepository.getUserByEmail(email, queryData);
         if (user == null) {
             return new CoreException(500, "User Not Found!");
