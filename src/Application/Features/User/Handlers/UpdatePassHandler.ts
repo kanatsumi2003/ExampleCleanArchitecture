@@ -1,13 +1,12 @@
-import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { UpdatePassResponse } from "../Response/UpdatePassResponse";
-import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
+import { IUnitOfWork } from "../../../Persistences/IRepositories/IUnitOfWork";
 
 
 export async function UpdatePassHandler(data: any): Promise<UpdatePassResponse|CoreException> {
-  const unitOfWork = new UnitOfWork();
+  const unitOfWork: IUnitOfWork = new UnitOfWork();
   try {
     const session = await unitOfWork.startTransaction();
     const { email, newpassword } = data;
@@ -38,6 +37,7 @@ export async function UpdatePassHandler(data: any): Promise<UpdatePassResponse|C
     // Trả về thông báo thành công
     return new UpdatePassResponse("Password updated successfully", StatusCodeEnums.OK_200,result);
   } catch (error: any) {
+    await unitOfWork.abortTransaction();
     return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
   }
 }

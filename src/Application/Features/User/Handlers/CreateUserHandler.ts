@@ -1,19 +1,15 @@
 import { CreateUserResponse } from './../Response/CreateUserResponse';
-import RoleRepository from "../../../../Infrastructure/Persistences/Respositories/RoleRepository";
-import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
-import IUserRepository from '../../../Persistences/IRepositories/IUserRepository';
-import IRoleRepository from '../../../Persistences/IRepositories/IRoleRepository';
-
 import {sendMail} from '../../../../Application/Common/Helpers/emailUtils';
 import { md5Encrypt } from '../../../Common/Helpers/passwordUtils';
 import { CoreException } from '../../../Common/Exceptions/CoreException';
 import { UnitOfWork } from '../../../../Infrastructure/Persistences/Respositories/UnitOfWork';
 import { StatusCodeEnums } from '../../../../Domain/Enums/StatusCodeEnums';
+import { IUnitOfWork } from '../../../Persistences/IRepositories/IUnitOfWork';
 
 
 
 export async function CreateUserHandler(data: any): Promise<CreateUserResponse|CoreException> {
-  const unitOfWork = new UnitOfWork();
+  const unitOfWork: IUnitOfWork = new UnitOfWork();
   try {
     const session = await unitOfWork.startTransaction();
     const {email, fullname, password, phoneNumber, username} = data;

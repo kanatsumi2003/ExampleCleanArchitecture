@@ -1,16 +1,11 @@
-import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
-import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { ChangePasswordResponse } from "../../User/Response/ChangePasswordResponse";
 import { comparePassword } from "../../../Common/Helpers/passwordUtils";
-import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
-import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
-import { validationUtils } from '../../../Common/Helpers/validationUtils';
-import { CreateUserResponse } from './../Response/CreateUserResponse';
 import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
+import { IUnitOfWork } from "../../../Persistences/IRepositories/IUnitOfWork";
 export async function ChangePasswordHandler(data: any): Promise<ChangePasswordResponse|CoreException>{
-   const unitOfWork = new UnitOfWork();
+   const unitOfWork: IUnitOfWork = new UnitOfWork();
     try {
         const session = await unitOfWork.startTransaction();
         const {userId, oldpassword, newpassword} = data;

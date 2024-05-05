@@ -1,11 +1,11 @@
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
-import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
 import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
 import { CreateSessionDTO } from "../DTO/CreateSessionDTO";
+import { IUnitOfWork } from "../../../Persistences/IRepositories/IUnitOfWork";
 
 export async function CreateSessionHandler(data: any): Promise<void|CoreException> {
-    const unitOfWork = new UnitOfWork();
+    const unitOfWork: IUnitOfWork = new UnitOfWork();
     try {
         const session = await unitOfWork.startTransaction();
         const createSessionDTO = new CreateSessionDTO(
@@ -20,7 +20,6 @@ export async function CreateSessionHandler(data: any): Promise<void|CoreExceptio
             data.deviceId,
             data.ipAddress,
         )
-        await unitOfWork.sessionRepository.createSession(createSessionDTO, session);
         await unitOfWork.sessionRepository.createSession(createSessionDTO, session);
         await unitOfWork.commitTransaction();
     } catch (error: any) {

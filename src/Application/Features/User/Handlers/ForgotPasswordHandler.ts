@@ -1,17 +1,15 @@
 import moment from "moment";
-import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { ForgotPasswordResponse } from "../Response/ForgotPasswordResponse";
-import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
+import { IUnitOfWork } from "../../../Persistences/IRepositories/IUnitOfWork";
 const { md5Encrypt } = require("../../../Common/Helpers/passwordUtils");
 const { sendMail } = require("../../../Common/Helpers/emailUtils")
-import { validationUtils } from '../../../Common/Helpers/validationUtils';
 
 export async function ForgotPasswordHandler(email: string): Promise<ForgotPasswordResponse|CoreException> {
     try {
-        const unitOfWork = new UnitOfWork();
+        const unitOfWork: IUnitOfWork = new UnitOfWork();
         await unitOfWork.startTransaction();
         const queryData: any = {
             isDelete: false,

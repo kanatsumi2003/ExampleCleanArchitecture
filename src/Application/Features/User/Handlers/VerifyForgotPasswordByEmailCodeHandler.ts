@@ -1,19 +1,15 @@
-import moment from "moment-timezone";
-import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
-import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { VerifyForgotPasswordByEmailCodeResponse } from "../Response/VerifyForgotPasswordByEmailCodeResponse";
 import { addDuration, encodejwt } from "../../../Common/Helpers/jwtUtils";
-import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
-import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { generateTimeStamp } from "../../../Common/Helpers/stringUtils";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
+import { IUnitOfWork } from "../../../Persistences/IRepositories/IUnitOfWork";
 const { md5Encrypt } = require("../../../Common/Helpers/passwordUtils");
 
 export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise<VerifyForgotPasswordByEmailCodeResponse> {
     const response = new VerifyForgotPasswordByEmailCodeResponse("", StatusCodeEnums.InternalServerError_500, {})
-    const unitOfWork = new UnitOfWork();
+    const unitOfWork: IUnitOfWork = new UnitOfWork();
     try {
         const session = await unitOfWork.startTransaction();
              const roleQueryData: any = {
@@ -44,7 +40,7 @@ export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise
         }
         user.emailCode = Math.random().toString(36).substring(2, 5);
         
-        await unitOfWork.userRepository.updateUserById(user._id, user)
+        await unitOfWork.userRepository.updateUserById(user._id, user, session)
 
         const token = await encodejwt(user);
         const sessionQueryData:any ={
@@ -62,7 +58,7 @@ export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise
         const tokenExpiryDate = addDuration(token.expiresIn || "");
         const refreshTokenExpiryDate = addDuration(process.env.REACT_APP_EXPIRE_REFRESH_TOKEN || "");
 
-        unitOfWork.sessionRepository.createSession({
+        await unitOfWork.sessionRepository.createSession({
             userId: user._id,
             email: user.email,
             name: user.name || "unknown",

@@ -1,14 +1,12 @@
 import { VerifyEmailResponse } from './../Response/VerifyEmailResponse';
-import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
 import { md5Encrypt } from "../../../Common/Helpers/passwordUtils";
-import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
-import { validationUtils } from '../../../Common/Helpers/validationUtils';
 import { CoreException } from '../../../Common/Exceptions/CoreException';
 import { StatusCodeEnums } from '../../../../Domain/Enums/StatusCodeEnums';
 import { UnitOfWork } from '../../../../Infrastructure/Persistences/Respositories/UnitOfWork';
+import { IUnitOfWork } from '../../../Persistences/IRepositories/IUnitOfWork';
 
 export async function verifyEmailHandler (data : any) : Promise<VerifyEmailResponse|CoreException> {
-  const unitOfWork = new UnitOfWork();
+  const unitOfWork: IUnitOfWork = new UnitOfWork();
   try {
     const {email, hash} = data
     // const userRepository: IUserRepository = new UserRepository();

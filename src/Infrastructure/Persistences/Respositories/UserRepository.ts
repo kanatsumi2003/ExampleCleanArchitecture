@@ -12,16 +12,16 @@ import { hashPassword } from "../../../Application/Common/Helpers/passwordUtils"
 //   }
 class UserRepository implements IUserRepository {
 
-  async updateUserById(userId: string, userData: any) {
+  async updateUserById(userId: string, userData: any, session: ClientSession) {
     try {
-      const user: any = new UserWithBase({
+      const user: any = await UserWithBase.updateOne({
         fullname: userData.fullname,
         email: userData.email,
         username: userData.username,
         password: userData.password,
         phoneNumber: userData.phoneNumber,
         role_id: userData.role_id,
-      });
+      }, {session});
       const query: any = {
         _id: new mongoose.Types.ObjectId(userId)
       }

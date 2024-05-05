@@ -1,5 +1,5 @@
 import { UnitOfWork } from './UnitOfWork';
-import mongoose from "mongoose";
+import mongoose, { ClientSession } from "mongoose";
 import IRoleRepository from "../../../Application/Persistences/IRepositories/IRoleRepository";
 import { Role, RoleWithBase } from "../../../Domain/Entities/RoleEntities";
 import BaseRepository from "./BaseRepository";
@@ -26,10 +26,9 @@ export default class RoleRepository extends BaseRepository<typeof Role> implemen
             throw new Error("Error at getRoleById in RoleRepository: " + error.message);
         }
     }
-    async createRole(createRoleData: any) {
+    async createRole(createRoleData: any, session: ClientSession): Promise<typeof RoleWithBase> {
         try {
-            const roleWithBase = new RoleWithBase(createRoleData);
-            await roleWithBase.save();
+            const roleWithBase: any = await RoleWithBase.create(createRoleData, {session});
             return roleWithBase;
         } catch (error: any) {
             throw new Error("Error at createRole in RoleRepository: " + error.message);

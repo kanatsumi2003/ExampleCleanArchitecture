@@ -20,7 +20,7 @@ interface IUserRepository {
     getUserByEmailAndName(email: string, username: string, queryData: any): Promise<typeof UserWithBase | null>;
     createUser(userData: any, session: ClientSession): Promise<typeof UserWithBase>;
     getUserById(userId: string, queryData: any): Promise<typeof UserWithBase>;
-    updateUserById(userId:string,  userData: any):Promise<void>;
+    updateUserById(userId: string, userData: any, session: ClientSession);
     uploadPass(data: any, session: ClientSession): Promise<void>;
     uploadImage(data: any, session: ClientSession): Promise<string>;
     changePasswordUser(queryData: any, session: ClientSession): Promise<void>;

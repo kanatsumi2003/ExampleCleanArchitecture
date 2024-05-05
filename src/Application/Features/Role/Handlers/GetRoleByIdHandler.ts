@@ -1,14 +1,14 @@
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
-import RoleRepository from "../../../../Infrastructure/Persistences/Respositories/RoleRepository";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
 import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
 import GetRoleByIdResponse from "../Response/GetRoleByIdResponse";
+import { IUnitOfWork } from "../../../Persistences/IRepositories/IUnitOfWork";
 
 export async function GetRoleByIdHandler(data: any): Promise<GetRoleByIdResponse|CoreException> {
-    const unitOfWork = new UnitOfWork();
+    const unitOfWork: IUnitOfWork = new UnitOfWork();
     try {
        
-        unitOfWork.startTransaction();
+        await unitOfWork.startTransaction();
         const {id} = data;
         const queryData: any = {
             isActive: true,
@@ -23,7 +23,6 @@ export async function GetRoleByIdHandler(data: any): Promise<GetRoleByIdResponse
             listClaim: result.listClaim,
         }
         const a = new GetRoleByIdResponse("Successfull", StatusCodeEnums.OK_200, responseData);
-        await unitOfWork.commitTransaction();
         console.log(a);
         return new GetRoleByIdResponse(
             "Successfull",
@@ -31,7 +30,6 @@ export async function GetRoleByIdHandler(data: any): Promise<GetRoleByIdResponse
             responseData,
         );
     } catch (error: any) {  
-        unitOfWork.abortTransaction();  
         return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
 
     }
