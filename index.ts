@@ -3,6 +3,7 @@ require('dotenv').config();
 const app = express();
 const userRoute = require('./src/Api/Routes/UserRoutes')
 const roleRoute = require('./src/Api/Routes/RoleRoutes')
+const vietqrRoute = require('./src/Api/Routes/VietQRRouter')
 const swaggerUi = require('swagger-ui-express')
 const swaggerFile = require('./swagger_output.json')
 
@@ -11,7 +12,7 @@ app.use(express.json());
 
 app.use("/api", roleRoute);
 app.use("/api", userRoute);
-
+app.use("/api", vietqrRoute);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 app.use('/uploads', express.static('uploads'));
 app.listen(3000, '0.0.0.0', () => {
