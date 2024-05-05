@@ -4,25 +4,21 @@ import { CoreException } from "../../../Common/Exceptions/CoreException";
 import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
 import { CreateRoleResponse } from "../Response/CreateRoleResponse";
 
-export async function CreateRoleHandler(
-  data: any
-): Promise<CreateRoleResponse|CoreException> {
+export async function CreateRoleHandler(data: any): Promise<CreateRoleResponse|CoreException> {
+  const unitOfWork = new UnitOfWork();
   try {
-    const unitOfWork = new UnitOfWork();
     await unitOfWork.startTransaction();
-    const roleRepository = new RoleRepository();
     const { name, description, isAdmin, listClaim } = data;
-
     const createRoledata: any = {
       name: name,
       description: description,
       isAdmin: isAdmin,
       listClaim: listClaim,
     };
-    const result = await unitOfWork.roleRepository.createRole(createRoledata);
+    const result =  await unitOfWork.roleRepository.createRole(createRoledata);
+    await unitOfWork.commitTransaction();
     return new CreateRoleResponse("Create role successful", StatusCodeEnums.Created_201, {});
   } catch (error: any) {
-    return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
-
+    throw new Error("Error at CreateRoleHandler: " + error.message);
   }
 }

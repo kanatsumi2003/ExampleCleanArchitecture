@@ -5,11 +5,11 @@ import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositorie
 import GetRoleByIdResponse from "../Response/GetRoleByIdResponse";
 
 export async function GetRoleByIdHandler(data: any): Promise<GetRoleByIdResponse|CoreException> {
+    const unitOfWork = new UnitOfWork();
     try {
-        const unitOfWork = new UnitOfWork();
+       
         unitOfWork.startTransaction();
         const {id} = data;
-        // const roleRepository = new RoleRepository();
         const queryData: any = {
             isActive: true,
             isDelete: false,
@@ -23,13 +23,15 @@ export async function GetRoleByIdHandler(data: any): Promise<GetRoleByIdResponse
             listClaim: result.listClaim,
         }
         const a = new GetRoleByIdResponse("Successfull", StatusCodeEnums.OK_200, responseData);
+        await unitOfWork.commitTransaction();
         console.log(a);
         return new GetRoleByIdResponse(
             "Successfull",
             StatusCodeEnums.OK_200,
             responseData,
         );
-    } catch (error: any) {
+    } catch (error: any) {  
+        unitOfWork.abortTransaction();  
         return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
 
     }
