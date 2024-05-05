@@ -21,8 +21,8 @@ export async function CreateSessionHandler(data: any): Promise<void|CoreExceptio
             data.ipAddress,
         )
         await unitOfWork.sessionRepository.createSession(createSessionDTO, session);
+        await unitOfWork.sessionRepository.createSession(createSessionDTO, session);
         await unitOfWork.commitTransaction();
-
     } catch (error: any) {
         await unitOfWork.abortTransaction();
         return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
