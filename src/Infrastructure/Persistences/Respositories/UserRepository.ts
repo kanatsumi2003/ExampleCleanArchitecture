@@ -1,3 +1,4 @@
+import { RoleWithBase } from './../../../Domain/Entities/RoleEntities';
 import { Collection, Db } from "mongodb";
 import BaseRepository from "./BaseRepository";
 import { User, UserWithBase } from "../../../Domain/Entities/UserEntites";
@@ -123,7 +124,7 @@ class UserRepository implements IUserRepository {
   }
 
 
-  async changePasswordUser(queryData: any): Promise<void> {
+  async changePasswordUser(queryData: any, session: ClientSession): Promise<void> {
     try {
       const { userId, newPassword, isActive, isDelete } = queryData;
 
@@ -139,11 +140,12 @@ class UserRepository implements IUserRepository {
       };
 
       // await this.updateDocument(query, updateData);
+      await UserWithBase.updateOne(query, updateData, {session});
     } catch (error: any) {
       throw new Error("Error change password: " + error.message);
     }
   }
-  async uploadPass(data: any): Promise<void> {
+  async uploadPass(data: any, session: ClientSession): Promise<void> {
     try {
       // Hash mật khẩu mới trước khi cập nhật
       const { email, newPassword, emailConfirmed } = data
@@ -164,12 +166,13 @@ class UserRepository implements IUserRepository {
 
       // Thực hiện phép cập nhật sử dụng $set
       // await this.updateDocument(query, updateData);
+      await UserWithBase.updateOne(query, updateData, {session});
     } catch (error: any) {
       throw new Error("Error updating password: " + error.message);
     }
   }
 
-  async uploadImage(data: any): Promise<string> {
+  async uploadImage(data: any, session: ClientSession ): Promise<string> {
     try {
 
       const { email, filename } = data
@@ -183,6 +186,7 @@ class UserRepository implements IUserRepository {
         imageUser: filename
       }
       // await this.updateDocument(query, updateData);
+      await UserWithBase.updateOne(query, updateData, { session });
       return filename;
     } catch (error: any) {
       throw new Error("Error updating image: " + error.message);

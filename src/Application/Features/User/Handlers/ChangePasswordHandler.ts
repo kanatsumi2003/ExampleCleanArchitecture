@@ -14,19 +14,20 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
     try {
         const session = await unitOfWork.startTransaction();
         const {userId, oldpassword, newpassword} = data;
-        const userQueryData = {
+        const userQueryData: any = {
             userId: userId,
             isDelete: false,
             isActive: true,
         }
 
-        const passwordError = validationUtils.validatePassword(newpassword);
+        // const passwordError = validationUtils.validatePassword(newpassword);
 
-        if (passwordError){
-            return new CreateUserResponse("Validation failed", 400, {}, "New " + passwordError);
-        }
+        // if (passwordError){
+        //     return new CreateUserResponse("Validation failed", 400, {}, "New " + passwordError);
+        // }
         
-        const user: any = await unitOfWork.userRepository.getUserById(userQueryData);
+        // const user: any = await unitOfWork.userRepository.getUserById(userQueryData);
+         const user: any = await unitOfWork.userRepository.getUserById(userQueryData);
         if (user == null) {
             return new CoreException(StatusCodeEnums.InternalServerError_500 , "User not found!");
         }
@@ -46,7 +47,7 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
             isActive: true,
             isDelete: false,
           };
-        const result: any = await unitOfWork.userRepository.changePasswordUser(changePasswordUserQueryData);
+        const result: any = await unitOfWork.userRepository.changePasswordUser(changePasswordUserQueryData, session);
         // xóa session
         const sessionQueryData:any ={
           email: user.email,
@@ -59,7 +60,8 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
                 await unitOfWork.sessionRepository.deleteSession(sess._id, session);
             }
         }
-        return new ChangePasswordResponse("Đổi mật khẩu và đăng xuất thành công!", 200, result);
+        await unitOfWork.commitTransaction();
+        return new ChangePasswordResponse("Change password successfully!", 200, result);
     } catch (error: any) {
         await unitOfWork.abortTransaction();
         return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);

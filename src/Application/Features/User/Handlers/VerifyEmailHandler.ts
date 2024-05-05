@@ -5,23 +5,26 @@ import IUserRepository from "../../../Persistences/IRepositories/IUserRepository
 import { validationUtils } from '../../../Common/Helpers/validationUtils';
 import { CoreException } from '../../../Common/Exceptions/CoreException';
 import { StatusCodeEnums } from '../../../../Domain/Enums/StatusCodeEnums';
+import { UnitOfWork } from '../../../../Infrastructure/Persistences/Respositories/UnitOfWork';
 
 export async function verifyEmailHandler (data : any) : Promise<VerifyEmailResponse|CoreException> {
+  const unitOfWork = new UnitOfWork();
   try {
     const {email, hash} = data
-    const userRepository: IUserRepository = new UserRepository();
+    // const userRepository: IUserRepository = new UserRepository();
+
 
     const queryData: any = {
         isDelete: false,
         isActive: true,
         emailConfirmed: false,
     }
-    const emailError = validationUtils.validateEmail(email);
-    if (emailError){
-          return new VerifyEmailResponse("Validation failed", 400, {}, emailError);
-    }
+    // const emailError = validationUtils.validateEmail(email);
+    // if (emailError){
+    //       return new VerifyEmailResponse("Validation failed", 400, {}, emailError);
+    // }
 
-    const user: any = await userRepository.getUserByEmail(email, queryData);
+    const user: any = await unitOfWork.userRepository.getUserByEmail(email, queryData);
     if (!user) {
       return new CoreException(StatusCodeEnums.InternalServerError_500, "User not found!");
     }     
