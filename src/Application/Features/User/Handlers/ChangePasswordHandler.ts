@@ -6,19 +6,27 @@ import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepo
 import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
-
-
+import { validationUtils } from '../../../Common/Helpers/validationUtils';
+import { CreateUserResponse } from './../Response/CreateUserResponse';
+import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
 export async function ChangePasswordHandler(data: any): Promise<ChangePasswordResponse|CoreException>{
-   
+   const unitOfWork = new UnitOfWork();
     try {
-        const sessionRepository: ISessionRepository = new SessionRepository();
-        const userRepository: IUserRepository = new UserRepository();
+        const session = await unitOfWork.startTransaction();
         const {userId, oldpassword, newpassword} = data;
         const userQueryData = {
+            userId: userId,
             isDelete: false,
             isActive: true,
         }
-        const user: any = await userRepository.getUserById(userId, userQueryData);
+
+        const passwordError = validationUtils.validatePassword(newpassword);
+
+        if (passwordError){
+            return new CreateUserResponse("Validation failed", 400, {}, "New " + passwordError);
+        }
+        
+        const user: any = await unitOfWork.userRepository.getUserById(userQueryData);
         if (user == null) {
             return new CoreException(StatusCodeEnums.InternalServerError_500 , "User not found!");
         }
@@ -38,21 +46,22 @@ export async function ChangePasswordHandler(data: any): Promise<ChangePasswordRe
             isActive: true,
             isDelete: false,
           };
-        const result: any = await userRepository.changePasswordUser(changePasswordUserQueryData);
+        const result: any = await unitOfWork.userRepository.changePasswordUser(changePasswordUserQueryData);
         // xóa session
         const sessionQueryData:any ={
           email: user.email,
           isDelete: false,
           isActive:true
       }
-        const session: any = await sessionRepository.findSessionByEmail(sessionQueryData)
-        if (session !== null && session.length >= 0) {
-            for (const sess of session) {
-                await sessionRepository.deleteSession(sess._id);
+        const sessionUser: any = await unitOfWork.sessionRepository.findSessionByEmail(sessionQueryData)
+        if (sessionUser !== null && sessionUser.length >= 0) {
+            for (const sess of sessionUser) {
+                await unitOfWork.sessionRepository.deleteSession(sess._id, session);
             }
         }
-        return new ChangePasswordResponse("Đổi mật khẩu và đăng xuất thành công!", StatusCodeEnums.OK_200, result);
+        return new ChangePasswordResponse("Đổi mật khẩu và đăng xuất thành công!", 200, result);
     } catch (error: any) {
+        await unitOfWork.abortTransaction();
         return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
     }
 }

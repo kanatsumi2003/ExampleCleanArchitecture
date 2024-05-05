@@ -80,7 +80,7 @@ web_modules/
 
 # Optional eslint cache
 .eslintcache
-
+data/
 # Optional stylelint cache
 .stylelintcache
 
@@ -186,4 +186,4 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,node
 .vscode/
 node_modules
-data/
+data/.vscode/

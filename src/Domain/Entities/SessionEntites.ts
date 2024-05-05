@@ -1,5 +1,54 @@
-import { BaseEntities } from "./BaseEntites";
-class SessionLogin {
+//import { BaseEntities } from "./BaseEntites";
+
+import mongoose from "mongoose";
+import { Basev2Schema } from "./BaseEntitiesv2";
+
+export const SessionLogin = new mongoose.Schema({
+    userId: {
+        type: String
+    },
+    email: {
+        type: String
+    },
+    name: {
+        type: String
+    },
+    username: {
+        type: String
+    },
+    jwttoken: {
+        type: String
+    },
+    refreshToken: {
+        type: String
+    },
+    expireRefreshToken: {
+        type: String
+    },
+    expireDate: {
+        type: Date
+    },
+    deviceId: {
+        type: String
+    },
+    ipAddress: {
+        type: String
+    },
+    dbname: {
+        type: String
+    }
+
+})
+
+const SessionWithBaseSchema = new mongoose.Schema({
+    ...SessionLogin.obj,
+    ...Basev2Schema.obj
+})
+
+export const SessionWithBase = mongoose.model("SessionWithBase", SessionWithBaseSchema, "sessions");
+
+
+/*class SessionLogin {
     private userId: string;
     private email: string;
     private name: string;
@@ -223,4 +272,4 @@ class SessionWithBase extends BaseEntities {
     }
 }
 
-export { SessionLogin, SessionWithBase };
+export { SessionLogin, SessionWithBase };*/

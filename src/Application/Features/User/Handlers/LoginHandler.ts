@@ -1,79 +1,107 @@
-import { response } from "express";
-import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
-import { LoginResponse } from "../Response/LoginResponse";
-import { LoginRequest } from "../Requests/LoginRequest";
-import { UserWithBase } from "../../../../Domain/Entities/UserEntites";
-import { addDuration, encodejwt } from "../../../Common/Helpers/jwtUtils";
-import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
-import { CreateSessionHandler } from "../../Session/Handlers/CreateSessionHandler";
-const { comparePassword } = require("../../../Common/Helpers/passwordUtils");
-import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
-import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
-import { CoreException } from "../../../Common/Exceptions/CoreException";
+    import { response } from "express";
+    import UserRepository from "../../../../Infrastructure/Persistences/Respositories/UserRepository";
+    import { LoginResponse } from "../Response/LoginResponse";
+    import { LoginRequest } from "../Requests/LoginRequest";
+    import { UserWithBase } from "../../../../Domain/Entities/UserEntites";
+    import { addDuration, encodejwt } from "../../../Common/Helpers/jwtUtils";
+    import SessionRepository from "../../../../Infrastructure/Persistences/Respositories/SessionRepository";
+    import { CreateSessionHandler } from "../../Session/Handlers/CreateSessionHandler";
+    const { comparePassword } = require("../../../Common/Helpers/passwordUtils");
+    import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
+    import ISessionRepository from "../../../Persistences/IRepositories/ISessionRepository";
+    import { validationUtils } from '../../../Common/Helpers/validationUtils';
+    import { CoreException } from "../../../Common/Exceptions/CoreException";
 
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
+    import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
+import { CreateUserSessionDTO } from "../Commands/CreateUserSessionDTO";
 
-async function LoginHandler(data: any): Promise<LoginResponse|CoreException> {
+    async function LoginHandler(data: any): Promise<LoginResponse|CoreException> {
+        const unitOfWork = new UnitOfWork();
     try {
-        const userRepository: IUserRepository = new UserRepository();
-        const sessionRepository: ISessionRepository = new SessionRepository();
-        const { deviceId, ipAddress, email, password } = data;
+            const session = await unitOfWork.startTransaction();
+            const { deviceId, ipAddress, email, password } = data;
 
-        const queryData: any = {
-            isDelete: false,
-            isActive: true,
-            emailConfirmed: true,
-        }
-        const user: any = await userRepository.getUserByEmail(email, queryData);
-        if (!user) {
-            return new CoreException(StatusCodeEnums.InternalServerError_500, "User not found!");
-        }
-        const isMatch = await comparePassword(password, user.password);
-        if (!isMatch) {
-            return new CoreException(StatusCodeEnums.Unauthorized_401, "Password is not match!")
-        }
+            const queryData: any = {
+                isDelete: false,
+                isActive: true,
+                emailConfirmed: true,
+            }
 
-        const token = await encodejwt(user);
+            // const emailError = validationUtils.validateEmail(email);
+            // const passwordError = validationUtils.validatePassword(password);
+            // if (emailError ||  passwordError) {
+            //     // Construct error message with appropriate separators
+            //     let errorMessage = '';
+            //     if (emailError) errorMessage += emailError + '; ';
+            //     if (passwordError) errorMessage += passwordError + '; '
+            //     errorMessage = errorMessage.trim().replace(/;+$/, '');
+            //     return new LoginResponse("Validation failed", 400, data, errorMessage);
+            // }
 
-        const queryDataSession: any = {
-            email: email.toLowerCase(),
-            ipAddress: ipAddress,
-            deviceId: deviceId,
-            isDelete: true
-        }
+            const user: any = await unitOfWork.userRepository.getUserByEmail(email, queryData);
+            if (!user) {
+                return new CoreException(StatusCodeEnums.InternalServerError_500, "User not found!");
+            }
+            const isMatch = await comparePassword(password, user.password);
+            if (!isMatch) {
+                return new CoreException(StatusCodeEnums.Unauthorized_401, "Password is not match!")
+            }
 
-        const session: any = await sessionRepository.findSessionByEmailAndIP(queryDataSession);
-        if (session != null) {
-                await sessionRepository.deleteSession(session._id); 
+            const token = await encodejwt(user);
+
+            const queryDataSession: any = {
+                email: email.toLowerCase(),
+                ipAddress: ipAddress,
+                deviceId: deviceId,
+                isDelete: true
+            }
+
+        const sessionUser: any = await unitOfWork.sessionRepository.findSessionByEmailAndIP(queryDataSession);
+        if (sessionUser != null) {
+                await unitOfWork.sessionRepository.deleteSession(sessionUser._id, session); 
         } 
 
-        const tokenExpiryDate = addDuration(token.expiresIn || "");
-        const refreshTokenExpiryDate = addDuration(process.env.REACT_APP_EXPIRE_REFRESH_TOKEN || "");
+            const tokenExpiryDate: any = addDuration(token.expiresIn || "");
+            const refreshTokenExpiryDate = addDuration(process.env.REACT_APP_EXPIRE_REFRESH_TOKEN || "");
 
-        const dataForCreateSession: any = {
-            user: user,
-            token: token,
-            deviceId: deviceId,
-            ipAddress: ipAddress,
-            refreshTokenExpiryDate: refreshTokenExpiryDate,
-            tokenExpiryDate: tokenExpiryDate,
-        }
-
-        await CreateSessionHandler(dataForCreateSession);
-
-        const dataTokenResponse = {
-            accessToken: token.token,
-            refreshToken: token.refreshToken,
-            expireIn: token.expiresIn || ""
-        }
+            // const dataForCreateSession: any = {
+            //     user: user,
+            //     token: token,
+            //     deviceId: deviceId,
+            //     ipAddress: ipAddress,
+            //     refreshTokenExpiryDate: refreshTokenExpiryDate,
+            //     tokenExpiryDate: tokenExpiryDate,
+            // }
+            const createSessionDTO = new CreateUserSessionDTO(
+                user._id,
+                user.email,
+                user.name || "unknown", 
+                user.username.toLowerCase(), 
+                token.token, 
+                token.refreshToken,
+                refreshTokenExpiryDate,
+                tokenExpiryDate,
+                deviceId,
+                ipAddress,
+            )
+           await unitOfWork.sessionRepository.createSession(createSessionDTO, session);
+            // await CreateSessionHandler(dataForCreateSession);
+            
+            const dataTokenResponse = {
+                accessToken: token.token,
+                refreshToken: token.refreshToken,
+                expireIn: token.expiresIn || ""
+            }
 
         const loginResponse = new LoginResponse("Success", StatusCodeEnums.OK_200, dataTokenResponse);
-
+        await unitOfWork.commitTransaction();
         return loginResponse
 
     } catch (error: any) {
+        await unitOfWork.abortTransaction();
         return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
     }
 }
 
-export default LoginHandler;
+    export default LoginHandler;

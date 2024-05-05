@@ -4,19 +4,27 @@ import { ForgotPasswordResponse } from "../Response/ForgotPasswordResponse";
 import IUserRepository from "../../../Persistences/IRepositories/IUserRepository";
 import { CoreException } from "../../../Common/Exceptions/CoreException";
 import { StatusCodeEnums } from "../../../../Domain/Enums/StatusCodeEnums";
+import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositories/UnitOfWork";
 const { md5Encrypt } = require("../../../Common/Helpers/passwordUtils");
 const { sendMail } = require("../../../Common/Helpers/emailUtils")
+import { validationUtils } from '../../../Common/Helpers/validationUtils';
 
 export async function ForgotPasswordHandler(email: string): Promise<ForgotPasswordResponse|CoreException> {
     try {
-        const userRepository: IUserRepository = new UserRepository();
+        const unitOfWork = new UnitOfWork();
+        await unitOfWork.startTransaction();
         const queryData: any = {
             isDelete: false,
             isActive: true,
             emailConfirmed: true,
         }
 
-        const user: any = await userRepository.getUserByEmail(email, queryData);
+        // const emailError = validationUtils.validateEmail(email);
+        // if (emailError){
+        //      return new ForgotPasswordResponse("Validation failed", 400, {}, emailError);
+        // }
+        
+        const user: any = await unitOfWork.userRepository.getUserByEmail(email, queryData);
         if (user == null) {
             return new CoreException(StatusCodeEnums.InternalServerError_500, "User Not Found!");
         }

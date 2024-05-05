@@ -14,7 +14,7 @@ import { User } from '../../Domain/Entities/UserEntites';
 declare global {
   namespace Express {
       interface Request {
-          user?: User;
+          user?: typeof User;
       }
   }
 }

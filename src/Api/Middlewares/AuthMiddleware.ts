@@ -3,10 +3,13 @@ import {Request, Response, NextFunction} from 'express'
 import SessionRepository from "../../Infrastructure/Persistences/Respositories/SessionRepository";
 import mongoose from 'mongoose';
 import RoleRepository from '../../Infrastructure/Persistences/Respositories/RoleRepository';
+import { UnitOfWork } from '../../Infrastructure/Persistences/Respositories/UnitOfWork';
 const moment = require('moment-timezone');
 
-function authenticateToken(req: any, res: any, next: any){
-    const sessionRepository = new SessionRepository();
+async function authenticateToken(req: any, res: any, next: any){
+    const unitOfWork = new UnitOfWork();
+    const session = await unitOfWork.startTransaction();
+   
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     if (!token) {
@@ -14,18 +17,18 @@ function authenticateToken(req: any, res: any, next: any){
     }
  
     // Find the session associated with the token
-     sessionRepository.findSessionByToken(token).then( session => {
+     unitOfWork.sessionRepository.findSessionByToken(token).then( sessionUser => {
 
-        if (!session) {
+        if (!sessionUser) {
             return res.sendStatus(401); // No session found for this token
         }
 
         // Check if the token is expired
         // const now = new Date();
         const now = moment();
-        if (session.expireDate < now) {
+        if (sessionUser.expireDate < now) {
             // Token has expired, delete the session
-             sessionRepository.deleteSession(session._id).then(() => {
+             unitOfWork.sessionRepository.deleteSession(sessionUser._id, session).then(() => {
                 return res.sendStatus(401); // Unauthorized due to expired token
             });
         } else {
@@ -37,10 +40,12 @@ function authenticateToken(req: any, res: any, next: any){
                 req.user = user; // Attach the user to the request object
                 req.session = session; // Attach the session to the request object
                 console.log("done authen");
+                unitOfWork.commitTransaction();
                 next(); // Proceed to the next middleware or request handler
             });
         }
     }).catch(err => {
+        unitOfWork.abortTransaction();
         console.error(err);
         return res.sendStatus(500); // Internal server error
     });
