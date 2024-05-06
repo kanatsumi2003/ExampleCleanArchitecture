@@ -40,9 +40,7 @@ export default class RoleController {
       };
       const result: any = await CreateRoleHandler(data);
       res.status(result.statusCode).json({ data: result });
-      if (result.error != undefined || result.error) {
-        res.status(result.statusCode).json({ error: result.error });
-      }
+
     } catch (error: any) {
       res.status(500).json({ error: error.message });
     }

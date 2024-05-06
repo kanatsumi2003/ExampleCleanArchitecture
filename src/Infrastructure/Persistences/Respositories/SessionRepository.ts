@@ -9,7 +9,7 @@ class SessionRepository extends BaseRepository<typeof SessionLogin> implements I
         const collectionName: string = "sessions";
         super(collectionName);
     }
-    async findSessionByEmail(queryData: any): Promise<typeof SessionWithBase> {
+    async findSessionByEmail(queryData: any): Promise<typeof SessionWithBase[]> {
         try {
             const {email, isDelete, isActive} = queryData;
             const query = {
@@ -18,7 +18,7 @@ class SessionRepository extends BaseRepository<typeof SessionLogin> implements I
                 isActive: isActive
             }
             const session: typeof SessionWithBase[] = await SessionWithBase.find(query);
-            return session[0];
+            return session;
           
         } catch (error:any) {
             throw new Error("Error at findSessionByEmail in SessionRepository: " + error.message);
@@ -66,9 +66,7 @@ class SessionRepository extends BaseRepository<typeof SessionLogin> implements I
             //const fullSession = new SessionWithBase(sessionData)
             //await this.insertDocuments(fullSession);
            
-            const fullSession: any = await SessionWithBase.create([{
-                sessionData
-              }], {session});
+            const fullSession: any = await SessionWithBase.create([sessionData], {session});
             return fullSession[0];
         } catch (error: any) {
             throw new Error("Error at createSession in SessionRepository: " + error.message);

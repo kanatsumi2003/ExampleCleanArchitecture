@@ -17,8 +17,8 @@ async function authenticateToken(req: any, res: any, next: any){
     }
  
     // Find the session associated with the token
-     unitOfWork.sessionRepository.findSessionByToken(token).then( sessionUser => {
-
+    unitOfWork.sessionRepository.findSessionByToken(token).then( sessionUser => {
+        console.log(sessionUser);
         if (!sessionUser) {
             return res.sendStatus(401); // No session found for this token
         }

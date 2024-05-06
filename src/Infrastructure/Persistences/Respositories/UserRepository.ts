@@ -14,12 +14,14 @@ class UserRepository implements IUserRepository {
 
   async updateUserById(userId: string, userData: any, session: ClientSession) {
     try {
-      const user: any = await UserWithBase.updateOne({
+      const _id = new mongoose.Types.ObjectId(userId);
+      const user: any = await UserWithBase.findByIdAndUpdate( _id, {
         fullname: userData.fullname,
         email: userData.email,
         username: userData.username,
         password: userData.password,
         phoneNumber: userData.phoneNumber,
+        emailCode: userData.emailCode,
         role_id: userData.role_id,
       }, {session});
       const query: any = {
@@ -31,9 +33,18 @@ class UserRepository implements IUserRepository {
     }
 
   }
+  async updateUserConfirmEmail(userId: string, updateData: any, session: ClientSession) {
+    try {
+      const _id = new mongoose.Types.ObjectId(userId);
+      await UserWithBase.findByIdAndUpdate(_id,
+        updateData
+      , {session});
+    } catch (error: any) {
+      throw new Error("Error at updateUserConfirmEmail in UserRepository: " + error.message);
+    }
+  }
 
-
-  async getUserByEmail(email: string, queryData: any): Promise<typeof UserWithBase> {
+  async getUserByEmail(email: string, queryData: any)  {
     try {
       const query: any = {
         email: email,
@@ -41,8 +52,8 @@ class UserRepository implements IUserRepository {
         isActive: queryData.isActive,
         emailConfirmed: queryData.emailConfirmed,
       };
-      const users: typeof UserWithBase[] = await UserWithBase.find(query)
-      return users[0];
+      const users: any = await UserWithBase.findOne(query)
+      return users;
     } catch (error: any) {
       throw new Error(
         "Error at getUserByEmail in UserRepository: " + error.message

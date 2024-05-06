@@ -1,6 +1,6 @@
 import mongoose, { Types } from "mongoose";
-import { Basev2Schema } from "./BaseEntitiesv2";
 import speakeasy from "speakeasy";
+import { BaseSchema } from "./BaseEntities";
 
 const isValidObjectId = (value: Types.ObjectId) => {
   return mongoose.Types.ObjectId.isValid(value);
@@ -57,7 +57,7 @@ export const User = new mongoose.Schema({
 
 const UserWithBaseSchema = new mongoose.Schema({
   ...User.obj,
-  ...Basev2Schema.obj
+  ...BaseSchema.obj
 })
 
 export const UserWithBase = mongoose.model("UserWithBase", UserWithBaseSchema, "users");

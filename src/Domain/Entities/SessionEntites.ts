@@ -1,7 +1,7 @@
 //import { BaseEntities } from "./BaseEntites";
 
 import mongoose from "mongoose";
-import { Basev2Schema } from "./BaseEntitiesv2";
+import { BaseSchema } from "./BaseEntities";
 
 export const SessionLogin = new mongoose.Schema({
     userId: {
@@ -37,8 +37,8 @@ export const SessionLogin = new mongoose.Schema({
 })
 
 const SessionWithBaseSchema = new mongoose.Schema({
+    ...BaseSchema.obj,
     ...SessionLogin.obj,
-    ...Basev2Schema.obj
 })
 
 export const SessionWithBase = mongoose.model("SessionWithBase", SessionWithBaseSchema, "sessions");

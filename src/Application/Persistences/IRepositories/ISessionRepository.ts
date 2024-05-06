@@ -15,5 +15,5 @@ export default interface ISessionRepository {
     deleteSession(_id: string, session: ClientSession): Promise<void>;
     createSession(sessionData: any, session: ClientSession): Promise<typeof SessionWithBase>;
     findSessionByToken(token: any): Promise<any>;
-    findSessionByEmail(queryData:any): Promise<typeof SessionWithBase>;
+    findSessionByEmail(queryData: any): Promise<typeof SessionWithBase[]>;
 }

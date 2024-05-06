@@ -1,7 +1,7 @@
 // import { BaseEntities } from "./BaseEntites";
 
 import mongoose from "mongoose";
-import { Basev2Schema } from "./BaseEntitiesv2";
+import { BaseSchema } from "./BaseEntities";
 
 export const Role = new mongoose.Schema({
   name: {
@@ -19,7 +19,7 @@ export const Role = new mongoose.Schema({
 })
 const RoleWithBaseSchema = new mongoose.Schema({
   ...Role.obj,
-  ...Basev2Schema.obj
+  ...BaseSchema.obj
 })
 export const RoleWithBase = mongoose.model("RoleWithBase", RoleWithBaseSchema, "userroles");
 // class Role {

@@ -8,6 +8,7 @@ import { IUnitOfWork } from '../../../Persistences/IRepositories/IUnitOfWork';
 export async function verifyEmailHandler (data : any) : Promise<VerifyEmailResponse|CoreException> {
   const unitOfWork: IUnitOfWork = new UnitOfWork();
   try {
+    const session = await unitOfWork.startTransaction();
     const {email, hash} = data
     // const userRepository: IUserRepository = new UserRepository();
 
@@ -33,13 +34,17 @@ export async function verifyEmailHandler (data : any) : Promise<VerifyEmailRespo
       return new CoreException(StatusCodeEnums.InternalServerError_500, "Can not verify");
     }
 
-    user.emailCode = Math.random().toString(36).substr(2, 5);
+    user.emailCode = Math.random().toString(36).substr(2, 5); 
     user.emailConfirmed = true;
+
     console.log(user._id.toString());
     // const result = await userRepository.updateDocument(queryData, user);
+    await unitOfWork.userRepository.updateUserConfirmEmail(user._id, user, session);
     // return new VerifyEmailResponse("Verify email successful", StatusCodeEnums.OK_200, result);
+    await unitOfWork.commitTransaction();
     return new VerifyEmailResponse("Verify email successful", 200, "");
   } catch (error: any) {
+    await unitOfWork.abortTransaction();
     return new CoreException(StatusCodeEnums.InternalServerError_500, error.mesagge);
   }
 }

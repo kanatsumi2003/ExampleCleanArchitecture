@@ -7,8 +7,7 @@ import { UnitOfWork } from "../../../../Infrastructure/Persistences/Respositorie
 import { IUnitOfWork } from "../../../Persistences/IRepositories/IUnitOfWork";
 const { md5Encrypt } = require("../../../Common/Helpers/passwordUtils");
 
-export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise<VerifyForgotPasswordByEmailCodeResponse> {
-    const response = new VerifyForgotPasswordByEmailCodeResponse("", StatusCodeEnums.InternalServerError_500, {})
+export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise<VerifyForgotPasswordByEmailCodeResponse | CoreException> {
     const unitOfWork: IUnitOfWork = new UnitOfWork();
     try {
         const session = await unitOfWork.startTransaction();
@@ -20,7 +19,7 @@ export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise
             
         const user:any = await unitOfWork.userRepository.getUserByEmail(data.email, roleQueryData);
         if (user === null) {
-            const response = new VerifyForgotPasswordByEmailCodeResponse("Email not existed",  StatusCodeEnums.BadRequest_400, {})
+            const response = new CoreException(StatusCodeEnums.InternalServerError_500, "Email not found")
             return response;
         }
 
@@ -29,16 +28,16 @@ export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise
 
 
         if (differenceInSecond > 1800) {
-            const response = new VerifyForgotPasswordByEmailCodeResponse("Email timeout!",  StatusCodeEnums.BadRequest_400, {})
+            const response = new CoreException(StatusCodeEnums.InternalServerError_500, "Time expired")
             return response;
         }
 
         const emailHash = await md5Encrypt(user.emailCode)
         if (data.hash !== emailHash) {
-            const response = new VerifyForgotPasswordByEmailCodeResponse("Cannot verify please try again", StatusCodeEnums.BadRequest_400, {})
+            const response = new CoreException(StatusCodeEnums.InternalServerError_500, "Email code is not match");
             return response;
         }
-        user.emailCode = Math.random().toString(36).substring(2, 5);
+        user.emailCode = Math.random().toString(36).substring(2, 7);
         
         await unitOfWork.userRepository.updateUserById(user._id, user, session)
 
@@ -67,14 +66,18 @@ export async function VerifyForgotPasswordByEmailCodeHandler(data: any): Promise
             refreshToken: token.refreshToken,
             ExpireRefreshToken: refreshTokenExpiryDate,
             expireDate: tokenExpiryDate,
+            deviceId: data.deviceId,
+            ipAddress: data.ipAddress,
         }, session)
         await unitOfWork.commitTransaction();
-    } catch (error) {
+        const dataTokenResponse: any = {
+            accessToken: token.token,
+            refreshToken: token.refreshToken,
+            expireIn: token.expiresIn,
+        }
+        return new VerifyForgotPasswordByEmailCodeResponse("Successful", StatusCodeEnums.OK_200, dataTokenResponse)
+    } catch (error: any) {
         await unitOfWork.abortTransaction();
-        const response = new VerifyForgotPasswordByEmailCodeResponse("Server error", StatusCodeEnums.InternalServerError_500, {})
-        return response;
+        throw new CoreException(StatusCodeEnums.InternalServerError_500, error.message);
     }
-
-    return response;
-
 }

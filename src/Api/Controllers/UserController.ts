@@ -118,9 +118,9 @@ export default class UserController {
     // #swagger.description = 'Update new Password'
     // #swagger.tags = ["User"]
     try {
-      const { email, newpassword } = req.body;
-
-      const data = { email, newpassword };
+      const { newpassword } = req.body;
+      const userId = (req as any).user.userId
+      const data = { userId, newpassword };
       const result: any = await UpdatePassHandler(data);
 
       return res.status(result.statusCode).json(result);
@@ -178,10 +178,14 @@ export default class UserController {
     // #swagger.tags = ["User"]
     try {
       const { hash, email, timeStamp } = req.body;
+      const deviceId = req.headers['user-agent'] || 'Unknown Device';
+      const ipAddress = req.headers['x-forwarded-for'] || (req as any).socket?.remoteAddress || 'Unknown IP';
       const data: any = {
         hash: hash,
         email: email,
         timeStamp: timeStamp,
+        deviceId: deviceId,
+        ipAddress: ipAddress
       };
       const result: any = await VerifyForgotPasswordByEmailCodeHandler(data);
       return res.status(result.statusCode).json(result);

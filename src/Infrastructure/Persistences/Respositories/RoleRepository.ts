@@ -28,7 +28,7 @@ export default class RoleRepository extends BaseRepository<typeof Role> implemen
     }
     async createRole(createRoleData: any, session: ClientSession): Promise<typeof RoleWithBase> {
         try {
-            const roleWithBase: any = await RoleWithBase.create(createRoleData, {session});
+            const roleWithBase: any = await RoleWithBase.create([createRoleData], {session});
             return roleWithBase;
         } catch (error: any) {
             throw new Error("Error at createRole in RoleRepository: " + error.message);

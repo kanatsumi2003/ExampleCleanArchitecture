@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-export const Basev2Schema: Schema = new mongoose.Schema({
+export const BaseSchema: Schema = new mongoose.Schema({
     isDelete: {
         type: Boolean,
         default: false,
